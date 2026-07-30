@@ -52,23 +52,30 @@ const revenueTrendByOutlet: Record<string, { month: string; revenue: number }[]>
 const outletComparison = [
   { outlet: "Nashik", revenue: 128000 }, { outlet: "Pune", revenue: 154000 },
   { outlet: "Mumbai", revenue: 96000 }, { outlet: "Nagpur", revenue: 111000 },
-  { outlet: "Aurangabad", revenue: 61000 },
+  { outlet: "Aurangabad", revenue: 61000 }, { outlet: "Thane", revenue: 135000 },
+  { outlet: "Kolhapur", revenue: 108000 }, { outlet: "Solapur", revenue: 89000 },
 ];
 
 const outletPerformance = [
-  { name: "Nashik", sales: 128000, target: 120000, growth: 6.4, status: "Healthy" },
-  { name: "Pune", sales: 154000, target: 140000, growth: 10.1, status: "Healthy" },
-  { name: "Mumbai Andheri", sales: 96000, target: 130000, growth: -3.2, status: "Watch" },
-  { name: "Nagpur", sales: 111000, target: 100000, growth: 8.7, status: "Healthy" },
-  { name: "Aurangabad", sales: 61000, target: 95000, growth: -12.5, status: "Critical" },
+  { name: "Nashik City Center", sales: 128000, target: 120000, growth: 6.4, status: "Healthy" },
+  { name: "Pune FC Road", sales: 154000, target: 140000, growth: 10.1, status: "Healthy" },
+  { name: "Mumbai Andheri East", sales: 96000, target: 130000, growth: -3.2, status: "Watch" },
+  { name: "Nagpur Dharampeth", sales: 111000, target: 100000, growth: 8.7, status: "Healthy" },
+  { name: "Aurangabad CIDCO", sales: 61000, target: 95000, growth: -12.5, status: "Critical" },
+  { name: "Thane Estate", sales: 135000, target: 125000, growth: 7.8, status: "Healthy" },
+  { name: "Kolhapur Tarabai Park", sales: 108000, target: 105000, growth: 3.5, status: "Healthy" },
+  { name: "Solapur Saat Rasta", sales: 89000, target: 95000, growth: -2.1, status: "Watch" },
 ];
 
 const outletLocations = [
-  { name: "Nashik", x: 42, y: 28, status: "Healthy" },
-  { name: "Pune", x: 48, y: 55, status: "Healthy" },
-  { name: "Mumbai Andheri", x: 22, y: 48, status: "Watch" },
-  { name: "Nagpur", x: 82, y: 38, status: "Healthy" },
-  { name: "Aurangabad", x: 58, y: 40, status: "Critical" },
+  { name: "Nashik City Center", x: 42, y: 28, status: "Healthy" },
+  { name: "Pune FC Road", x: 48, y: 55, status: "Healthy" },
+  { name: "Mumbai Andheri East", x: 22, y: 48, status: "Watch" },
+  { name: "Nagpur Dharampeth", x: 82, y: 38, status: "Healthy" },
+  { name: "Aurangabad CIDCO", x: 58, y: 40, status: "Critical" },
+  { name: "Thane Estate", x: 30, y: 44, status: "Healthy" },
+  { name: "Kolhapur Tarabai Park", x: 45, y: 80, status: "Healthy" },
+  { name: "Solapur Saat Rasta", x: 65, y: 72, status: "Watch" },
 ];
 
 const healthRadar = [
@@ -87,10 +94,13 @@ const dailySales = Array.from({ length: 35 }, (_, i) => {
 
 const networkNodes = [
   { name: "Nashik", revenue: 128000, angle: 270, status: "Healthy" },
-  { name: "Pune", revenue: 154000, angle: 342, status: "Healthy" },
-  { name: "Mumbai Andheri", revenue: 96000, angle: 54, status: "Watch" },
-  { name: "Nagpur", revenue: 111000, angle: 126, status: "Healthy" },
-  { name: "Aurangabad", revenue: 61000, angle: 198, status: "Critical" },
+  { name: "Pune", revenue: 154000, angle: 315, status: "Healthy" },
+  { name: "Mumbai Andheri", revenue: 96000, angle: 0, status: "Watch" },
+  { name: "Nagpur", revenue: 111000, angle: 45, status: "Healthy" },
+  { name: "Aurangabad", revenue: 61000, angle: 90, status: "Critical" },
+  { name: "Thane", revenue: 135000, angle: 135, status: "Healthy" },
+  { name: "Kolhapur", revenue: 108000, angle: 180, status: "Healthy" },
+  { name: "Solapur", revenue: 89000, angle: 225, status: "Watch" },
 ];
 
 const kpis = [
