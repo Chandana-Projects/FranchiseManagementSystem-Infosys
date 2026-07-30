@@ -165,8 +165,5 @@ exports.getOutletById = async (id) => {
             outlet_id: Number(id)
         }
     });
-<<<<<<< HEAD
 };
-=======
-};
->>>>>>> 7770818c3ff2de3252d8663a972bcdafe1794c34
+
