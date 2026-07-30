@@ -758,19 +758,19 @@ export default function FranchiseOSDashboard() {
                       : "All tracked items are within a healthy range across the network."}
                   </p>
                   <div className="flex flex-wrap gap-2 mt-3">
-                    <span className="text-xs px-2.5 py-1 rounded-full border" style={{ background: `${accent}1A`, color: accent, borderColor: `${accent}33` }}>Healthy: {inventorySummary.healthy}</span>
-                    <span className="text-xs px-2.5 py-1 rounded-full border" style={{ background: "#F59E0B1A", color: "#F59E0B", borderColor: "#F59E0B33" }}>Watch: {inventorySummary.watch}</span>
-                    <span className="text-xs px-2.5 py-1 rounded-full border" style={{ background: "#FB71851A", color: "#FB7185", borderColor: "#FB718533" }}>Critical: {inventorySummary.critical}</span>
+                    <span className="text-xs px-2.5 py-1 rounded-full border" style={{ background: `${accent}1A`, color: accent, borderColor: `${accent}33` }}>Healthy: {inventorySummary?.healthy ?? 0}</span>
+                    <span className="text-xs px-2.5 py-1 rounded-full border" style={{ background: "#F59E0B1A", color: "#F59E0B", borderColor: "#F59E0B33" }}>Watch: {inventorySummary?.watch ?? 0}</span>
+                    <span className="text-xs px-2.5 py-1 rounded-full border" style={{ background: "#FB71851A", color: "#FB7185", borderColor: "#FB718533" }}>Critical: {inventorySummary?.critical ?? 0}</span>
                   </div>
                 </div>
               )}
 
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {[
-                  { label: "SKUs tracked", value: String(inventorySummary?.total ?? "—"), icon: Boxes },
-                  { label: "Units in view", value: inventorySummary && inventorySummary.totalUnits != null ? Number(inventorySummary.totalUnits).toLocaleString("en-IN") : "—", icon: TrendingUp },
-                  { label: "Needs reorder", value: inventorySummary ? String(inventorySummary.watch + inventorySummary.critical) : "—", icon: AlertTriangle },
-                  { label: "Inventory health", value: inventorySummary ? `${inventorySummary.healthPct}%` : "—", icon: ShieldCheck },
+                  { label: "SKUs tracked", value: String(inventorySummary?.total ?? 0), icon: Boxes },
+                  { label: "Units in view", value: Number(inventorySummary?.totalUnits || 0).toLocaleString("en-IN"), icon: TrendingUp },
+                  { label: "Needs reorder", value: String((inventorySummary?.watch || 0) + (inventorySummary?.critical || 0)), icon: AlertTriangle },
+                  { label: "Inventory health", value: `${inventorySummary?.healthPct ?? 100}%`, icon: ShieldCheck },
                 ].map((k) => {
                   const Icon = k.icon;
                   return (

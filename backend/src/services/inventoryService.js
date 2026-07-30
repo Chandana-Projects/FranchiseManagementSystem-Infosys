@@ -48,7 +48,16 @@ async function getItemById(item_id) {
 }
 
 async function getSummary() {
-  const items = await prisma.inventory_items.findMany();
+  let items = [];
+  try {
+    items = await prisma.inventory_items.findMany();
+    if (!Array.isArray(items) || items.length === 0) {
+      items = loadDatasetItems();
+    }
+  } catch (_) {
+    items = loadDatasetItems();
+  }
+
   const total = items.length;
   const critical = items.filter((i) => Number(i.quantity) <= Number(i.reorder_at) * 0.5).length;
   const watch = items.filter(
