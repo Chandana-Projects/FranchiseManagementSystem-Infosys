@@ -1,0 +1,13 @@
+outlet_id,outlet_name,month,target_revenue,actual_revenue,growth_percentage
+1,Nashik City Center,Feb,120000.00,98000.00,4.2
+1,Nashik City Center,Mar,120000.00,105000.00,5.1
+1,Nashik City Center,Apr,120000.00,99000.00,4.0
+1,Nashik City Center,May,120000.00,118000.00,5.8
+1,Nashik City Center,Jun,120000.00,121000.00,6.1
+1,Nashik City Center,Jul,120000.00,128000.00,6.4
+2,Pune FC Road,Feb,140000.00,120000.00,8.0
+2,Pune FC Road,Mar,140000.00,131000.00,8.5
+2,Pune FC Road,Apr,140000.00,128000.00,8.2
+2,Pune FC Road,May,140000.00,142000.00,9.1
+2,Pune FC Road,Jun,140000.00,149000.00,9.6
+2,Pune FC Road,Jul,140000.00,154000.00,10.1

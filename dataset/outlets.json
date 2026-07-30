@@ -1,0 +1,98 @@
+[
+  {
+    "outlet_id": 1,
+    "outlet_name": "Nashik City Center",
+    "franchise_name": "FranchiseOps Nashik",
+    "city": "Nashik",
+    "state": "Maharashtra",
+    "address": "College Road, Near KTHM Circle, Nashik 422005",
+    "latitude": 20.0059,
+    "longitude": 73.7898,
+    "opening_date": "2023-01-15",
+    "status": "Healthy"
+  },
+  {
+    "outlet_id": 2,
+    "outlet_name": "Pune FC Road",
+    "franchise_name": "FranchiseOps Pune",
+    "city": "Pune",
+    "state": "Maharashtra",
+    "address": "Fergusson College Road, Deccan Gymkhana, Pune 411004",
+    "latitude": 18.5204,
+    "longitude": 73.8567,
+    "opening_date": "2022-11-01",
+    "status": "Healthy"
+  },
+  {
+    "outlet_id": 3,
+    "outlet_name": "Mumbai Andheri East",
+    "franchise_name": "FranchiseOps Mumbai",
+    "city": "Mumbai",
+    "state": "Maharashtra",
+    "address": "Saki Naka, Andheri East, Mumbai 400072",
+    "latitude": 19.1197,
+    "longitude": 72.8464,
+    "opening_date": "2023-04-10",
+    "status": "Watch"
+  },
+  {
+    "outlet_id": 4,
+    "outlet_name": "Nagpur Dharampeth",
+    "franchise_name": "FranchiseOps Nagpur",
+    "city": "Nagpur",
+    "state": "Maharashtra",
+    "address": "Zenda Chowk, Dharampeth, Nagpur 440010",
+    "latitude": 21.1458,
+    "longitude": 79.0882,
+    "opening_date": "2023-06-20",
+    "status": "Healthy"
+  },
+  {
+    "outlet_id": 5,
+    "outlet_name": "Aurangabad CIDCO",
+    "franchise_name": "FranchiseOps Aurangabad",
+    "city": "Chhatrapati Sambhajinagar",
+    "state": "Maharashtra",
+    "address": "CIDCO Sector 3, Chhatrapati Sambhajinagar 431003",
+    "latitude": 19.8762,
+    "longitude": 75.3433,
+    "opening_date": "2023-08-05",
+    "status": "Critical"
+  },
+  {
+    "outlet_id": 6,
+    "outlet_name": "Thane Estate",
+    "franchise_name": "FranchiseOps Thane",
+    "city": "Thane",
+    "state": "Maharashtra",
+    "address": "Ghopada Road, Panch Pakhadi, Thane 400602",
+    "latitude": 19.2183,
+    "longitude": 72.9781,
+    "opening_date": "2023-09-12",
+    "status": "Healthy"
+  },
+  {
+    "outlet_id": 7,
+    "outlet_name": "Kolhapur Tarabai Park",
+    "franchise_name": "FranchiseOps Kolhapur",
+    "city": "Kolhapur",
+    "state": "Maharashtra",
+    "address": "Tarabai Park, Station Road, Kolhapur 416003",
+    "latitude": 16.7050,
+    "longitude": 74.2433,
+    "opening_date": "2023-10-18",
+    "status": "Healthy"
+  },
+  {
+    "outlet_id": 8,
+    "outlet_name": "Solapur Saat Rasta",
+    "franchise_name": "FranchiseOps Solapur",
+    "city": "Solapur",
+    "state": "Maharashtra",
+    "address": "Saat Rasta Circle, Civil Lines, Solapur 413003",
+    "latitude": 17.6599,
+    "longitude": 75.9064,
+    "opening_date": "2023-11-25",
+    "status": "Watch"
+  }
+]

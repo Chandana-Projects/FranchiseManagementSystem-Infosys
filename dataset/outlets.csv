@@ -1,0 +1,9 @@
+outlet_id,outlet_name,franchise_name,city,state,address,latitude,longitude,opening_date,status
+1,Nashik City Center,FranchiseOps Nashik,Nashik,Maharashtra,"College Road, Near KTHM Circle, Nashik 422005",20.0059,73.7898,2023-01-15,Healthy
+2,Pune FC Road,FranchiseOps Pune,Pune,Maharashtra,"Fergusson College Road, Deccan Gymkhana, Pune 411004",18.5204,73.8567,2022-11-01,Healthy
+3,Mumbai Andheri East,FranchiseOps Mumbai,Mumbai,Maharashtra,"Saki Naka, Andheri East, Mumbai 400072",19.1197,72.8464,2023-04-10,Watch
+4,Nagpur Dharampeth,FranchiseOps Nagpur,Nagpur,Maharashtra,"Zenda Chowk, Dharampeth, Nagpur 440010",21.1458,79.0882,2023-06-20,Healthy
+5,Aurangabad CIDCO,FranchiseOps Aurangabad,Chhatrapati Sambhajinagar,Maharashtra,"CIDCO Sector 3, Chhatrapati Sambhajinagar 431003",19.8762,75.3433,2023-08-05,Critical
+6,Thane Estate,FranchiseOps Thane,Thane,Maharashtra,"Ghopada Road, Panch Pakhadi, Thane 400602",19.2183,72.9781,2023-09-12,Healthy
+7,Kolhapur Tarabai Park,FranchiseOps Kolhapur,Kolhapur,Maharashtra,"Tarabai Park, Station Road, Kolhapur 416003",16.7050,74.2433,2023-10-18,Healthy
+8,Solapur Saat Rasta,FranchiseOps Solapur,Solapur,Maharashtra,"Saat Rasta Circle, Civil Lines, Solapur 413003",17.6599,75.9064,2023-11-25,Watch

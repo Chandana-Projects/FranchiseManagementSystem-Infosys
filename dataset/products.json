@@ -1,0 +1,22 @@
+[
+  { "product_id": 1, "product_name": "Signature Cold Coffee", "sku": "BEV-CC-01", "category": "Beverages", "unit_price": 160.00, "description": "Classic chilled espresso blended with rich cream and cocoa." },
+  { "product_id": 2, "product_name": "Classic Cappuccino", "sku": "BEV-CAP-02", "category": "Beverages", "unit_price": 140.00, "description": "Steamed milk foam poured over single shot dark roast espresso." },
+  { "product_id": 3, "product_name": "Masala Kulhad Chai", "sku": "BEV-CHAI-03", "category": "Beverages", "unit_price": 60.00, "description": "Traditional spiced Indian tea served piping hot in earthenware." },
+  { "product_id": 4, "product_name": "Iced Peach Green Tea", "sku": "BEV-TEA-04", "category": "Beverages", "unit_price": 120.00, "description": "Refreshing green tea infused with natural peach extract and mint." },
+  { "product_id": 5, "product_name": "Dark Chocolate Mocha", "sku": "BEV-MOC-05", "category": "Beverages", "unit_price": 180.00, "description": "Rich Belgian dark chocolate melted into double espresso latte." },
+  { "product_id": 6, "product_name": "Paneer Tikka Sandwich", "sku": "FOOD-SW-01", "category": "Meals", "unit_price": 190.00, "description": "Grilled sourdough stuffed with spiced cottage cheese and mint chutney." },
+  { "product_id": 7, "product_name": "Classic Cheese Burger", "sku": "FOOD-BGR-02", "category": "Meals", "unit_price": 210.00, "description": "Vegetable patty with cheddar cheese, jalapeños, and secret sauce." },
+  { "product_id": 8, "product_name": "Peri Peri French Fries", "sku": "FOOD-FRY-03", "category": "Snacks", "unit_price": 130.00, "description": "Crispy golden potato fries tossed in fiery African peri-peri spices." },
+  { "product_id": 9, "product_name": "Garlic Butter Toast", "sku": "FOOD-TST-04", "category": "Snacks", "unit_price": 110.00, "description": "Oven-baked baguette brushed with roasted garlic, herbs, and butter." },
+  { "product_id": 10, "product_name": "Butter Croissant", "sku": "BAK-CRS-01", "category": "Bakery", "unit_price": 120.00, "description": "Flaky French butter pastry freshly baked every morning." },
+  { "product_id": 11, "product_name": "Blueberry Muffin", "sku": "BAK-MUF-02", "category": "Bakery", "unit_price": 140.00, "description": "Moist vanilla sponge studded with wild organic blueberries." },
+  { "product_id": 12, "product_name": "Hazelnut Chocolate Brownie", "sku": "BAK-BRN-03", "category": "Bakery", "unit_price": 150.00, "description": "Dense fudgy dark chocolate brownie topped with roasted hazelnuts." },
+  { "product_id": 13, "product_name": "Red Velvet Cupcake", "sku": "BAK-CUP-04", "category": "Bakery", "unit_price": 110.00, "description": "Classic cocoa sponge topped with cream cheese frosting." },
+  { "product_id": 14, "product_name": "Caramel Macchiato", "sku": "BEV-MAC-06", "category": "Beverages", "unit_price": 190.00, "description": "Vanilla-infused milk marked with espresso and drizzled with caramel." },
+  { "product_id": 15, "product_name": "Veg Club Sandwich", "sku": "FOOD-SW-05", "category": "Meals", "unit_price": 220.00, "description": "Triple-layer toasted sandwich with cucumber, tomato, cheese, and lettuce." },
+  { "product_id": 16, "product_name": "Matcha Green Latte", "sku": "BEV-MAT-07", "category": "Beverages", "unit_price": 200.00, "description": "Ceremonial grade Japanese green tea whisked with oat milk." },
+  { "product_id": 17, "product_name": "Mango Passion Cooler", "sku": "BEV-CLR-08", "category": "Beverages", "unit_price": 150.00, "description": "Alphonso mango puree shaken with passionfruit boba." },
+  { "product_id": 18, "product_name": "FranchiseOps Travel Mug", "sku": "MER-MUG-01", "category": "Merchandise", "unit_price": 650.00, "description": "Stainless steel thermal insulated travel flask (500ml)." },
+  { "product_id": 19, "product_name": "Artisanal Coffee Beans (250g)", "sku": "MER-COF-02", "category": "Merchandise", "unit_price": 480.00, "description": "Medium roast Arabica coffee beans sourced from Chikmagalur." },
+  { "product_id": 20, "product_name": "Sizzling Chocolate Lava Cake", "sku": "BAK-LAV-05", "category": "Bakery", "unit_price": 160.00, "description": "Warm chocolate sponge with molten ganache center." }
+]

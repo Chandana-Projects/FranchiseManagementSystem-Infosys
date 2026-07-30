@@ -1,0 +1,9 @@
+inventory_id,product_id,outlet_id,current_stock,min_threshold,reorder_quantity,supplier
+1,1,1,85,20,50,Western Coffee Roasters
+2,2,1,14,15,40,Western Coffee Roasters
+3,3,1,210,50,100,Desi Spices & Teas
+4,6,2,42,10,30,Sahyadri Dairy Products
+5,10,2,8,15,25,Bakehouse Artisan Supplies
+6,1,3,5,20,50,Western Coffee Roasters
+7,8,4,120,30,60,Deccan Snacks Co.
+8,12,5,3,10,20,Bakehouse Artisan Supplies

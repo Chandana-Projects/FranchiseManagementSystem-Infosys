@@ -1,0 +1,10 @@
+[
+  { "inventory_id": 1, "product_id": 1, "outlet_id": 1, "current_stock": 85, "min_threshold": 20, "reorder_quantity": 50, "supplier": "Western Coffee Roasters" },
+  { "inventory_id": 2, "product_id": 2, "outlet_id": 1, "current_stock": 14, "min_threshold": 15, "reorder_quantity": 40, "supplier": "Western Coffee Roasters" },
+  { "inventory_id": 3, "product_id": 3, "outlet_id": 1, "current_stock": 210, "min_threshold": 50, "reorder_quantity": 100, "supplier": "Desi Spices & Teas" },
+  { "inventory_id": 4, "product_id": 6, "outlet_id": 2, "current_stock": 42, "min_threshold": 10, "reorder_quantity": 30, "supplier": "Sahyadri Dairy Products" },
+  { "inventory_id": 5, "product_id": 10, "outlet_id": 2, "current_stock": 8, "min_threshold": 15, "reorder_quantity": 25, "supplier": "Bakehouse Artisan Supplies" },
+  { "inventory_id": 6, "product_id": 1, "outlet_id": 3, "current_stock": 5, "min_threshold": 20, "reorder_quantity": 50, "supplier": "Western Coffee Roasters" },
+  { "inventory_id": 7, "product_id": 8, "outlet_id": 4, "current_stock": 120, "min_threshold": 30, "reorder_quantity": 60, "supplier": "Deccan Snacks Co." },
+  { "inventory_id": 8, "product_id": 12, "outlet_id": 5, "current_stock": 3, "min_threshold": 10, "reorder_quantity": 20, "supplier": "Bakehouse Artisan Supplies" }
+]

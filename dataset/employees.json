@@ -1,0 +1,14 @@
+[
+  { "employee_id": 1, "full_name": "Rahul Sharma", "role": "Store Manager", "email": "rahul.sharma@franchiseops.in", "phone": "+91 98230 11223", "outlet_id": 2, "salary": 45000.00, "status": "Active", "joining_date": "2022-11-15" },
+  { "employee_id": 2, "full_name": "Priya Patel", "role": "Shift Supervisor", "email": "priya.patel@franchiseops.in", "phone": "+91 97120 44556", "outlet_id": 1, "salary": 32000.00, "status": "Active", "joining_date": "2023-01-20" },
+  { "employee_id": 3, "full_name": "Amit Verma", "role": "Head Barista", "email": "amit.verma@franchiseops.in", "phone": "+91 96550 77889", "outlet_id": 3, "salary": 24000.00, "status": "Active", "joining_date": "2023-04-15" },
+  { "employee_id": 4, "full_name": "Sneha Kulkarni", "role": "Lead Cashier", "email": "sneha.kulkarni@franchiseops.in", "phone": "+91 95440 33221", "outlet_id": 4, "salary": 22000.00, "status": "Active", "joining_date": "2023-06-25" },
+  { "employee_id": 5, "full_name": "Vikas Deshmukh", "role": "Inventory Executive", "email": "vikas.deshmukh@franchiseops.in", "phone": "+91 94330 88990", "outlet_id": 5, "salary": 26000.00, "status": "Active", "joining_date": "2023-08-10" },
+  { "employee_id": 6, "full_name": "Neha Joshi", "role": "Assistant Manager", "email": "neha.joshi@franchiseops.in", "phone": "+91 98111 22334", "outlet_id": 2, "salary": 35000.00, "status": "Active", "joining_date": "2023-02-01" },
+  { "employee_id": 7, "full_name": "Karan Mehta", "role": "Barista", "email": "karan.mehta@franchiseops.in", "phone": "+91 97222 33445", "outlet_id": 1, "salary": 20000.00, "status": "Active", "joining_date": "2023-03-12" },
+  { "employee_id": 8, "full_name": "Pooja Hegde", "role": "Kitchen Staff", "email": "pooja.hegde@franchiseops.in", "phone": "+91 96333 44556", "outlet_id": 6, "salary": 19000.00, "status": "Active", "joining_date": "2023-09-20" },
+  { "employee_id": 9, "full_name": "Siddharth Rao", "role": "Store Manager", "email": "siddharth.rao@franchiseops.in", "phone": "+91 95444 55667", "outlet_id": 6, "salary": 48000.00, "status": "Active", "joining_date": "2023-09-01" },
+  { "employee_id": 10, "full_name": "Ananya Roy", "role": "Barista", "email": "ananya.roy@franchiseops.in", "phone": "+91 94555 66778", "outlet_id": 7, "salary": 21000.00, "status": "Active", "joining_date": "2023-10-25" },
+  { "employee_id": 11, "full_name": "Manish Pandey", "role": "Shift Supervisor", "email": "manish.pandey@franchiseops.in", "phone": "+91 93666 77889", "outlet_id": 8, "salary": 31000.00, "status": "Active", "joining_date": "2023-11-30" },
+  { "employee_id": 12, "full_name": "Rohan Gupta", "role": "Cashier", "email": "rohan.gupta@franchiseops.in", "phone": "+91 92777 88990", "outlet_id": 3, "salary": 19500.00, "status": "Active", "joining_date": "2023-05-18" }
+]
