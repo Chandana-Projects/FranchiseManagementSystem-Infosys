@@ -441,7 +441,7 @@ export default function FranchiseOSDashboard() {
         <div className="p-8">
           {active === "dashboard" ? (
             <div className="space-y-6">
-              <div className="rounded-xl p-5 border border-l-4" style={{ background: t.card, borderColor: t.border, borderLeftColor: accent }}>
+              <div className="rounded-xl p-5 border border-l-4" style={{ background: t.card, borderTopColor: t.border, borderRightColor: t.border, borderBottomColor: t.border, borderLeftColor: accent }}>
                 <div className="flex items-center gap-2 mb-1">
                   <Sparkles size={15} color={accent} />
                   <p className="text-sm font-semibold" style={{ color: t.text }}>AI Briefing</p>
@@ -747,7 +747,7 @@ export default function FranchiseOSDashboard() {
               )}
 
               {inventorySummary && (
-                <div className="rounded-xl p-5 border border-l-4" style={{ background: t.card, borderColor: t.border, borderLeftColor: accent }}>
+                <div className="rounded-xl p-5 border border-l-4" style={{ background: t.card, borderTopColor: t.border, borderRightColor: t.border, borderBottomColor: t.border, borderLeftColor: accent }}>
                   <div className="flex items-center gap-2 mb-1">
                     <Sparkles size={15} color={accent} />
                     <p className="text-sm font-semibold" style={{ color: t.text }}>AI Briefing</p>
