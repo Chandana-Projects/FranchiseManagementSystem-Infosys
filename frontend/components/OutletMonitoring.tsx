@@ -523,8 +523,8 @@ export default function FranchiseOSDashboard() {
                     {outletPerformance.map((o) => (
                       <tr key={o.name} className="border-b last:border-0" style={{ borderColor: t.border }}>
                         <td className="px-5 py-3 font-medium" style={{ color: t.text }}>{o.name}</td>
-                        <td className="px-5 py-3" style={{ color: t.textMuted }}>₹{o.sales.toLocaleString("en-IN")}</td>
-                        <td className="px-5 py-3" style={{ color: t.textFaint }}>₹{o.target.toLocaleString("en-IN")}</td>
+                        <td className="px-5 py-3" style={{ color: t.textMuted }}>₹{Number(o.sales || 0).toLocaleString("en-IN")}</td>
+                        <td className="px-5 py-3" style={{ color: t.textFaint }}>₹{Number(o.target || 0).toLocaleString("en-IN")}</td>
                         <td className="px-5 py-3">
                           <span className="flex items-center gap-1 font-medium" style={{ color: o.growth >= 0 ? accent : "#FB7185" }}>
                             {o.growth >= 0 ? <TrendingUp size={13} /> : <TrendingDown size={13} />}
@@ -699,8 +699,8 @@ export default function FranchiseOSDashboard() {
                     {outletPerformance.map((o) => (
                       <tr key={o.name} className="border-b last:border-0" style={{ borderColor: t.border }}>
                         <td className="px-5 py-3 font-medium" style={{ color: t.text }}>{o.name}</td>
-                        <td className="px-5 py-3" style={{ color: t.textMuted }}>₹{o.sales.toLocaleString("en-IN")}</td>
-                        <td className="px-5 py-3" style={{ color: t.textFaint }}>₹{o.target.toLocaleString("en-IN")}</td>
+                        <td className="px-5 py-3" style={{ color: t.textMuted }}>₹{Number(o.sales || 0).toLocaleString("en-IN")}</td>
+                        <td className="px-5 py-3" style={{ color: t.textFaint }}>₹{Number(o.target || 0).toLocaleString("en-IN")}</td>
                         <td className="px-5 py-3">
                           <span className="flex items-center gap-1 font-medium" style={{ color: o.growth >= 0 ? accent : "#FB7185" }}>
                             {o.growth >= 0 ? <TrendingUp size={13} /> : <TrendingDown size={13} />}
@@ -747,7 +747,7 @@ export default function FranchiseOSDashboard() {
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {[
                   { label: "SKUs tracked", value: String(inventorySummary?.total ?? "—"), icon: Boxes },
-                  { label: "Units in view", value: inventorySummary ? inventorySummary.totalUnits.toLocaleString("en-IN") : "—", icon: TrendingUp },
+                  { label: "Units in view", value: inventorySummary && inventorySummary.totalUnits != null ? Number(inventorySummary.totalUnits).toLocaleString("en-IN") : "—", icon: TrendingUp },
                   { label: "Needs reorder", value: inventorySummary ? String(inventorySummary.watch + inventorySummary.critical) : "—", icon: AlertTriangle },
                   { label: "Inventory health", value: inventorySummary ? `${inventorySummary.healthPct}%` : "—", icon: ShieldCheck },
                 ].map((k) => {
