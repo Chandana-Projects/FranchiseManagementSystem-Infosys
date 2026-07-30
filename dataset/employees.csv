@@ -1,13 +1,41 @@
-employee_id,full_name,role,email,phone,outlet_id,salary,status,joining_date
-1,Rahul Sharma,Store Manager,rahul.sharma@franchiseops.in,+91 98230 11223,2,45000.00,Active,2022-11-15
-2,Priya Patel,Shift Supervisor,priya.patel@franchiseops.in,+91 97120 44556,1,32000.00,Active,2023-01-20
-3,Amit Verma,Head Barista,amit.verma@franchiseops.in,+91 96550 77889,3,24000.00,Active,2023-04-15
-4,Sneha Kulkarni,Lead Cashier,sneha.kulkarni@franchiseops.in,+91 95440 33221,4,22000.00,Active,2023-06-25
-5,Vikas Deshmukh,Inventory Executive,vikas.deshmukh@franchiseops.in,+91 94330 88990,5,26000.00,Active,2023-08-10
-6,Neha Joshi,Assistant Manager,neha.joshi@franchiseops.in,+91 98111 22334,2,35000.00,Active,2023-02-01
-7,Karan Mehta,Barista,karan.mehta@franchiseops.in,+91 97222 33445,1,20000.00,Active,2023-03-12
-8,Pooja Hegde,Kitchen Staff,pooja.hegde@franchiseops.in,+91 96333 44556,6,19000.00,Active,2023-09-20
-9,Siddharth Rao,Store Manager,siddharth.rao@franchiseops.in,+91 95444 55667,6,48000.00,Active,2023-09-01
-10,Ananya Roy,Barista,ananya.roy@franchiseops.in,+91 94555 66778,7,21000.00,Active,2023-10-25
-11,Manish Pandey,Shift Supervisor,manish.pandey@franchiseops.in,+91 93666 77889,8,31000.00,Active,2023-11-30
-12,Rohan Gupta,Cashier,rohan.gupta@franchiseops.in,+91 92777 88990,3,19500.00,Active,2023-05-18
+employee_id,full_name,role,email,phone,outlet_id,city,salary,status,joining_date
+1,Rahul Sharma,Store Manager,rahul.sharma@franchiseops.in,+91 98230 11223,1,Nashik,45000.00,Active,2023-01-15
+2,Priya Patel,Shift Supervisor,priya.patel@franchiseops.in,+91 97120 44556,1,Nashik,32000.00,Active,2023-01-20
+3,Karan Mehta,Barista,karan.mehta@franchiseops.in,+91 97222 33445,1,Nashik,20000.00,Active,2023-03-12
+4,Aarav Shah,Cashier,aarav.shah@franchiseops.in,+91 98333 11224,1,Nashik,19000.00,Active,2023-04-05
+5,Siddharth Rao,Store Manager,siddharth.rao@franchiseops.in,+91 95444 55667,2,Pune,48000.00,Active,2022-11-01
+6,Neha Joshi,Assistant Manager,neha.joshi@franchiseops.in,+91 98111 22334,2,Pune,35000.00,Active,2022-11-10
+7,Aditya Kulkarni,Head Barista,aditya.k@franchiseops.in,+91 98444 33221,2,Pune,25000.00,Active,2023-01-15
+8,Riya Deshmukh,Shift Supervisor,riya.d@franchiseops.in,+91 97555 44332,2,Pune,31000.00,Active,2023-02-18
+9,Tanmay Shinde,Barista,tanmay.s@franchiseops.in,+91 96666 55443,2,Pune,21000.00,Active,2023-05-12
+10,Amit Verma,Head Barista,amit.verma@franchiseops.in,+91 96550 77889,3,Mumbai,26000.00,Active,2023-04-15
+11,Rohan Gupta,Cashier,rohan.gupta@franchiseops.in,+91 92777 88990,3,Mumbai,21500.00,Active,2023-05-18
+12,Deepak Fernandez,Store Manager,deepak.f@franchiseops.in,+91 99888 77665,3,Mumbai,52000.00,Active,2023-04-10
+13,Ananya Roy,Shift Supervisor,ananya.roy@franchiseops.in,+91 94555 66778,3,Mumbai,33000.00,Active,2023-06-01
+14,Sneha Kulkarni,Lead Cashier,sneha.kulkarni@franchiseops.in,+91 95440 33221,4,Nagpur,22000.00,Active,2023-06-25
+15,Rajesh Agrawal,Store Manager,rajesh.a@franchiseops.in,+91 98777 66554,4,Nagpur,46000.00,Active,2023-06-20
+16,Pooja Hegde,Kitchen Staff,pooja.hegde@franchiseops.in,+91 96333 44556,4,Nagpur,19000.00,Active,2023-07-15
+17,Gaurav Mishra,Barista,gaurav.m@franchiseops.in,+91 97666 55443,4,Nagpur,20000.00,Active,2023-08-01
+18,Vikas Deshmukh,Inventory Executive,vikas.deshmukh@franchiseops.in,+91 94330 88990,5,Aurangabad,26000.00,Active,2023-08-10
+19,Nilesh Jadhav,Store Manager,nilesh.j@franchiseops.in,+91 98555 44332,5,Aurangabad,42000.00,Active,2023-08-05
+20,Swati Pawar,Cashier,swati.p@franchiseops.in,+91 97444 33221,5,Aurangabad,18500.00,Active,2023-09-01
+21,Manish Pandey,Shift Supervisor,manish.pandey@franchiseops.in,+91 93666 77889,6,Thane,31000.00,Active,2023-09-12
+22,Kavita Sawant,Store Manager,kavita.s@franchiseops.in,+91 98666 77889,6,Thane,47000.00,Active,2023-09-10
+23,Sameer Naik,Barista,sameer.n@franchiseops.in,+91 97777 88990,6,Thane,21000.00,Active,2023-10-05
+24,Tejas Patil,Store Manager,tejas.p@franchiseops.in,+91 98888 99001,7,Kolhapur,44000.00,Active,2023-10-18
+25,Sayali Chavan,Shift Supervisor,sayali.c@franchiseops.in,+91 97999 00112,7,Kolhapur,29000.00,Active,2023-10-25
+26,Onkar Bhosale,Barista,onkar.b@franchiseops.in,+91 96000 11223,7,Kolhapur,19500.00,Active,2023-11-01
+27,Mahesh Gaikwad,Store Manager,mahesh.g@franchiseops.in,+91 98111 00998,8,Solapur,43000.00,Active,2023-11-25
+28,Shruti Kamble,Shift Supervisor,shruti.k@franchiseops.in,+91 97222 11009,8,Solapur,28500.00,Active,2023-12-01
+29,Akash Mane,Barista,akash.m@franchiseops.in,+91 96333 22110,8,Solapur,19000.00,Active,2023-12-10
+30,Meera Saxena,Regional Auditor,meera.s@franchiseops.in,+91 99112 23344,2,Pune,60000.00,Active,2022-09-01
+31,Tushar More,Logistics Lead,tushar.m@franchiseops.in,+91 99223 34455,1,Nashik,38000.00,Active,2023-02-15
+32,Varun Kapoor,Quality Inspector,varun.k@franchiseops.in,+91 99334 45566,3,Mumbai,41000.00,Active,2023-05-01
+33,Pankaj Sharma,Kitchen Staff,pankaj.s@franchiseops.in,+91 99445 56677,4,Nagpur,18500.00,Active,2023-07-20
+34,Bhakti Salunkhe,Cashier,bhakti.s@franchiseops.in,+91 99556 67788,6,Thane,20000.00,Active,2023-09-25
+35,Chetan Shetti,Barista,chetan.s@franchiseops.in,+91 99667 78899,7,Kolhapur,19000.00,Active,2023-11-15
+36,Dinesh Solanki,Cashier,dinesh.s@franchiseops.in,+91 99778 89900,8,Solapur,18500.00,Active,2023-12-15
+37,Esha Sen,Marketing Lead,esha.sen@franchiseops.in,+91 99889 90011,3,Mumbai,55000.00,Active,2023-04-15
+38,Farhan Khan,Barista Trainer,farhan.k@franchiseops.in,+91 99990 01122,2,Pune,36000.00,Active,2022-12-01
+39,Gita Pillai,Accountant,gita.p@franchiseops.in,+91 98001 12233,1,Nashik,40000.00,Active,2023-02-01
+40,Harsh Vardhan,Maintenance Tech,harsh.v@franchiseops.in,+91 98112 23344,5,Aurangabad,25000.00,Active,2023-08-20

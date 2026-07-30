@@ -17,27 +17,43 @@ function loadDatasetItems() {
       sku: p.sku || `SKU-${item.product_id}`,
       name: p.product_name || `Product #${item.product_id}`,
       category: p.category || "General",
-      unit: "units",
+      unit: item.unit || "units",
       quantity: item.current_stock,
       reorder_at: item.min_threshold,
       supplier: item.supplier,
-      outlets: { outlet_name: `Outlet #${item.outlet_id}`, city: "Maharashtra" },
+      outlets: { outlet_name: item.outlet_name || `Outlet #${item.outlet_id}`, city: item.city || "Maharashtra" },
     };
   });
 }
 
-async function getAllItems({ outlet_id, search } = {}) {
+async function getAllItems({ outlet_id, city, search } = {}) {
+  let items = [];
   try {
-    const items = await prisma.inventory_items.findMany({
-      where: outlet_id ? { outlet_id: Number(outlet_id) } : {},
+    const where = {};
+    if (outlet_id && outlet_id !== "All") where.outlet_id = Number(outlet_id);
+    const dbItems = await prisma.inventory_items.findMany({
+      where,
       include: { outlets: { select: { outlet_name: true, city: true } } },
       orderBy: { updated_at: "desc" },
     });
-    if (items.length > 0) return items;
-    return loadDatasetItems();
+    items = dbItems.length > 0 ? dbItems : loadDatasetItems();
   } catch (_) {
-    return loadDatasetItems();
+    items = loadDatasetItems();
   }
+
+  if (outlet_id && outlet_id !== "All") {
+    items = items.filter((i) => String(i.outlet_id) === String(outlet_id));
+  }
+  if (city && city !== "All") {
+    const c = city.toLowerCase();
+    items = items.filter((i) => i.outlets?.city?.toLowerCase().includes(c) || i.city?.toLowerCase().includes(c));
+  }
+  if (search) {
+    const q = search.toLowerCase();
+    items = items.filter((i) => (i.name && i.name.toLowerCase().includes(q)) || (i.sku && i.sku.toLowerCase().includes(q)));
+  }
+
+  return items;
 }
 
 async function getItemById(item_id) {

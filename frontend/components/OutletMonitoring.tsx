@@ -826,7 +826,7 @@ export default function FranchiseOSDashboard() {
                       <th className="px-5 py-2 font-medium">SKU</th>
                       <th className="px-5 py-2 font-medium">Item</th>
                       <th className="px-5 py-2 font-medium">Category</th>
-                      <th className="px-5 py-2 font-medium">Outlet</th>
+                      <th className="px-5 py-2 font-medium">City / Outlet</th>
                       <th className="px-5 py-2 font-medium text-right">On hand</th>
                       <th className="px-5 py-2 font-medium text-right">Reorder at</th>
                       <th className="px-5 py-2 font-medium">Status</th>
@@ -843,7 +843,10 @@ export default function FranchiseOSDashboard() {
                           <td className="px-5 py-3 font-mono text-xs" style={{ color: t.textFaint }}>{i.sku}</td>
                           <td className="px-5 py-3 font-medium" style={{ color: t.text }}>{i.name}</td>
                           <td className="px-5 py-3" style={{ color: t.textMuted }}>{i.category || "—"}</td>
-                          <td className="px-5 py-3" style={{ color: t.textMuted }}>{i.outlets?.outlet_name || "—"}</td>
+                          <td className="px-5 py-3" style={{ color: t.textMuted }}>
+                            <span className="font-medium text-xs text-teal-400 mr-1.5">{i.outlets?.city || "Network"}</span>
+                            <span>({i.outlets?.outlet_name || "—"})</span>
+                          </td>
                           <td className="px-5 py-3 text-right" style={{ color: t.text }}>{Number(i.quantity)} {i.unit || ""}</td>
                           <td className="px-5 py-3 text-right" style={{ color: t.textFaint }}>{Number(i.reorder_at)} {i.unit || ""}</td>
                           <td className="px-5 py-3">
