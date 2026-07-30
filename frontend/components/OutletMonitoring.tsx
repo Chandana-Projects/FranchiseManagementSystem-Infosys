@@ -233,11 +233,14 @@ function LoginPage({
           <p className="text-lg font-semibold mb-1" style={{ color: t.text }}>Sign in to your network</p>
           <p className="text-sm mb-5" style={{ color: t.textMuted }}>Access dashboards, agents, and outlet insights.</p>
 
-          {error && (
-            <div className="text-xs rounded-lg px-3 py-2 mb-4" style={{ background: "#FB71851A", color: "#FB7185", border: "1px solid #FB718533" }}>
-              {error}
-            </div>
-          )}
+          <div 
+            onClick={() => { setEmail("abhi@gmail.com"); setPassword("abhi"); }} 
+            className="mb-4 p-2.5 rounded-lg border text-xs cursor-pointer flex items-center justify-between transition-colors"
+            style={{ background: `${accent}10`, borderColor: `${accent}30`, color: accent }}
+          >
+            <span className="font-medium">Demo Admin: abhi@gmail.com / abhi</span>
+            <span className="text-[10px] underline font-bold">Quick Fill</span>
+          </div>
 
           <div className="mb-3.5">
             <p className="text-xs mb-1.5" style={{ color: t.textMuted }}>Work email</p>
