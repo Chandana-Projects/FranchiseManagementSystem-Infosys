@@ -1,4 +1,8 @@
+const fs = require('fs');
+const path = require('path');
 const prisma = require('../config/prisma');
+
+const datasetPath = path.join(__dirname, '../../../dataset/employees.json');
 
 exports.getAllEmployees = async (req, res, next) => {
   try {
@@ -7,9 +11,17 @@ exports.getAllEmployees = async (req, res, next) => {
         outlets: true
       }
     });
-    res.json(employees);
+    if (employees.length > 0) return res.json(employees);
+
+    const dataset = JSON.parse(fs.readFileSync(datasetPath, 'utf8'));
+    res.json(dataset);
   } catch (error) {
-    next(error);
+    try {
+      const dataset = JSON.parse(fs.readFileSync(datasetPath, 'utf8'));
+      res.json(dataset);
+    } catch (_) {
+      next(error);
+    }
   }
 };
 

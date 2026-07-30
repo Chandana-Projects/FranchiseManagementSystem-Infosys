@@ -1,11 +1,24 @@
+const fs = require('fs');
+const path = require('path');
 const prisma = require('../config/prisma');
+
+const datasetPath = path.join(__dirname, '../../../dataset/products.json');
 
 exports.getAllProducts = async (req, res, next) => {
   try {
     const products = await prisma.products.findMany();
-    res.json(products);
+    if (products.length > 0) return res.json(products);
+    
+    // Fallback to real dataset file
+    const dataset = JSON.parse(fs.readFileSync(datasetPath, 'utf8'));
+    res.json(dataset);
   } catch (error) {
-    next(error);
+    try {
+      const dataset = JSON.parse(fs.readFileSync(datasetPath, 'utf8'));
+      res.json(dataset);
+    } catch (_) {
+      next(error);
+    }
   }
 };
 
