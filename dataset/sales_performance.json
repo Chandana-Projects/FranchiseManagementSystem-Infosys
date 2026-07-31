@@ -1,0 +1,15 @@
+[
+  { "outlet_id": 1, "outlet_name": "Nashik City Center", "month": "Feb", "target_revenue": 120000.00, "actual_revenue": 98000.00, "growth_percentage": 4.2 },
+  { "outlet_id": 1, "outlet_name": "Nashik City Center", "month": "Mar", "target_revenue": 120000.00, "actual_revenue": 105000.00, "growth_percentage": 5.1 },
+  { "outlet_id": 1, "outlet_name": "Nashik City Center", "month": "Apr", "target_revenue": 120000.00, "actual_revenue": 99000.00, "growth_percentage": 4.0 },
+  { "outlet_id": 1, "outlet_name": "Nashik City Center", "month": "May", "target_revenue": 120000.00, "actual_revenue": 118000.00, "growth_percentage": 5.8 },
+  { "outlet_id": 1, "outlet_name": "Nashik City Center", "month": "Jun", "target_revenue": 120000.00, "actual_revenue": 121000.00, "growth_percentage": 6.1 },
+  { "outlet_id": 1, "outlet_name": "Nashik City Center", "month": "Jul", "target_revenue": 120000.00, "actual_revenue": 128000.00, "growth_percentage": 6.4 },
+
+  { "outlet_id": 2, "outlet_name": "Pune FC Road", "month": "Feb", "target_revenue": 140000.00, "actual_revenue": 120000.00, "growth_percentage": 8.0 },
+  { "outlet_id": 2, "outlet_name": "Pune FC Road", "month": "Mar", "target_revenue": 140000.00, "actual_revenue": 131000.00, "growth_percentage": 8.5 },
+  { "outlet_id": 2, "outlet_name": "Pune FC Road", "month": "Apr", "target_revenue": 140000.00, "actual_revenue": 128000.00, "growth_percentage": 8.2 },
+  { "outlet_id": 2, "outlet_name": "Pune FC Road", "month": "May", "target_revenue": 140000.00, "actual_revenue": 142000.00, "growth_percentage": 9.1 },
+  { "outlet_id": 2, "outlet_name": "Pune FC Road", "month": "Jun", "target_revenue": 140000.00, "actual_revenue": 149000.00, "growth_percentage": 9.6 },
+  { "outlet_id": 2, "outlet_name": "Pune FC Road", "month": "Jul", "target_revenue": 140000.00, "actual_revenue": 154000.00, "growth_percentage": 10.1 }
+]

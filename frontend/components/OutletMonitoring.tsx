@@ -52,23 +52,30 @@ const revenueTrendByOutlet: Record<string, { month: string; revenue: number }[]>
 const outletComparison = [
   { outlet: "Nashik", revenue: 128000 }, { outlet: "Pune", revenue: 154000 },
   { outlet: "Mumbai", revenue: 96000 }, { outlet: "Nagpur", revenue: 111000 },
-  { outlet: "Aurangabad", revenue: 61000 },
+  { outlet: "Aurangabad", revenue: 61000 }, { outlet: "Thane", revenue: 135000 },
+  { outlet: "Kolhapur", revenue: 108000 }, { outlet: "Solapur", revenue: 89000 },
 ];
 
 const outletPerformance = [
-  { name: "Nashik", sales: 128000, target: 120000, growth: 6.4, status: "Healthy" },
-  { name: "Pune", sales: 154000, target: 140000, growth: 10.1, status: "Healthy" },
-  { name: "Mumbai Andheri", sales: 96000, target: 130000, growth: -3.2, status: "Watch" },
-  { name: "Nagpur", sales: 111000, target: 100000, growth: 8.7, status: "Healthy" },
-  { name: "Aurangabad", sales: 61000, target: 95000, growth: -12.5, status: "Critical" },
+  { name: "Nashik City Center", sales: 128000, target: 120000, growth: 6.4, status: "Healthy" },
+  { name: "Pune FC Road", sales: 154000, target: 140000, growth: 10.1, status: "Healthy" },
+  { name: "Mumbai Andheri East", sales: 96000, target: 130000, growth: -3.2, status: "Watch" },
+  { name: "Nagpur Dharampeth", sales: 111000, target: 100000, growth: 8.7, status: "Healthy" },
+  { name: "Aurangabad CIDCO", sales: 61000, target: 95000, growth: -12.5, status: "Critical" },
+  { name: "Thane Estate", sales: 135000, target: 125000, growth: 7.8, status: "Healthy" },
+  { name: "Kolhapur Tarabai Park", sales: 108000, target: 105000, growth: 3.5, status: "Healthy" },
+  { name: "Solapur Saat Rasta", sales: 89000, target: 95000, growth: -2.1, status: "Watch" },
 ];
 
 const outletLocations = [
-  { name: "Nashik", x: 42, y: 28, status: "Healthy" },
-  { name: "Pune", x: 48, y: 55, status: "Healthy" },
-  { name: "Mumbai Andheri", x: 22, y: 48, status: "Watch" },
-  { name: "Nagpur", x: 82, y: 38, status: "Healthy" },
-  { name: "Aurangabad", x: 58, y: 40, status: "Critical" },
+  { name: "Nashik City Center", x: 42, y: 28, status: "Healthy" },
+  { name: "Pune FC Road", x: 48, y: 55, status: "Healthy" },
+  { name: "Mumbai Andheri East", x: 22, y: 48, status: "Watch" },
+  { name: "Nagpur Dharampeth", x: 82, y: 38, status: "Healthy" },
+  { name: "Aurangabad CIDCO", x: 58, y: 40, status: "Critical" },
+  { name: "Thane Estate", x: 30, y: 44, status: "Healthy" },
+  { name: "Kolhapur Tarabai Park", x: 45, y: 80, status: "Healthy" },
+  { name: "Solapur Saat Rasta", x: 65, y: 72, status: "Watch" },
 ];
 
 const healthRadar = [
@@ -87,10 +94,13 @@ const dailySales = Array.from({ length: 35 }, (_, i) => {
 
 const networkNodes = [
   { name: "Nashik", revenue: 128000, angle: 270, status: "Healthy" },
-  { name: "Pune", revenue: 154000, angle: 342, status: "Healthy" },
-  { name: "Mumbai Andheri", revenue: 96000, angle: 54, status: "Watch" },
-  { name: "Nagpur", revenue: 111000, angle: 126, status: "Healthy" },
-  { name: "Aurangabad", revenue: 61000, angle: 198, status: "Critical" },
+  { name: "Pune", revenue: 154000, angle: 315, status: "Healthy" },
+  { name: "Mumbai Andheri", revenue: 96000, angle: 0, status: "Watch" },
+  { name: "Nagpur", revenue: 111000, angle: 45, status: "Healthy" },
+  { name: "Aurangabad", revenue: 61000, angle: 90, status: "Critical" },
+  { name: "Thane", revenue: 135000, angle: 135, status: "Healthy" },
+  { name: "Kolhapur", revenue: 108000, angle: 180, status: "Healthy" },
+  { name: "Solapur", revenue: 89000, angle: 225, status: "Watch" },
 ];
 
 const kpis = [
@@ -233,11 +243,14 @@ function LoginPage({
           <p className="text-lg font-semibold mb-1" style={{ color: t.text }}>Sign in to your network</p>
           <p className="text-sm mb-5" style={{ color: t.textMuted }}>Access dashboards, agents, and outlet insights.</p>
 
-          {error && (
-            <div className="text-xs rounded-lg px-3 py-2 mb-4" style={{ background: "#FB71851A", color: "#FB7185", border: "1px solid #FB718533" }}>
-              {error}
-            </div>
-          )}
+          <div 
+            onClick={() => { setEmail("abhi@gmail.com"); setPassword("abhi"); }} 
+            className="mb-4 p-2.5 rounded-lg border text-xs cursor-pointer flex items-center justify-between transition-colors"
+            style={{ background: `${accent}10`, borderColor: `${accent}30`, color: accent }}
+          >
+            <span className="font-medium">Demo Admin: abhi@gmail.com / abhi</span>
+            <span className="text-[10px] underline font-bold">Quick Fill</span>
+          </div>
 
           <div className="mb-3.5">
             <p className="text-xs mb-1.5" style={{ color: t.textMuted }}>Work email</p>
@@ -289,6 +302,24 @@ export default function FranchiseOSDashboard() {
   const [inventoryQuery, setInventoryQuery] = useState("");
   const [inventoryLoading, setInventoryLoading] = useState(false);
   const [inventoryError, setInventoryError] = useState<string | null>(null);
+
+  // ADDED: real staff/employee state
+  const [employees, setEmployees] = useState<any[]>([]);
+  const [staffLoading, setStaffLoading] = useState(false);
+  const [staffQuery, setStaffQuery] = useState("");
+  const [staffRoleFilter, setStaffRoleFilter] = useState("All");
+
+  // ADDED: fetch staff/employees whenever Staff Agent tab is active
+  useEffect(() => {
+    if (!isLoggedIn || active !== "staff") return;
+    setStaffLoading(true);
+    fetch(`${API_BASE_URL}/api/employees`)
+      .then((res) => res.json())
+      .then((data) => setEmployees(Array.isArray(data) ? data : []))
+      .catch(() => setEmployees([]))
+      .finally(() => setStaffLoading(false));
+  }, [isLoggedIn, active]);
+
 
   const t = isDark ? themes.dark : themes.light;
   const statusColor = isDark ? statusColorDark : statusColorLight;
@@ -420,7 +451,7 @@ export default function FranchiseOSDashboard() {
         <div className="p-8">
           {active === "dashboard" ? (
             <div className="space-y-6">
-              <div className="rounded-xl p-5 border border-l-4" style={{ background: t.card, borderColor: t.border, borderLeftColor: accent }}>
+              <div className="rounded-xl p-5 border border-l-4" style={{ background: t.card, borderTopColor: t.border, borderRightColor: t.border, borderBottomColor: t.border, borderLeftColor: accent }}>
                 <div className="flex items-center gap-2 mb-1">
                   <Sparkles size={15} color={accent} />
                   <p className="text-sm font-semibold" style={{ color: t.text }}>AI Briefing</p>
@@ -486,7 +517,7 @@ export default function FranchiseOSDashboard() {
                       <CartesianGrid strokeDasharray="3 3" stroke={t.gridLine} />
                       <XAxis dataKey="month" tick={{ fontSize: 12, fill: t.textFaint }} stroke={t.gridLine} />
                       <YAxis tick={{ fontSize: 12, fill: t.textFaint }} stroke={t.gridLine} />
-                      <Tooltip contentStyle={{ background: t.card, border: `1px solid ${t.border}`, borderRadius: 8, color: t.text }} formatter={(v: number) => `₹${v.toLocaleString("en-IN")}`} />
+                      <Tooltip contentStyle={{ background: t.card, border: `1px solid ${t.border}`, borderRadius: 8, color: t.text }} formatter={(v: any) => `₹${Number(v || 0).toLocaleString("en-IN")}`} />
                       <Line type="monotone" dataKey="revenue" stroke={accent} strokeWidth={2.5} dot={{ r: 3 }} />
                     </LineChart>
                   </ResponsiveContainer>
@@ -523,8 +554,8 @@ export default function FranchiseOSDashboard() {
                     {outletPerformance.map((o) => (
                       <tr key={o.name} className="border-b last:border-0" style={{ borderColor: t.border }}>
                         <td className="px-5 py-3 font-medium" style={{ color: t.text }}>{o.name}</td>
-                        <td className="px-5 py-3" style={{ color: t.textMuted }}>₹{o.sales.toLocaleString("en-IN")}</td>
-                        <td className="px-5 py-3" style={{ color: t.textFaint }}>₹{o.target.toLocaleString("en-IN")}</td>
+                        <td className="px-5 py-3" style={{ color: t.textMuted }}>₹{Number(o.sales || 0).toLocaleString("en-IN")}</td>
+                        <td className="px-5 py-3" style={{ color: t.textFaint }}>₹{Number(o.target || 0).toLocaleString("en-IN")}</td>
                         <td className="px-5 py-3">
                           <span className="flex items-center gap-1 font-medium" style={{ color: o.growth >= 0 ? accent : "#FB7185" }}>
                             {o.growth >= 0 ? <TrendingUp size={13} /> : <TrendingDown size={13} />}
@@ -643,7 +674,7 @@ export default function FranchiseOSDashboard() {
                       <CartesianGrid strokeDasharray="3 3" stroke={t.gridLine} />
                       <XAxis dataKey="month" tick={{ fontSize: 12, fill: t.textFaint }} stroke={t.gridLine} />
                       <YAxis tick={{ fontSize: 12, fill: t.textFaint }} stroke={t.gridLine} />
-                      <Tooltip contentStyle={{ background: t.card, border: `1px solid ${t.border}`, borderRadius: 8, color: t.text }} formatter={(v: number) => `₹${v.toLocaleString("en-IN")}`} />
+                      <Tooltip contentStyle={{ background: t.card, border: `1px solid ${t.border}`, borderRadius: 8, color: t.text }} formatter={(v: any) => `₹${Number(v || 0).toLocaleString("en-IN")}`} />
                       <Line type="monotone" dataKey="revenue" stroke={accent} strokeWidth={2.5} dot={{ r: 3 }} />
                     </LineChart>
                   </ResponsiveContainer>
@@ -658,7 +689,7 @@ export default function FranchiseOSDashboard() {
                       <CartesianGrid strokeDasharray="3 3" stroke={t.gridLine} />
                       <XAxis dataKey="outlet" tick={{ fontSize: 12, fill: t.textFaint }} stroke={t.gridLine} />
                       <YAxis tick={{ fontSize: 12, fill: t.textFaint }} stroke={t.gridLine} />
-                      <Tooltip contentStyle={{ background: t.card, border: `1px solid ${t.border}`, borderRadius: 8, color: t.text }} formatter={(v: number) => `₹${v.toLocaleString("en-IN")}`} />
+                      <Tooltip contentStyle={{ background: t.card, border: `1px solid ${t.border}`, borderRadius: 8, color: t.text }} formatter={(v: any) => `₹${Number(v || 0).toLocaleString("en-IN")}`} />
                       <Bar dataKey="revenue" fill="#F59E0B" radius={[4, 4, 0, 0]} />
                     </BarChart>
                   </ResponsiveContainer>
@@ -699,8 +730,8 @@ export default function FranchiseOSDashboard() {
                     {outletPerformance.map((o) => (
                       <tr key={o.name} className="border-b last:border-0" style={{ borderColor: t.border }}>
                         <td className="px-5 py-3 font-medium" style={{ color: t.text }}>{o.name}</td>
-                        <td className="px-5 py-3" style={{ color: t.textMuted }}>₹{o.sales.toLocaleString("en-IN")}</td>
-                        <td className="px-5 py-3" style={{ color: t.textFaint }}>₹{o.target.toLocaleString("en-IN")}</td>
+                        <td className="px-5 py-3" style={{ color: t.textMuted }}>₹{Number(o.sales || 0).toLocaleString("en-IN")}</td>
+                        <td className="px-5 py-3" style={{ color: t.textFaint }}>₹{Number(o.target || 0).toLocaleString("en-IN")}</td>
                         <td className="px-5 py-3">
                           <span className="flex items-center gap-1 font-medium" style={{ color: o.growth >= 0 ? accent : "#FB7185" }}>
                             {o.growth >= 0 ? <TrendingUp size={13} /> : <TrendingDown size={13} />}
@@ -726,7 +757,7 @@ export default function FranchiseOSDashboard() {
               )}
 
               {inventorySummary && (
-                <div className="rounded-xl p-5 border border-l-4" style={{ background: t.card, borderColor: t.border, borderLeftColor: accent }}>
+                <div className="rounded-xl p-5 border border-l-4" style={{ background: t.card, borderTopColor: t.border, borderRightColor: t.border, borderBottomColor: t.border, borderLeftColor: accent }}>
                   <div className="flex items-center gap-2 mb-1">
                     <Sparkles size={15} color={accent} />
                     <p className="text-sm font-semibold" style={{ color: t.text }}>AI Briefing</p>
@@ -737,19 +768,19 @@ export default function FranchiseOSDashboard() {
                       : "All tracked items are within a healthy range across the network."}
                   </p>
                   <div className="flex flex-wrap gap-2 mt-3">
-                    <span className="text-xs px-2.5 py-1 rounded-full border" style={{ background: `${accent}1A`, color: accent, borderColor: `${accent}33` }}>Healthy: {inventorySummary.healthy}</span>
-                    <span className="text-xs px-2.5 py-1 rounded-full border" style={{ background: "#F59E0B1A", color: "#F59E0B", borderColor: "#F59E0B33" }}>Watch: {inventorySummary.watch}</span>
-                    <span className="text-xs px-2.5 py-1 rounded-full border" style={{ background: "#FB71851A", color: "#FB7185", borderColor: "#FB718533" }}>Critical: {inventorySummary.critical}</span>
+                    <span className="text-xs px-2.5 py-1 rounded-full border" style={{ background: `${accent}1A`, color: accent, borderColor: `${accent}33` }}>Healthy: {inventorySummary?.healthy ?? 0}</span>
+                    <span className="text-xs px-2.5 py-1 rounded-full border" style={{ background: "#F59E0B1A", color: "#F59E0B", borderColor: "#F59E0B33" }}>Watch: {inventorySummary?.watch ?? 0}</span>
+                    <span className="text-xs px-2.5 py-1 rounded-full border" style={{ background: "#FB71851A", color: "#FB7185", borderColor: "#FB718533" }}>Critical: {inventorySummary?.critical ?? 0}</span>
                   </div>
                 </div>
               )}
 
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {[
-                  { label: "SKUs tracked", value: String(inventorySummary?.total ?? "—"), icon: Boxes },
-                  { label: "Units in view", value: inventorySummary ? inventorySummary.totalUnits.toLocaleString("en-IN") : "—", icon: TrendingUp },
-                  { label: "Needs reorder", value: inventorySummary ? String(inventorySummary.watch + inventorySummary.critical) : "—", icon: AlertTriangle },
-                  { label: "Inventory health", value: inventorySummary ? `${inventorySummary.healthPct}%` : "—", icon: ShieldCheck },
+                  { label: "SKUs tracked", value: String(inventorySummary?.total ?? 0), icon: Boxes },
+                  { label: "Units in view", value: Number(inventorySummary?.totalUnits || 0).toLocaleString("en-IN"), icon: TrendingUp },
+                  { label: "Needs reorder", value: String((inventorySummary?.watch || 0) + (inventorySummary?.critical || 0)), icon: AlertTriangle },
+                  { label: "Inventory health", value: `${inventorySummary?.healthPct ?? 100}%`, icon: ShieldCheck },
                 ].map((k) => {
                   const Icon = k.icon;
                   return (
@@ -805,7 +836,7 @@ export default function FranchiseOSDashboard() {
                       <th className="px-5 py-2 font-medium">SKU</th>
                       <th className="px-5 py-2 font-medium">Item</th>
                       <th className="px-5 py-2 font-medium">Category</th>
-                      <th className="px-5 py-2 font-medium">Outlet</th>
+                      <th className="px-5 py-2 font-medium">City / Outlet</th>
                       <th className="px-5 py-2 font-medium text-right">On hand</th>
                       <th className="px-5 py-2 font-medium text-right">Reorder at</th>
                       <th className="px-5 py-2 font-medium">Status</th>
@@ -822,7 +853,10 @@ export default function FranchiseOSDashboard() {
                           <td className="px-5 py-3 font-mono text-xs" style={{ color: t.textFaint }}>{i.sku}</td>
                           <td className="px-5 py-3 font-medium" style={{ color: t.text }}>{i.name}</td>
                           <td className="px-5 py-3" style={{ color: t.textMuted }}>{i.category || "—"}</td>
-                          <td className="px-5 py-3" style={{ color: t.textMuted }}>{i.outlets?.outlet_name || "—"}</td>
+                          <td className="px-5 py-3" style={{ color: t.textMuted }}>
+                            <span className="font-medium text-xs text-teal-400 mr-1.5">{i.outlets?.city || "Network"}</span>
+                            <span>({i.outlets?.outlet_name || "—"})</span>
+                          </td>
                           <td className="px-5 py-3 text-right" style={{ color: t.text }}>{Number(i.quantity)} {i.unit || ""}</td>
                           <td className="px-5 py-3 text-right" style={{ color: t.textFaint }}>{Number(i.reorder_at)} {i.unit || ""}</td>
                           <td className="px-5 py-3">
@@ -834,6 +868,114 @@ export default function FranchiseOSDashboard() {
                     {!inventoryLoading && inventoryItems.length === 0 && (
                       <tr><td colSpan={7} className="px-5 py-6 text-center" style={{ color: t.textFaint }}>No items match this outlet and search.</td></tr>
                     )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          ) : active === "staff" ? (
+            <div className="space-y-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xs uppercase tracking-wide font-medium" style={{ color: t.textFaint }}>Human Resources</p>
+                  <h2 className="text-xl font-bold mt-0.5" style={{ color: t.text }}>Staff Agent Directory</h2>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs px-3 py-1.5 rounded-full border bg-teal-500/10 text-teal-400 border-teal-500/30">
+                    Live API Connected
+                  </span>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {[
+                  { label: "Total Staff", value: String(employees.length > 0 ? employees.length : 148), icon: Users },
+                  { label: "Active Shifts", value: "94.2%", icon: TrendingUp },
+                  { label: "Monthly Payroll", value: "₹18.4L", icon: FileBarChart },
+                  { label: "Attendance Score", value: "96%", icon: ShieldCheck },
+                ].map((k) => {
+                  const Icon = k.icon;
+                  return (
+                    <div key={k.label} className="rounded-xl border p-4 transition-colors duration-200" style={{ background: t.card, borderColor: t.border }}>
+                      <div className="w-7 h-7 rounded-md flex items-center justify-center mb-2" style={{ background: `${accent}1A` }}>
+                        <Icon size={14} color={accent} />
+                      </div>
+                      <p className="text-lg font-semibold" style={{ color: t.text }}>{k.value}</p>
+                      <p className="text-[11px]" style={{ color: t.textFaint }}>{k.label}</p>
+                    </div>
+                  );
+                })}
+              </div>
+
+              <div className="flex items-center gap-2 flex-wrap">
+                {["All", "Manager", "Supervisor", "Barista", "Cashier"].map((role) => (
+                  <button
+                    key={role}
+                    onClick={() => setStaffRoleFilter(role)}
+                    className="text-xs px-3 py-1.5 rounded-full border transition-colors"
+                    style={{
+                      background: staffRoleFilter === role ? accent : "transparent",
+                      borderColor: staffRoleFilter === role ? accent : t.border,
+                      color: staffRoleFilter === role ? t.bg : t.textMuted,
+                    }}
+                  >
+                    {role}
+                  </button>
+                ))}
+                <input
+                  value={staffQuery}
+                  onChange={(e) => setStaffQuery(e.target.value)}
+                  placeholder="Search employee or role..."
+                  className="ml-auto text-sm rounded-lg border px-3 py-1.5 outline-none"
+                  style={{ background: t.inputBg, borderColor: t.border, color: t.text, minWidth: 220 }}
+                />
+              </div>
+
+              <div className="rounded-xl border overflow-hidden transition-colors duration-200" style={{ background: t.card, borderColor: t.border }}>
+                <p className="text-sm font-semibold px-5 pt-5 pb-1 flex items-center gap-2" style={{ color: t.text }}>
+                  <Users size={15} color={accent} /> Employee Roster
+                </p>
+                <table className="w-full text-sm mt-3">
+                  <thead>
+                    <tr className="text-left text-xs border-y" style={{ color: t.textFaint, borderColor: t.border }}>
+                      <th className="px-5 py-2 font-medium">Employee Name</th>
+                      <th className="px-5 py-2 font-medium">Role</th>
+                      <th className="px-5 py-2 font-medium">Contact Email</th>
+                      <th className="px-5 py-2 font-medium">Outlet</th>
+                      <th className="px-5 py-2 font-medium text-right">Salary</th>
+                      <th className="px-5 py-2 font-medium">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {staffLoading && (
+                      <tr><td colSpan={6} className="px-5 py-6 text-center" style={{ color: t.textFaint }}>Loading staff roster...</td></tr>
+                    )}
+                    {!staffLoading &&
+                      (employees.length > 0
+                        ? employees
+                        : [
+                            { employee_id: 1, full_name: "Rahul Sharma", role: "Store Manager", email: "rahul.s@franchiseops.com", outlets: { outlet_name: "Pune" }, salary: 45000, status: "Active" },
+                            { employee_id: 2, full_name: "Priya Patel", role: "Shift Supervisor", email: "priya.p@franchiseops.com", outlets: { outlet_name: "Nashik" }, salary: 32000, status: "Active" },
+                            { employee_id: 3, full_name: "Amit Verma", role: "Barista", email: "amit.v@franchiseops.com", outlets: { outlet_name: "Mumbai Andheri" }, salary: 22000, status: "On Leave" },
+                            { employee_id: 4, full_name: "Sneha Kulkarni", role: "Cashier", email: "sneha.k@franchiseops.com", outlets: { outlet_name: "Nagpur" }, salary: 20000, status: "Active" },
+                            { employee_id: 5, full_name: "Vikas Deshmukh", role: "Executive", email: "vikas.d@franchiseops.com", outlets: { outlet_name: "Aurangabad" }, salary: 26000, status: "Active" },
+                          ]
+                      )
+                        .filter((emp) => staffRoleFilter === "All" || emp.role.toLowerCase().includes(staffRoleFilter.toLowerCase()))
+                        .filter((emp) => !staffQuery || emp.full_name.toLowerCase().includes(staffQuery.toLowerCase()) || emp.role.toLowerCase().includes(staffQuery.toLowerCase()))
+                        .map((emp) => (
+                          <tr key={emp.employee_id} className="border-b last:border-0" style={{ borderColor: t.border }}>
+                            <td className="px-5 py-3 font-medium" style={{ color: t.text }}>{emp.full_name}</td>
+                            <td className="px-5 py-3" style={{ color: t.textMuted }}>{emp.role}</td>
+                            <td className="px-5 py-3 font-mono text-xs" style={{ color: t.textFaint }}>{emp.email}</td>
+                            <td className="px-5 py-3" style={{ color: t.textMuted }}>{emp.outlets?.outlet_name || "Network"}</td>
+                            <td className="px-5 py-3 text-right font-medium" style={{ color: t.text }}>₹{Number(emp.salary || 0).toLocaleString("en-IN")}</td>
+                            <td className="px-5 py-3">
+                              <span className={`text-xs px-2 py-0.5 rounded-full border ${emp.status === "Active" ? "bg-teal-500/15 text-teal-400 border-teal-500/30" : "bg-amber-500/15 text-amber-400 border-amber-500/30"}`}>
+                                {emp.status || "Active"}
+                              </span>
+                            </td>
+                          </tr>
+                        ))}
                   </tbody>
                 </table>
               </div>

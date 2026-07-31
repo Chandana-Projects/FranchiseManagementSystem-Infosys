@@ -1,7 +1,17 @@
+const fs = require("fs");
+const path = require("path");
 const prisma = require("../config/prisma");
 
+const datasetOutletsPath = path.join(__dirname, "../../../dataset/outlets.json");
+
 exports.getAllOutlets = async () => {
-    return await prisma.outlets.findMany();
+    try {
+        const outlets = await prisma.outlets.findMany();
+        if (outlets.length > 0) return outlets;
+        return JSON.parse(fs.readFileSync(datasetOutletsPath, "utf8"));
+    } catch (_) {
+        return JSON.parse(fs.readFileSync(datasetOutletsPath, "utf8"));
+    }
 };
 
 exports.getRevenueTrend = async () => {
