@@ -12,10 +12,8 @@ import {
   Sun, Moon, AlertTriangle, Eye, EyeOff, Mail, Lock
 } from "lucide-react";
 
-// ADDED: backend base URL — set NEXT_PUBLIC_API_BASE_URL in frontend/.env.local
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
 
-// ================= Theme tokens =================
 const themes = {
   dark: {
     bg: "#0E1015", panel: "#14161C", card: "#1A1D24", border: "#232630",
@@ -29,8 +27,6 @@ const themes = {
   },
 };
 
-// ================= Dummy data still used by Dashboard / Outlet Performance charts =================
-// (unchanged from before — only login + inventory are wired to the real backend in this pass)
 const revenueTrendByOutlet: Record<string, { month: string; revenue: number }[]> = {
   All: [
     { month: "Feb", revenue: 412000 }, { month: "Mar", revenue: 458000 },
@@ -145,7 +141,6 @@ const modules = [
   { id: "settings", label: "Settings", icon: Settings },
 ];
 
-// ADDED: types for real inventory + outlet data coming from the backend
 type InventoryItem = {
   item_id: number;
   outlet_id: number;
@@ -178,7 +173,23 @@ function inventoryStatus(item: InventoryItem): "Healthy" | "Watch" | "Critical" 
   return "Healthy";
 }
 
-// ADDED: real login page, calling POST /api/auth/login
+const WEEKDAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+
+const attendanceLog = [
+  { staffId: 1, name: "Rahul Sharma", outlet: "Pune", checkIn: "09:02", checkOut: "18:10", todayStatus: "Present", week: ["P", "P", "P", "P", "P", "-", "-"] },
+  { staffId: 2, name: "Priya Patel", outlet: "Nashik", checkIn: "08:58", checkOut: "17:45", todayStatus: "Present", week: ["P", "P", "L", "P", "P", "-", "-"] },
+  { staffId: 3, name: "Amit Verma", outlet: "Mumbai Andheri", checkIn: "-", checkOut: "-", todayStatus: "Absent", week: ["P", "P", "A", "A", "A", "-", "-"] },
+  { staffId: 4, name: "Sneha Kulkarni", outlet: "Nagpur", checkIn: "09:00", checkOut: "18:00", todayStatus: "Present", week: ["P", "P", "P", "P", "P", "-", "-"] },
+  { staffId: 5, name: "Vikas Deshmukh", outlet: "Aurangabad", checkIn: "13:05", checkOut: "21:00", todayStatus: "Late", week: ["P", "L", "P", "P", "L", "-", "-"] },
+];
+
+const attendanceDotColor: Record<string, string> = {
+  P: "#2DD9B9",
+  L: "#F2A93B",
+  A: "#F2586B",
+  "-": "#232630",
+};
+
 function LoginPage({
   t,
   accent,
@@ -243,14 +254,20 @@ function LoginPage({
           <p className="text-lg font-semibold mb-1" style={{ color: t.text }}>Sign in to your network</p>
           <p className="text-sm mb-5" style={{ color: t.textMuted }}>Access dashboards, agents, and outlet insights.</p>
 
-          <div 
-            onClick={() => { setEmail("abhi@gmail.com"); setPassword("abhi"); }} 
+          <div
+            onClick={() => { setEmail("abhi@gmail.com"); setPassword("abhi"); }}
             className="mb-4 p-2.5 rounded-lg border text-xs cursor-pointer flex items-center justify-between transition-colors"
             style={{ background: `${accent}10`, borderColor: `${accent}30`, color: accent }}
           >
             <span className="font-medium">Demo Admin: abhi@gmail.com / abhi</span>
             <span className="text-[10px] underline font-bold">Quick Fill</span>
           </div>
+
+          {error && (
+            <div className="text-xs rounded-lg px-3 py-2 mb-4" style={{ background: "#FB71851A", color: "#FB7185", border: "1px solid #FB718533" }}>
+              {error}
+            </div>
+          )}
 
           <div className="mb-3.5">
             <p className="text-xs mb-1.5" style={{ color: t.textMuted }}>Work email</p>
@@ -288,13 +305,12 @@ function LoginPage({
 export default function FranchiseOSDashboard() {
   const [isDark, setIsDark] = useState(true);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [checkingAuth, setCheckingAuth] = useState(true); // ADDED: avoid flashing login page on refresh
+  const [checkingAuth, setCheckingAuth] = useState(true);
   const [active, setActive] = useState("dashboard");
   const [outletTab, setOutletTab] = useState("trend");
   const [selectedOutlet, setSelectedOutlet] = useState("All");
   const [pinHover, setPinHover] = useState<string | null>(null);
 
-  // ADDED: real inventory + outlet state
   const [inventoryItems, setInventoryItems] = useState<InventoryItem[]>([]);
   const [inventorySummary, setInventorySummary] = useState<InventorySummary | null>(null);
   const [outlets, setOutlets] = useState<Outlet[]>([]);
@@ -303,13 +319,12 @@ export default function FranchiseOSDashboard() {
   const [inventoryLoading, setInventoryLoading] = useState(false);
   const [inventoryError, setInventoryError] = useState<string | null>(null);
 
-  // ADDED: real staff/employee state
   const [employees, setEmployees] = useState<any[]>([]);
   const [staffLoading, setStaffLoading] = useState(false);
   const [staffQuery, setStaffQuery] = useState("");
   const [staffRoleFilter, setStaffRoleFilter] = useState("All");
+  const [staffTab, setStaffTab] = useState<"directory" | "attendance">("directory");
 
-  // ADDED: fetch staff/employees whenever Staff Agent tab is active
   useEffect(() => {
     if (!isLoggedIn || active !== "staff") return;
     setStaffLoading(true);
@@ -320,21 +335,23 @@ export default function FranchiseOSDashboard() {
       .finally(() => setStaffLoading(false));
   }, [isLoggedIn, active]);
 
-
   const t = isDark ? themes.dark : themes.light;
   const statusColor = isDark ? statusColorDark : statusColorLight;
   const accent = "#2DD4BF";
   const activeLabel = modules.find((m) => m.id === active)?.label ?? "Dashboard";
   const trendData = revenueTrendByOutlet[selectedOutlet] || revenueTrendByOutlet.All;
 
-  // ADDED: on mount, check for an existing token so refresh doesn't force re-login
+  const presentToday = attendanceLog.filter((a) => a.todayStatus === "Present").length;
+  const absentToday = attendanceLog.filter((a) => a.todayStatus === "Absent").length;
+  const lateToday = attendanceLog.filter((a) => a.todayStatus === "Late").length;
+  const attendanceRateToday = Math.round((presentToday / attendanceLog.length) * 100);
+
   useEffect(() => {
     const token = localStorage.getItem("fops_token");
     setIsLoggedIn(!!token);
     setCheckingAuth(false);
   }, []);
 
-  // ADDED: fetch outlets once, for the inventory filter dropdown
   useEffect(() => {
     if (!isLoggedIn) return;
     fetch(`${API_BASE_URL}/api/outlets`)
@@ -343,8 +360,6 @@ export default function FranchiseOSDashboard() {
       .catch(() => setOutlets([]));
   }, [isLoggedIn]);
 
-  // ADDED: fetch inventory items + summary whenever the Inventory Agent module is open,
-  // or the outlet filter / search query changes
   useEffect(() => {
     if (!isLoggedIn || active !== "inventory") return;
 
@@ -383,7 +398,6 @@ export default function FranchiseOSDashboard() {
 
   return (
     <div className="w-full min-h-[800px] flex font-sans transition-colors duration-200" style={{ background: t.bg, color: t.text }}>
-      {/* ---------------- Sidebar ---------------- */}
       <aside className="w-64 flex flex-col shrink-0 border-r transition-colors duration-200" style={{ background: t.panel, borderColor: t.border }}>
         <div className="px-5 py-5 flex items-center gap-2 border-b" style={{ borderColor: t.border }}>
           <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-teal-400 to-teal-600 flex items-center justify-center font-bold text-sm" style={{ color: t.bg }}>F</div>
@@ -418,9 +432,7 @@ export default function FranchiseOSDashboard() {
         </div>
       </aside>
 
-      {/* ---------------- Main ---------------- */}
       <main className="flex-1 overflow-y-auto">
-        {/* Topbar */}
         <div className="border-b px-8 py-4 flex items-center justify-between gap-4 transition-colors duration-200" style={{ background: t.panel, borderColor: t.border }}>
           <div className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm flex-1 max-w-md border" style={{ background: t.inputBg, borderColor: t.border, color: t.textFaint }}>
             <Search size={14} />
@@ -749,7 +761,6 @@ export default function FranchiseOSDashboard() {
             </div>
           ) : active === "inventory" ? (
             <div className="space-y-6">
-              {/* ADDED: real inventory data from the backend */}
               {inventoryError && (
                 <div className="text-sm rounded-lg px-4 py-3" style={{ background: "#FB71851A", color: "#FB7185", border: "1px solid #FB718533" }}>
                   {inventoryError}
@@ -877,7 +888,7 @@ export default function FranchiseOSDashboard() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-xs uppercase tracking-wide font-medium" style={{ color: t.textFaint }}>Human Resources</p>
-                  <h2 className="text-xl font-bold mt-0.5" style={{ color: t.text }}>Staff Agent Directory</h2>
+                  <h2 className="text-xl font-bold mt-0.5" style={{ color: t.text }}>Staff Agent</h2>
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="text-xs px-3 py-1.5 rounded-full border bg-teal-500/10 text-teal-400 border-teal-500/30">
@@ -886,99 +897,210 @@ export default function FranchiseOSDashboard() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="flex flex-wrap gap-2">
                 {[
-                  { label: "Total Staff", value: String(employees.length > 0 ? employees.length : 148), icon: Users },
-                  { label: "Active Shifts", value: "94.2%", icon: TrendingUp },
-                  { label: "Monthly Payroll", value: "₹18.4L", icon: FileBarChart },
-                  { label: "Attendance Score", value: "96%", icon: ShieldCheck },
-                ].map((k) => {
-                  const Icon = k.icon;
+                  { id: "directory", label: "Staff Directory", icon: Users },
+                  { id: "attendance", label: "Attendance", icon: ShieldCheck },
+                ].map((tb) => {
+                  const Icon = tb.icon;
+                  const isActive = staffTab === tb.id;
                   return (
-                    <div key={k.label} className="rounded-xl border p-4 transition-colors duration-200" style={{ background: t.card, borderColor: t.border }}>
-                      <div className="w-7 h-7 rounded-md flex items-center justify-center mb-2" style={{ background: `${accent}1A` }}>
-                        <Icon size={14} color={accent} />
-                      </div>
-                      <p className="text-lg font-semibold" style={{ color: t.text }}>{k.value}</p>
-                      <p className="text-[11px]" style={{ color: t.textFaint }}>{k.label}</p>
-                    </div>
+                    <button
+                      key={tb.id}
+                      onClick={() => setStaffTab(tb.id as "directory" | "attendance")}
+                      className="flex items-center gap-2 text-sm px-4 py-2 rounded-lg border transition-colors"
+                      style={{
+                        background: isActive ? `${accent}1A` : t.card,
+                        borderColor: isActive ? `${accent}4D` : t.border,
+                        color: isActive ? t.text : t.textMuted,
+                      }}
+                    >
+                      <Icon size={15} color={isActive ? accent : t.textFaint} />
+                      {tb.label}
+                    </button>
                   );
                 })}
               </div>
 
-              <div className="flex items-center gap-2 flex-wrap">
-                {["All", "Manager", "Supervisor", "Barista", "Cashier"].map((role) => (
-                  <button
-                    key={role}
-                    onClick={() => setStaffRoleFilter(role)}
-                    className="text-xs px-3 py-1.5 rounded-full border transition-colors"
-                    style={{
-                      background: staffRoleFilter === role ? accent : "transparent",
-                      borderColor: staffRoleFilter === role ? accent : t.border,
-                      color: staffRoleFilter === role ? t.bg : t.textMuted,
-                    }}
-                  >
-                    {role}
-                  </button>
-                ))}
-                <input
-                  value={staffQuery}
-                  onChange={(e) => setStaffQuery(e.target.value)}
-                  placeholder="Search employee or role..."
-                  className="ml-auto text-sm rounded-lg border px-3 py-1.5 outline-none"
-                  style={{ background: t.inputBg, borderColor: t.border, color: t.text, minWidth: 220 }}
-                />
-              </div>
+              {staffTab === "directory" && (
+                <div className="space-y-6">
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    {[
+                      { label: "Total Staff", value: String(employees.length > 0 ? employees.length : 148), icon: Users },
+                      { label: "Active Shifts", value: "94.2%", icon: TrendingUp },
+                      { label: "Monthly Payroll", value: "₹18.4L", icon: FileBarChart },
+                      { label: "Attendance Score", value: "96%", icon: ShieldCheck },
+                    ].map((k) => {
+                      const Icon = k.icon;
+                      return (
+                        <div key={k.label} className="rounded-xl border p-4 transition-colors duration-200" style={{ background: t.card, borderColor: t.border }}>
+                          <div className="w-7 h-7 rounded-md flex items-center justify-center mb-2" style={{ background: `${accent}1A` }}>
+                            <Icon size={14} color={accent} />
+                          </div>
+                          <p className="text-lg font-semibold" style={{ color: t.text }}>{k.value}</p>
+                          <p className="text-[11px]" style={{ color: t.textFaint }}>{k.label}</p>
+                        </div>
+                      );
+                    })}
+                  </div>
 
-              <div className="rounded-xl border overflow-hidden transition-colors duration-200" style={{ background: t.card, borderColor: t.border }}>
-                <p className="text-sm font-semibold px-5 pt-5 pb-1 flex items-center gap-2" style={{ color: t.text }}>
-                  <Users size={15} color={accent} /> Employee Roster
-                </p>
-                <table className="w-full text-sm mt-3">
-                  <thead>
-                    <tr className="text-left text-xs border-y" style={{ color: t.textFaint, borderColor: t.border }}>
-                      <th className="px-5 py-2 font-medium">Employee Name</th>
-                      <th className="px-5 py-2 font-medium">Role</th>
-                      <th className="px-5 py-2 font-medium">Contact Email</th>
-                      <th className="px-5 py-2 font-medium">Outlet</th>
-                      <th className="px-5 py-2 font-medium text-right">Salary</th>
-                      <th className="px-5 py-2 font-medium">Status</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {staffLoading && (
-                      <tr><td colSpan={6} className="px-5 py-6 text-center" style={{ color: t.textFaint }}>Loading staff roster...</td></tr>
-                    )}
-                    {!staffLoading &&
-                      (employees.length > 0
-                        ? employees
-                        : [
-                            { employee_id: 1, full_name: "Rahul Sharma", role: "Store Manager", email: "rahul.s@franchiseops.com", outlets: { outlet_name: "Pune" }, salary: 45000, status: "Active" },
-                            { employee_id: 2, full_name: "Priya Patel", role: "Shift Supervisor", email: "priya.p@franchiseops.com", outlets: { outlet_name: "Nashik" }, salary: 32000, status: "Active" },
-                            { employee_id: 3, full_name: "Amit Verma", role: "Barista", email: "amit.v@franchiseops.com", outlets: { outlet_name: "Mumbai Andheri" }, salary: 22000, status: "On Leave" },
-                            { employee_id: 4, full_name: "Sneha Kulkarni", role: "Cashier", email: "sneha.k@franchiseops.com", outlets: { outlet_name: "Nagpur" }, salary: 20000, status: "Active" },
-                            { employee_id: 5, full_name: "Vikas Deshmukh", role: "Executive", email: "vikas.d@franchiseops.com", outlets: { outlet_name: "Aurangabad" }, salary: 26000, status: "Active" },
-                          ]
-                      )
-                        .filter((emp) => staffRoleFilter === "All" || emp.role.toLowerCase().includes(staffRoleFilter.toLowerCase()))
-                        .filter((emp) => !staffQuery || emp.full_name.toLowerCase().includes(staffQuery.toLowerCase()) || emp.role.toLowerCase().includes(staffQuery.toLowerCase()))
-                        .map((emp) => (
-                          <tr key={emp.employee_id} className="border-b last:border-0" style={{ borderColor: t.border }}>
-                            <td className="px-5 py-3 font-medium" style={{ color: t.text }}>{emp.full_name}</td>
-                            <td className="px-5 py-3" style={{ color: t.textMuted }}>{emp.role}</td>
-                            <td className="px-5 py-3 font-mono text-xs" style={{ color: t.textFaint }}>{emp.email}</td>
-                            <td className="px-5 py-3" style={{ color: t.textMuted }}>{emp.outlets?.outlet_name || "Network"}</td>
-                            <td className="px-5 py-3 text-right font-medium" style={{ color: t.text }}>₹{Number(emp.salary || 0).toLocaleString("en-IN")}</td>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    {["All", "Manager", "Supervisor", "Barista", "Cashier"].map((role) => (
+                      <button
+                        key={role}
+                        onClick={() => setStaffRoleFilter(role)}
+                        className="text-xs px-3 py-1.5 rounded-full border transition-colors"
+                        style={{
+                          background: staffRoleFilter === role ? accent : "transparent",
+                          borderColor: staffRoleFilter === role ? accent : t.border,
+                          color: staffRoleFilter === role ? t.bg : t.textMuted,
+                        }}
+                      >
+                        {role}
+                      </button>
+                    ))}
+                    <input
+                      value={staffQuery}
+                      onChange={(e) => setStaffQuery(e.target.value)}
+                      placeholder="Search employee or role..."
+                      className="ml-auto text-sm rounded-lg border px-3 py-1.5 outline-none"
+                      style={{ background: t.inputBg, borderColor: t.border, color: t.text, minWidth: 220 }}
+                    />
+                  </div>
+
+                  <div className="rounded-xl border overflow-hidden transition-colors duration-200" style={{ background: t.card, borderColor: t.border }}>
+                    <p className="text-sm font-semibold px-5 pt-5 pb-1 flex items-center gap-2" style={{ color: t.text }}>
+                      <Users size={15} color={accent} /> Employee Roster
+                    </p>
+                    <table className="w-full text-sm mt-3">
+                      <thead>
+                        <tr className="text-left text-xs border-y" style={{ color: t.textFaint, borderColor: t.border }}>
+                          <th className="px-5 py-2 font-medium">Employee Name</th>
+                          <th className="px-5 py-2 font-medium">Role</th>
+                          <th className="px-5 py-2 font-medium">Contact Email</th>
+                          <th className="px-5 py-2 font-medium">Outlet</th>
+                          <th className="px-5 py-2 font-medium text-right">Salary</th>
+                          <th className="px-5 py-2 font-medium">Status</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {staffLoading && (
+                          <tr><td colSpan={6} className="px-5 py-6 text-center" style={{ color: t.textFaint }}>Loading staff roster...</td></tr>
+                        )}
+                        {!staffLoading &&
+                          (employees.length > 0
+                            ? employees
+                            : [
+                                { employee_id: 1, full_name: "Rahul Sharma", role: "Store Manager", email: "rahul.s@franchiseops.com", outlets: { outlet_name: "Pune" }, salary: 45000, status: "Active" },
+                                { employee_id: 2, full_name: "Priya Patel", role: "Shift Supervisor", email: "priya.p@franchiseops.com", outlets: { outlet_name: "Nashik" }, salary: 32000, status: "Active" },
+                                { employee_id: 3, full_name: "Amit Verma", role: "Barista", email: "amit.v@franchiseops.com", outlets: { outlet_name: "Mumbai Andheri" }, salary: 22000, status: "On Leave" },
+                                { employee_id: 4, full_name: "Sneha Kulkarni", role: "Cashier", email: "sneha.k@franchiseops.com", outlets: { outlet_name: "Nagpur" }, salary: 20000, status: "Active" },
+                                { employee_id: 5, full_name: "Vikas Deshmukh", role: "Executive", email: "vikas.d@franchiseops.com", outlets: { outlet_name: "Aurangabad" }, salary: 26000, status: "Active" },
+                              ]
+                          )
+                            .filter((emp) => staffRoleFilter === "All" || emp.role.toLowerCase().includes(staffRoleFilter.toLowerCase()))
+                            .filter((emp) => !staffQuery || emp.full_name.toLowerCase().includes(staffQuery.toLowerCase()) || emp.role.toLowerCase().includes(staffQuery.toLowerCase()))
+                            .map((emp) => (
+                              <tr key={emp.employee_id} className="border-b last:border-0" style={{ borderColor: t.border }}>
+                                <td className="px-5 py-3 font-medium" style={{ color: t.text }}>{emp.full_name}</td>
+                                <td className="px-5 py-3" style={{ color: t.textMuted }}>{emp.role}</td>
+                                <td className="px-5 py-3 font-mono text-xs" style={{ color: t.textFaint }}>{emp.email}</td>
+                                <td className="px-5 py-3" style={{ color: t.textMuted }}>{emp.outlets?.outlet_name || "Network"}</td>
+                                <td className="px-5 py-3 text-right font-medium" style={{ color: t.text }}>₹{Number(emp.salary || 0).toLocaleString("en-IN")}</td>
+                                <td className="px-5 py-3">
+                                  <span className={`text-xs px-2 py-0.5 rounded-full border ${emp.status === "Active" ? "bg-teal-500/15 text-teal-400 border-teal-500/30" : "bg-amber-500/15 text-amber-400 border-amber-500/30"}`}>
+                                    {emp.status || "Active"}
+                                  </span>
+                                </td>
+                              </tr>
+                            ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+
+              {staffTab === "attendance" && (
+                <div className="space-y-6">
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    {[
+                      { label: "Present today", value: String(presentToday), icon: ShieldCheck },
+                      { label: "Absent today", value: String(absentToday), icon: AlertTriangle },
+                      { label: "Late today", value: String(lateToday), icon: TrendingDown },
+                      { label: "Attendance rate", value: `${attendanceRateToday}%`, icon: TrendingUp },
+                    ].map((k) => {
+                      const Icon = k.icon;
+                      return (
+                        <div key={k.label} className="rounded-xl border p-4 transition-colors duration-200" style={{ background: t.card, borderColor: t.border }}>
+                          <div className="w-7 h-7 rounded-md flex items-center justify-center mb-3" style={{ background: `${accent}1A` }}>
+                            <Icon size={13} color={accent} />
+                          </div>
+                          <p className="text-lg font-semibold" style={{ color: t.text }}>{k.value}</p>
+                          <p className="text-[11px] mt-0.5" style={{ color: t.textFaint }}>{k.label}</p>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  <div className="rounded-xl border overflow-hidden transition-colors duration-200" style={{ background: t.card, borderColor: t.border }}>
+                    <p className="text-sm font-semibold px-5 pt-5 pb-1 flex items-center gap-2" style={{ color: t.text }}>
+                      <ShieldCheck size={15} color={accent} /> Today&apos;s attendance log
+                    </p>
+                    <table className="w-full text-sm mt-3">
+                      <thead>
+                        <tr className="text-left text-xs border-y" style={{ color: t.textFaint, borderColor: t.border }}>
+                          <th className="px-5 py-2 font-medium">Name</th>
+                          <th className="px-5 py-2 font-medium">Outlet</th>
+                          <th className="px-5 py-2 font-medium">Check-in</th>
+                          <th className="px-5 py-2 font-medium">Check-out</th>
+                          <th className="px-5 py-2 font-medium">Today</th>
+                          <th className="px-5 py-2 font-medium">Last 7 days</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {attendanceLog.map((a) => (
+                          <tr key={a.staffId} className="border-b last:border-0" style={{ borderColor: t.border }}>
+                            <td className="px-5 py-3 font-medium" style={{ color: t.text }}>{a.name}</td>
+                            <td className="px-5 py-3" style={{ color: t.textMuted }}>{a.outlet}</td>
+                            <td className="px-5 py-3" style={{ color: t.textMuted }}>{a.checkIn}</td>
+                            <td className="px-5 py-3" style={{ color: t.textMuted }}>{a.checkOut}</td>
                             <td className="px-5 py-3">
-                              <span className={`text-xs px-2 py-0.5 rounded-full border ${emp.status === "Active" ? "bg-teal-500/15 text-teal-400 border-teal-500/30" : "bg-amber-500/15 text-amber-400 border-amber-500/30"}`}>
-                                {emp.status || "Active"}
+                              <span
+                                className="text-xs px-2 py-0.5 rounded-full border"
+                                style={{
+                                  background:
+                                    a.todayStatus === "Present" ? `${accent}1A` :
+                                    a.todayStatus === "Absent" ? "#FB71851A" :
+                                    a.todayStatus === "Late" ? "#F59E0B1A" : "#64748B1A",
+                                  color:
+                                    a.todayStatus === "Present" ? accent :
+                                    a.todayStatus === "Absent" ? "#FB7185" :
+                                    a.todayStatus === "Late" ? "#F59E0B" : "#94A3B8",
+                                  borderColor: "transparent",
+                                }}
+                              >
+                                {a.todayStatus}
                               </span>
+                            </td>
+                            <td className="px-5 py-3">
+                              <div className="flex items-center gap-1">
+                                {a.week.map((day, i) => (
+                                  <span
+                                    key={i}
+                                    title={`${WEEKDAYS[i]}: ${day === "P" ? "Present" : day === "L" ? "Late" : day === "A" ? "Absent" : "Off"}`}
+                                    className="w-3.5 h-3.5 rounded-[3px]"
+                                    style={{ background: attendanceDotColor[day] }}
+                                  />
+                                ))}
+                              </div>
                             </td>
                           </tr>
                         ))}
-                  </tbody>
-                </table>
-              </div>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
             </div>
           ) : (
             <div className="rounded-2xl border p-12 text-center transition-colors duration-200" style={{ background: t.card, borderColor: t.border }}>
