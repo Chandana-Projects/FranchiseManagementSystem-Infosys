@@ -266,19 +266,8 @@ function LoginPage({
           <p className="text-lg font-semibold mb-1" style={{ color: t.text }}>Sign in to your network</p>
           <p className="text-sm mb-5" style={{ color: t.textMuted }}>Access dashboards, agents, and outlet insights.</p>
 
-<<<<<<< HEAD
-          <div
-            onClick={() => { setEmail("abhi@gmail.com"); setPassword("abhi"); }}
-=======
-          {error && (
-            <div className="mb-4 p-2.5 rounded-lg border text-xs text-rose-400 bg-rose-500/10 border-rose-500/30">
-              {error}
-            </div>
-          )}
-
           <div 
             onClick={() => { setEmail("abhi@gmail.com"); setPassword("abhi"); }} 
->>>>>>> 315b9e0 (refactor: polish codebase, clean duplicate exports, fix ESLint warnings and type safety)
             className="mb-4 p-2.5 rounded-lg border text-xs cursor-pointer flex items-center justify-between transition-colors"
             style={{ background: `${accent}10`, borderColor: `${accent}30`, color: accent }}
           >
@@ -327,10 +316,6 @@ function LoginPage({
 
 export default function FranchiseOSDashboard() {
   const [isDark, setIsDark] = useState(true);
-<<<<<<< HEAD
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [checkingAuth, setCheckingAuth] = useState(true);
-=======
   const [isLoggedIn, setIsLoggedIn] = useState(() => {
     if (typeof window !== "undefined") {
       return !!localStorage.getItem("fops_token");
@@ -338,7 +323,6 @@ export default function FranchiseOSDashboard() {
     return false;
   });
   const [checkingAuth] = useState(false);
->>>>>>> 315b9e0 (refactor: polish codebase, clean duplicate exports, fix ESLint warnings and type safety)
   const [active, setActive] = useState("dashboard");
   const [outletTab, setOutletTab] = useState("trend");
   const [selectedOutlet, setSelectedOutlet] = useState("All");
@@ -352,12 +336,8 @@ export default function FranchiseOSDashboard() {
   const [inventoryLoading, setInventoryLoading] = useState(false);
   const [inventoryError, setInventoryError] = useState<string | null>(null);
 
-<<<<<<< HEAD
-  const [employees, setEmployees] = useState<any[]>([]);
-=======
   // ADDED: real staff/employee state
   const [employees, setEmployees] = useState<Employee[]>([]);
->>>>>>> 315b9e0 (refactor: polish codebase, clean duplicate exports, fix ESLint warnings and type safety)
   const [staffLoading, setStaffLoading] = useState(false);
   const [staffQuery, setStaffQuery] = useState("");
   const [staffRoleFilter, setStaffRoleFilter] = useState("All");
@@ -387,21 +367,12 @@ export default function FranchiseOSDashboard() {
   const activeLabel = modules.find((m) => m.id === active)?.label ?? "Dashboard";
   const trendData = revenueTrendByOutlet[selectedOutlet] || revenueTrendByOutlet.All;
 
-<<<<<<< HEAD
   const presentToday = attendanceLog.filter((a) => a.todayStatus === "Present").length;
   const absentToday = attendanceLog.filter((a) => a.todayStatus === "Absent").length;
   const lateToday = attendanceLog.filter((a) => a.todayStatus === "Late").length;
   const attendanceRateToday = Math.round((presentToday / attendanceLog.length) * 100);
 
-  useEffect(() => {
-    const token = localStorage.getItem("fops_token");
-    setIsLoggedIn(!!token);
-    setCheckingAuth(false);
-  }, []);
-
-=======
   // ADDED: fetch outlets once, for the inventory filter dropdown
->>>>>>> 315b9e0 (refactor: polish codebase, clean duplicate exports, fix ESLint warnings and type safety)
   useEffect(() => {
     if (!isLoggedIn) return;
     fetch(`${API_BASE_URL}/api/outlets`)
