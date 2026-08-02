@@ -169,10 +169,4 @@ exports.updateOutlet = async (id, data) => {
         }
     });
 };
-exports.getOutletById = async (id) => {
-    return await prisma.outlets.findUnique({
-        where: {
-            outlet_id: Number(id)
-        }
-    });
-};
+

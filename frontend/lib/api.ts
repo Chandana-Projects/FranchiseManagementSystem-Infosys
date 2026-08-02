@@ -23,8 +23,8 @@ export async function fetchWithAuth(endpoint: string, options: RequestInit = {})
 
 export const api = {
   // Auth
-  login: (data: any) => fetchWithAuth("/api/auth/login", { method: "POST", body: JSON.stringify(data) }),
-  register: (data: any) => fetchWithAuth("/api/auth/register", { method: "POST", body: JSON.stringify(data) }),
+  login: (data: Record<string, unknown>) => fetchWithAuth("/api/auth/login", { method: "POST", body: JSON.stringify(data) }),
+  register: (data: Record<string, unknown>) => fetchWithAuth("/api/auth/register", { method: "POST", body: JSON.stringify(data) }),
 
   // Outlets
   getOutlets: () => fetchWithAuth("/api/outlets"),

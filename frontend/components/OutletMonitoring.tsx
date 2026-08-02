@@ -222,6 +222,18 @@ type InventorySummary = {
 
 type Outlet = { outlet_id: number; outlet_name: string; city: string | null };
 
+type Employee = {
+  employee_id?: number;
+  full_name?: string;
+  email?: string;
+  phone?: string;
+  role?: string;
+  salary?: number | string;
+  status?: string;
+  outlets?: { outlet_name: string; city: string };
+  [key: string]: unknown;
+};
+
 function inventoryStatus(item: InventoryItem): "Healthy" | "Watch" | "Critical" {
   const qty = Number(item.quantity);
   const reorderAt = Number(item.reorder_at);
@@ -289,7 +301,7 @@ function LoginPage({
       localStorage.setItem("fops_token", data.token);
       localStorage.setItem("fops_user", JSON.stringify(data.user));
       onLogin();
-    } catch (err) {
+    } catch {
       setError("Could not reach the server. Is the backend running?");
     } finally {
       setLoading(false);
@@ -311,8 +323,8 @@ function LoginPage({
           <p className="text-lg font-semibold mb-1" style={{ color: t.text }}>Sign in to your network</p>
           <p className="text-sm mb-5" style={{ color: t.textMuted }}>Access dashboards, agents, and outlet insights.</p>
 
-          <div
-            onClick={() => { setEmail("abhi@gmail.com"); setPassword("abhi"); }}
+          <div 
+            onClick={() => { setEmail("abhi@gmail.com"); setPassword("abhi"); }} 
             className="mb-4 p-2.5 rounded-lg border text-xs cursor-pointer flex items-center justify-between transition-colors"
             style={{ background: `${accent}10`, borderColor: `${accent}30`, color: accent }}
           >
@@ -361,8 +373,13 @@ function LoginPage({
 
 export default function FranchiseOSDashboard() {
   const [isDark, setIsDark] = useState(true);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [checkingAuth, setCheckingAuth] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(() => {
+    if (typeof window !== "undefined") {
+      return !!localStorage.getItem("fops_token");
+    }
+    return false;
+  });
+  const [checkingAuth] = useState(false);
   const [active, setActive] = useState("dashboard");
   const [outletTab, setOutletTab] = useState("trend");
   const [selectedOutlet, setSelectedOutlet] = useState("All");
@@ -377,7 +394,8 @@ export default function FranchiseOSDashboard() {
   const [inventoryLoading, setInventoryLoading] = useState(false);
   const [inventoryError, setInventoryError] = useState<string | null>(null);
 
-  const [employees, setEmployees] = useState<any[]>([]);
+  // ADDED: real staff/employee state
+  const [employees, setEmployees] = useState<Employee[]>([]);
   const [staffLoading, setStaffLoading] = useState(false);
   const [staffQuery, setStaffQuery] = useState("");
   const [staffRoleFilter, setStaffRoleFilter] = useState("All");
@@ -385,12 +403,20 @@ export default function FranchiseOSDashboard() {
 
   useEffect(() => {
     if (!isLoggedIn || active !== "staff") return;
-    setStaffLoading(true);
+    let isSubscribed = true;
+    Promise.resolve().then(() => setStaffLoading(true));
     fetch(`${API_BASE_URL}/api/employees`)
       .then((res) => res.json())
-      .then((data) => setEmployees(Array.isArray(data) ? data : []))
-      .catch(() => setEmployees([]))
-      .finally(() => setStaffLoading(false));
+      .then((data) => {
+        if (isSubscribed) setEmployees(Array.isArray(data) ? data : []);
+      })
+      .catch(() => {
+        if (isSubscribed) setEmployees([]);
+      })
+      .finally(() => {
+        if (isSubscribed) setStaffLoading(false);
+      });
+    return () => { isSubscribed = false; };
   }, [isLoggedIn, active]);
 
   const t = isDark ? themes.dark : themes.light;
@@ -405,12 +431,7 @@ export default function FranchiseOSDashboard() {
   const lateToday = attendanceLog.filter((a) => a.todayStatus === "Late").length;
   const attendanceRateToday = Math.round((presentToday / attendanceLog.length) * 100);
 
-  useEffect(() => {
-    const token = localStorage.getItem("fops_token");
-    setIsLoggedIn(!!token);
-    setCheckingAuth(false);
-  }, []);
-
+  // ADDED: fetch outlets once, for the inventory filter dropdown
   useEffect(() => {
     if (!isLoggedIn) return;
     fetch(`${API_BASE_URL}/api/outlets`)
@@ -422,8 +443,11 @@ export default function FranchiseOSDashboard() {
   useEffect(() => {
     if (!isLoggedIn || active !== "inventory") return;
 
-    setInventoryLoading(true);
-    setInventoryError(null);
+    let isSubscribed = true;
+    Promise.resolve().then(() => {
+      setInventoryLoading(true);
+      setInventoryError(null);
+    });
 
     const params = new URLSearchParams();
     if (inventoryOutletId !== "All") params.set("outlet_id", inventoryOutletId);
@@ -434,11 +458,19 @@ export default function FranchiseOSDashboard() {
       fetch(`${API_BASE_URL}/api/inventory/summary`).then((res) => res.json()),
     ])
       .then(([items, summary]) => {
-        setInventoryItems(Array.isArray(items) ? items : []);
-        setInventorySummary(summary);
+        if (isSubscribed) {
+          setInventoryItems(Array.isArray(items) ? items : []);
+          setInventorySummary(summary);
+        }
       })
-      .catch(() => setInventoryError("Could not load inventory from the server."))
-      .finally(() => setInventoryLoading(false));
+      .catch(() => {
+        if (isSubscribed) setInventoryError("Could not load inventory from the server.");
+      })
+      .finally(() => {
+        if (isSubscribed) setInventoryLoading(false);
+      });
+
+    return () => { isSubscribed = false; };
   }, [isLoggedIn, active, inventoryOutletId, inventoryQuery]);
 
   function handleSignOut() {
@@ -588,7 +620,7 @@ export default function FranchiseOSDashboard() {
                       <CartesianGrid strokeDasharray="3 3" stroke={t.gridLine} />
                       <XAxis dataKey="month" tick={{ fontSize: 12, fill: t.textFaint }} stroke={t.gridLine} />
                       <YAxis tick={{ fontSize: 12, fill: t.textFaint }} stroke={t.gridLine} />
-                      <Tooltip contentStyle={{ background: t.card, border: `1px solid ${t.border}`, borderRadius: 8, color: t.text }} formatter={(v: any) => `₹${Number(v || 0).toLocaleString("en-IN")}`} />
+                      <Tooltip contentStyle={{ background: t.card, border: `1px solid ${t.border}`, borderRadius: 8, color: t.text }} formatter={(v) => `₹${Number((v as number) || 0).toLocaleString("en-IN")}`} />
                       <Line type="monotone" dataKey="revenue" stroke={accent} strokeWidth={2.5} dot={{ r: 3 }} />
                     </LineChart>
                   </ResponsiveContainer>
@@ -746,7 +778,7 @@ export default function FranchiseOSDashboard() {
                       <CartesianGrid strokeDasharray="3 3" stroke={t.gridLine} />
                       <XAxis dataKey="month" tick={{ fontSize: 12, fill: t.textFaint }} stroke={t.gridLine} />
                       <YAxis tick={{ fontSize: 12, fill: t.textFaint }} stroke={t.gridLine} />
-                      <Tooltip contentStyle={{ background: t.card, border: `1px solid ${t.border}`, borderRadius: 8, color: t.text }} formatter={(v: any) => `₹${Number(v || 0).toLocaleString("en-IN")}`} />
+                      <Tooltip contentStyle={{ background: t.card, border: `1px solid ${t.border}`, borderRadius: 8, color: t.text }} formatter={(v) => `₹${Number((v as number) || 0).toLocaleString("en-IN")}`} />
                       <Line type="monotone" dataKey="revenue" stroke={accent} strokeWidth={2.5} dot={{ r: 3 }} />
                     </LineChart>
                   </ResponsiveContainer>
@@ -793,7 +825,7 @@ export default function FranchiseOSDashboard() {
                       <CartesianGrid strokeDasharray="3 3" stroke={t.gridLine} />
                       <XAxis dataKey="outlet" tick={{ fontSize: 12, fill: t.textFaint }} stroke={t.gridLine} />
                       <YAxis tick={{ fontSize: 12, fill: t.textFaint }} stroke={t.gridLine} />
-                      <Tooltip contentStyle={{ background: t.card, border: `1px solid ${t.border}`, borderRadius: 8, color: t.text }} formatter={(v: any) => `₹${Number(v || 0).toLocaleString("en-IN")}`} />
+                      <Tooltip contentStyle={{ background: t.card, border: `1px solid ${t.border}`, borderRadius: 8, color: t.text }} formatter={(v) => `₹${Number((v as number) || 0).toLocaleString("en-IN")}`} />
                       <Bar dataKey="revenue" fill="#F59E0B" radius={[4, 4, 0, 0]} />
                     </BarChart>
                   </ResponsiveContainer>
@@ -1090,8 +1122,8 @@ export default function FranchiseOSDashboard() {
                                 { employee_id: 5, full_name: "Vikas Deshmukh", role: "Executive", email: "vikas.d@franchiseops.com", outlets: { outlet_name: "Aurangabad" }, salary: 26000, status: "Active" },
                               ]
                           )
-                            .filter((emp) => staffRoleFilter === "All" || emp.role.toLowerCase().includes(staffRoleFilter.toLowerCase()))
-                            .filter((emp) => !staffQuery || emp.full_name.toLowerCase().includes(staffQuery.toLowerCase()) || emp.role.toLowerCase().includes(staffQuery.toLowerCase()))
+                            .filter((emp) => staffRoleFilter === "All" || (emp.role || "").toLowerCase().includes(staffRoleFilter.toLowerCase()))
+                            .filter((emp) => !staffQuery || (emp.full_name || "").toLowerCase().includes(staffQuery.toLowerCase()) || (emp.role || "").toLowerCase().includes(staffQuery.toLowerCase()))
                             .map((emp) => (
                               <tr key={emp.employee_id} className="border-b last:border-0" style={{ borderColor: t.border }}>
                                 <td className="px-5 py-3 font-medium" style={{ color: t.text }}>{emp.full_name}</td>
