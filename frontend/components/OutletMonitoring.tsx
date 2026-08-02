@@ -9,7 +9,7 @@ import {
   LayoutGrid, Store, Boxes, Users, Megaphone, ShieldCheck, Brain,
   BellRing, FileBarChart, Settings, Search, Sparkles, Download,
   TrendingUp, TrendingDown, MapPin, LineChart as LineChartIcon, BarChart3,
-  Sun, Moon, AlertTriangle, Eye, EyeOff, Mail, Lock
+  Sun, Moon, AlertTriangle, Eye, EyeOff, Mail, Lock, Calendar
 } from "lucide-react";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
@@ -42,6 +42,63 @@ const revenueTrendByOutlet: Record<string, { month: string; revenue: number }[]>
     { month: "Feb", revenue: 120000 }, { month: "Mar", revenue: 131000 },
     { month: "Apr", revenue: 128000 }, { month: "May", revenue: 142000 },
     { month: "Jun", revenue: 149000 }, { month: "Jul", revenue: 154000 },
+  ],
+};
+
+const weeklyRevenueTrendByOutlet: Record<string, { week: string; revenue: number }[]> = {
+  All: [
+    { week: "Week 1", revenue: 132000 }, { week: "Week 2", revenue: 145000 },
+    { week: "Week 3", revenue: 138000 }, { week: "Week 4", revenue: 151000 },
+    { week: "Week 5", revenue: 149000 }, { week: "Week 6", revenue: 162000 },
+    { week: "Week 7", revenue: 158000 }, { week: "Week 8", revenue: 171000 },
+  ],
+  Nashik: [
+    { week: "Week 1", revenue: 28000 }, { week: "Week 2", revenue: 31000 },
+    { week: "Week 3", revenue: 29500 }, { week: "Week 4", revenue: 33000 },
+    { week: "Week 5", revenue: 32000 }, { week: "Week 6", revenue: 34500 },
+    { week: "Week 7", revenue: 33500 }, { week: "Week 8", revenue: 36000 },
+  ],
+  Pune: [
+    { week: "Week 1", revenue: 35000 }, { week: "Week 2", revenue: 37500 },
+    { week: "Week 3", revenue: 36000 }, { week: "Week 4", revenue: 39000 },
+    { week: "Week 5", revenue: 38500 }, { week: "Week 6", revenue: 41000 },
+    { week: "Week 7", revenue: 40000 }, { week: "Week 8", revenue: 43000 },
+  ],
+  "Mumbai Andheri": [
+    { week: "Week 1", revenue: 21000 }, { week: "Week 2", revenue: 20000 },
+    { week: "Week 3", revenue: 19500 }, { week: "Week 4", revenue: 22000 },
+    { week: "Week 5", revenue: 21500 }, { week: "Week 6", revenue: 20500 },
+    { week: "Week 7", revenue: 22500 }, { week: "Week 8", revenue: 21000 },
+  ],
+  Nagpur: [
+    { week: "Week 1", revenue: 24000 }, { week: "Week 2", revenue: 25500 },
+    { week: "Week 3", revenue: 24500 }, { week: "Week 4", revenue: 26500 },
+    { week: "Week 5", revenue: 25000 }, { week: "Week 6", revenue: 27000 },
+    { week: "Week 7", revenue: 26000 }, { week: "Week 8", revenue: 28500 },
+  ],
+  Aurangabad: [
+    { week: "Week 1", revenue: 13500 }, { week: "Week 2", revenue: 12800 },
+    { week: "Week 3", revenue: 12000 }, { week: "Week 4", revenue: 13000 },
+    { week: "Week 5", revenue: 12500 }, { week: "Week 6", revenue: 11800 },
+    { week: "Week 7", revenue: 12200 }, { week: "Week 8", revenue: 13500 },
+  ],
+  Thane: [
+    { week: "Week 1", revenue: 29500 }, { week: "Week 2", revenue: 30800 },
+    { week: "Week 3", revenue: 29800 }, { week: "Week 4", revenue: 32000 },
+    { week: "Week 5", revenue: 31500 }, { week: "Week 6", revenue: 33500 },
+    { week: "Week 7", revenue: 32800 }, { week: "Week 8", revenue: 35000 },
+  ],
+  Kolhapur: [
+    { week: "Week 1", revenue: 23000 }, { week: "Week 2", revenue: 24500 },
+    { week: "Week 3", revenue: 23800 }, { week: "Week 4", revenue: 25500 },
+    { week: "Week 5", revenue: 24800 }, { week: "Week 6", revenue: 26000 },
+    { week: "Week 7", revenue: 25200 }, { week: "Week 8", revenue: 27000 },
+  ],
+  Solapur: [
+    { week: "Week 1", revenue: 18500 }, { week: "Week 2", revenue: 17800 },
+    { week: "Week 3", revenue: 17200 }, { week: "Week 4", revenue: 18800 },
+    { week: "Week 5", revenue: 18200 }, { week: "Week 6", revenue: 17500 },
+    { week: "Week 7", revenue: 18900 }, { week: "Week 8", revenue: 19200 },
   ],
 };
 
@@ -309,6 +366,7 @@ export default function FranchiseOSDashboard() {
   const [active, setActive] = useState("dashboard");
   const [outletTab, setOutletTab] = useState("trend");
   const [selectedOutlet, setSelectedOutlet] = useState("All");
+  const [selectedWeeklyOutlet, setSelectedWeeklyOutlet] = useState("All");
   const [pinHover, setPinHover] = useState<string | null>(null);
 
   const [inventoryItems, setInventoryItems] = useState<InventoryItem[]>([]);
@@ -340,6 +398,7 @@ export default function FranchiseOSDashboard() {
   const accent = "#2DD4BF";
   const activeLabel = modules.find((m) => m.id === active)?.label ?? "Dashboard";
   const trendData = revenueTrendByOutlet[selectedOutlet] || revenueTrendByOutlet.All;
+  const weeklyTrendData = weeklyRevenueTrendByOutlet[selectedWeeklyOutlet] || weeklyRevenueTrendByOutlet.All;
 
   const presentToday = attendanceLog.filter((a) => a.todayStatus === "Present").length;
   const absentToday = attendanceLog.filter((a) => a.todayStatus === "Absent").length;
@@ -645,6 +704,7 @@ export default function FranchiseOSDashboard() {
               <div className="flex flex-wrap gap-2">
                 {[
                   { id: "trend", label: "Sales Revenue Trend", icon: LineChartIcon },
+                  { id: "weekly", label: "Weekly Revenue", icon: Calendar },
                   { id: "compare", label: "Compare Franchise Locations", icon: BarChart3 },
                   { id: "map", label: "Outlet Map", icon: MapPin },
                 ].map((tb) => {
@@ -685,6 +745,38 @@ export default function FranchiseOSDashboard() {
                     <LineChart data={trendData}>
                       <CartesianGrid strokeDasharray="3 3" stroke={t.gridLine} />
                       <XAxis dataKey="month" tick={{ fontSize: 12, fill: t.textFaint }} stroke={t.gridLine} />
+                      <YAxis tick={{ fontSize: 12, fill: t.textFaint }} stroke={t.gridLine} />
+                      <Tooltip contentStyle={{ background: t.card, border: `1px solid ${t.border}`, borderRadius: 8, color: t.text }} formatter={(v: any) => `₹${Number(v || 0).toLocaleString("en-IN")}`} />
+                      <Line type="monotone" dataKey="revenue" stroke={accent} strokeWidth={2.5} dot={{ r: 3 }} />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+              )}
+
+              {outletTab === "weekly" && (
+                <div className="rounded-xl border p-5 transition-colors duration-200" style={{ background: t.card, borderColor: t.border }}>
+                  <div className="flex items-center justify-between mb-4 flex-wrap gap-3">
+                    <div>
+                      <p className="text-sm font-semibold" style={{ color: t.text }}>Weekly Revenue</p>
+                      <p className="text-xs" style={{ color: t.textFaint }}>Last 8 weeks</p>
+                    </div>
+                    <div className="flex items-center gap-2 flex-wrap">
+                      {Object.keys(weeklyRevenueTrendByOutlet).map((o) => (
+                        <button
+                          key={o}
+                          onClick={() => setSelectedWeeklyOutlet(o)}
+                          className="text-xs px-3 py-1.5 rounded-full border transition-colors"
+                          style={{ background: selectedWeeklyOutlet === o ? accent : "transparent", borderColor: selectedWeeklyOutlet === o ? accent : t.border, color: selectedWeeklyOutlet === o ? t.bg : t.textMuted }}
+                        >
+                          {o}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <ResponsiveContainer width="100%" height={260}>
+                    <LineChart data={weeklyTrendData}>
+                      <CartesianGrid strokeDasharray="3 3" stroke={t.gridLine} />
+                      <XAxis dataKey="week" tick={{ fontSize: 12, fill: t.textFaint }} stroke={t.gridLine} />
                       <YAxis tick={{ fontSize: 12, fill: t.textFaint }} stroke={t.gridLine} />
                       <Tooltip contentStyle={{ background: t.card, border: `1px solid ${t.border}`, borderRadius: 8, color: t.text }} formatter={(v: any) => `₹${Number(v || 0).toLocaleString("en-IN")}`} />
                       <Line type="monotone" dataKey="revenue" stroke={accent} strokeWidth={2.5} dot={{ r: 3 }} />
