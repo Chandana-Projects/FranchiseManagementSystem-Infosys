@@ -536,7 +536,9 @@ export default function FranchiseOSDashboard() {
     if (!isLoggedIn || active !== "intelligence") return;
     let isSubscribed = true;
     Promise.resolve().then(() => setIntelligenceLoading(true));
-    fetch(`${API_BASE_URL}/api/agent/franchise-intelligence`)
+    const token = localStorage.getItem("fops_token");
+    const headers: HeadersInit = token ? { "Authorization": `Bearer ${token}` } : {};
+    fetch(`${API_BASE_URL}/api/agent/franchise-intelligence`, { headers })
       .then((res) => {
         if (!res.ok) throw new Error();
         return res.json();
@@ -593,7 +595,9 @@ export default function FranchiseOSDashboard() {
     if (!isLoggedIn || active !== "staff") return;
     let isSubscribed = true;
     Promise.resolve().then(() => setStaffLoading(true));
-    fetch(`${API_BASE_URL}/api/employees`)
+    const token = localStorage.getItem("fops_token");
+    const headers: HeadersInit = token ? { "Authorization": `Bearer ${token}` } : {};
+    fetch(`${API_BASE_URL}/api/employees`, { headers })
       .then((res) => res.json())
       .then((data) => {
         if (isSubscribed) setEmployees(Array.isArray(data) ? data : []);
@@ -622,7 +626,9 @@ export default function FranchiseOSDashboard() {
   // ADDED: fetch outlets once, for the inventory filter dropdown
   useEffect(() => {
     if (!isLoggedIn) return;
-    fetch(`${API_BASE_URL}/api/outlets`)
+    const token = localStorage.getItem("fops_token");
+    const headers: HeadersInit = token ? { "Authorization": `Bearer ${token}` } : {};
+    fetch(`${API_BASE_URL}/api/outlets`, { headers })
       .then((res) => res.json())
       .then((data) => setOutlets(Array.isArray(data) ? data : []))
       .catch(() => setOutlets([]));
@@ -641,9 +647,12 @@ export default function FranchiseOSDashboard() {
     if (inventoryOutletId !== "All") params.set("outlet_id", inventoryOutletId);
     if (inventoryQuery) params.set("search", inventoryQuery);
 
+    const token = localStorage.getItem("fops_token");
+    const headers: HeadersInit = token ? { "Authorization": `Bearer ${token}` } : {};
+
     Promise.all([
-      fetch(`${API_BASE_URL}/api/inventory?${params.toString()}`).then((res) => res.json()),
-      fetch(`${API_BASE_URL}/api/inventory/summary`).then((res) => res.json()),
+      fetch(`${API_BASE_URL}/api/inventory?${params.toString()}`, { headers }).then((res) => res.json()),
+      fetch(`${API_BASE_URL}/api/inventory/summary`, { headers }).then((res) => res.json()),
     ])
       .then(([items, summary]) => {
         if (isSubscribed) {
