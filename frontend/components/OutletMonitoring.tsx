@@ -440,7 +440,7 @@ function CustomCursor({ isDark }: { isDark: boolean }) {
           y: prev.y + dy * ease,
         };
         setHistory((prevHistory) => {
-          const updated = [nextTrail, ...prevHistory].slice(0, 8);
+          const updated = [nextTrail, ...prevHistory].slice(0, 16);
           return updated;
         });
         return nextTrail;
@@ -456,25 +456,47 @@ function CustomCursor({ isDark }: { isDark: boolean }) {
 
   return (
     <>
-      {/* Trailing Lights */}
-      {history.map((pt, i) => {
-        const ratio = (8 - i) / 8;
-        return (
-          <div
-            key={i}
-            className="pointer-events-none fixed z-40 rounded-full"
-            style={{
-              left: `${pt.x}px`,
-              top: `${pt.y}px`,
-              width: `${6 * ratio}px`,
-              height: `${6 * ratio}px`,
-              background: `rgba(45, 212, 191, ${0.35 * ratio})`,
-              boxShadow: `0 0 ${12 * ratio}px rgba(45, 212, 191, ${0.5 * ratio})`,
-              transform: "translate(-50%, -50%)",
-            }}
-          />
-        );
-      })}
+      {/* Continuous Glowing Laser Tail */}
+      <svg className="pointer-events-none fixed inset-0 z-40 w-full h-full">
+        {/* Glow Layer */}
+        {history.map((pt, i) => {
+          if (i === history.length - 1) return null;
+          const nextPt = history[i + 1];
+          const ratio = (history.length - i) / history.length;
+          return (
+            <line
+              key={`glow-${i}`}
+              x1={pt.x}
+              y1={pt.y}
+              x2={nextPt.x}
+              y2={nextPt.y}
+              stroke="#2DD4BF"
+              strokeOpacity={0.25 * ratio}
+              strokeWidth={14 * ratio}
+              strokeLinecap="round"
+            />
+          );
+        })}
+        {/* Core Laser Light Layer */}
+        {history.map((pt, i) => {
+          if (i === history.length - 1) return null;
+          const nextPt = history[i + 1];
+          const ratio = (history.length - i) / history.length;
+          return (
+            <line
+              key={`core-${i}`}
+              x1={pt.x}
+              y1={pt.y}
+              x2={nextPt.x}
+              y2={nextPt.y}
+              stroke="#E6FFFA"
+              strokeOpacity={0.8 * ratio}
+              strokeWidth={4 * ratio}
+              strokeLinecap="round"
+            />
+          );
+        })}
+      </svg>
 
       {/* Inner Circle Dot */}
       <div
