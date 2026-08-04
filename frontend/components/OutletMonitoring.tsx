@@ -376,8 +376,7 @@ function CustomCursor({ isDark }: { isDark: boolean }) {
   const [position, setPosition] = useState({ x: -100, y: -100 });
   const [trail, setTrail] = useState({ x: -100, y: -100 });
   const [isVisible, setIsVisible] = useState(false);
-  const [isHovered, setIsHovered] = useState(false);
-  const [history, setHistory] = useState<Array<{ x: number; y: number }>>([]);
+  const [hoverType, setHoverType] = useState<string | null>(null);
 
   const positionRef = useRef({ x: -100, y: -100 });
 
@@ -394,23 +393,28 @@ function CustomCursor({ isDark }: { isDark: boolean }) {
 
     const handleMouseOver = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
-      if (
-        target &&
-        (target.tagName === "BUTTON" ||
-          target.tagName === "A" ||
-          target.tagName === "INPUT" ||
-          target.tagName === "SELECT" ||
-          target.closest("button") ||
-          target.closest("a") ||
-          target.closest('[role="button"]') ||
-          target.classList.contains("interactive"))
-      ) {
-        setIsHovered(true);
+      if (!target) return;
+
+      const isInput = target.tagName === "INPUT" || target.tagName === "TEXTAREA" || target.closest("input");
+      const isMapPin = target.closest(".cursor-pointer") && (target.closest("svg") || target.closest('[style*="left"]'));
+      const isExit = target.closest('[aria-label="Sign out"]') || target.closest('[onclick*="signOut"]') || (target.textContent && target.textContent.toLowerCase().includes("sign out"));
+      const isButton = target.tagName === "BUTTON" || target.tagName === "A" || target.closest("button") || target.closest("a") || target.closest('[role="button"]') || target.classList.contains("interactive");
+
+      if (isInput) {
+        setHoverType("TYPE");
+      } else if (isExit) {
+        setHoverType("EXIT");
+      } else if (isMapPin) {
+        setHoverType("MAP");
+      } else if (isButton) {
+        setHoverType("CLICK");
+      } else {
+        setHoverType(null);
       }
     };
 
     const handleMouseOut = () => {
-      setIsHovered(false);
+      setHoverType(null);
     };
 
     window.addEventListener("mousemove", handleMouseMove);
@@ -434,96 +438,58 @@ function CustomCursor({ isDark }: { isDark: boolean }) {
       setTrail((prev) => {
         const dx = positionRef.current.x - prev.x;
         const dy = positionRef.current.y - prev.y;
-        const ease = isHovered ? 0.25 : 0.15;
-        const nextTrail = {
+        const ease = hoverType ? 0.28 : 0.16;
+        return {
           x: prev.x + dx * ease,
           y: prev.y + dy * ease,
         };
-        setHistory((prevHistory) => {
-          const updated = [nextTrail, ...prevHistory].slice(0, 16);
-          return updated;
-        });
-        return nextTrail;
       });
       animationFrameId = requestAnimationFrame(updateTrail);
     };
 
     animationFrameId = requestAnimationFrame(updateTrail);
     return () => cancelAnimationFrame(animationFrameId);
-  }, [isVisible, isHovered]);
+  }, [isVisible, hoverType]);
 
   if (!isVisible) return null;
 
   return (
     <>
-      {/* Continuous Glowing Laser Tail */}
-      <svg className="pointer-events-none fixed inset-0 z-40 w-full h-full">
-        {/* Glow Layer */}
-        {history.map((pt, i) => {
-          if (i === history.length - 1) return null;
-          const nextPt = history[i + 1];
-          const ratio = (history.length - i) / history.length;
-          return (
-            <line
-              key={`glow-${i}`}
-              x1={pt.x}
-              y1={pt.y}
-              x2={nextPt.x}
-              y2={nextPt.y}
-              stroke="#2DD4BF"
-              strokeOpacity={0.25 * ratio}
-              strokeWidth={14 * ratio}
-              strokeLinecap="round"
-            />
-          );
-        })}
-        {/* Core Laser Light Layer */}
-        {history.map((pt, i) => {
-          if (i === history.length - 1) return null;
-          const nextPt = history[i + 1];
-          const ratio = (history.length - i) / history.length;
-          return (
-            <line
-              key={`core-${i}`}
-              x1={pt.x}
-              y1={pt.y}
-              x2={nextPt.x}
-              y2={nextPt.y}
-              stroke="#E6FFFA"
-              strokeOpacity={0.8 * ratio}
-              strokeWidth={4 * ratio}
-              strokeLinecap="round"
-            />
-          );
-        })}
-      </svg>
-
-      {/* Inner Circle Dot */}
+      {/* Dynamic Context HUD Outer Capsule */}
       <div
-        className="pointer-events-none fixed z-50 h-2 w-2 rounded-full"
+        className="pointer-events-none fixed z-50 flex items-center justify-center rounded-full border transition-all duration-300 ease-out"
+        style={{
+          left: `${trail.x}px`,
+          top: `${trail.y}px`,
+          width: hoverType ? "56px" : "28px",
+          height: "28px",
+          borderRadius: hoverType ? "14px" : "50%",
+          borderColor: hoverType ? "#2DD4BF" : "#2DD4BF40",
+          background: hoverType ? "rgba(45, 212, 191, 0.12)" : "transparent",
+          boxShadow: hoverType ? "0 0 16px rgba(45,212,191,0.35)" : "0 0 8px rgba(45,212,191,0.08)",
+          transform: `translate(-50%, -50%)`,
+          opacity: 0.9,
+          transition: "width 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-radius 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease, background-color 0.25s ease, box-shadow 0.25s ease",
+        }}
+      >
+        {hoverType && (
+          <span className="text-[8px] font-extrabold tracking-widest text-[#2DD4BF] select-none">
+            {hoverType}
+          </span>
+        )}
+      </div>
+
+      {/* Inner Dot Indicator */}
+      <div
+        className="pointer-events-none fixed z-50 h-1.5 w-1.5 rounded-full"
         style={{
           left: `${position.x}px`,
           top: `${position.y}px`,
           background: "#2DD4BF",
-          boxShadow: isHovered ? "0 0 16px #2DD4BF" : "0 0 8px #2DD4BF",
-          transform: `translate(-50%, -50%) scale(${isHovered ? 1.5 : 1})`,
-          transition: "transform 0.2s ease-out, box-shadow 0.2s ease-out",
-        }}
-      />
-      {/* Outer Overlapping Circle with a Gap */}
-      <div
-        className="pointer-events-none fixed z-50 rounded-full border"
-        style={{
-          left: `${trail.x}px`,
-          top: `${trail.y}px`,
-          width: isHovered ? "48px" : "36px",
-          height: isHovered ? "48px" : "36px",
-          borderColor: isHovered ? "#2DD4BF" : "#2DD4BF50",
-          background: isHovered ? "rgba(45, 212, 191, 0.08)" : "transparent",
-          boxShadow: isHovered ? "0 0 20px rgba(45,212,191,0.4)" : "0 0 10px rgba(45,212,191,0.1)",
-          transform: `translate(-50%, -50%)`,
-          opacity: 0.85,
-          transition: "width 0.2s ease-out, height 0.2s ease-out, border-color 0.2s ease-out, background-color 0.2s ease-out, box-shadow 0.2s ease-out, opacity 0.2s ease-out",
+          boxShadow: "0 0 6px #2DD4BF",
+          transform: `translate(-50%, -50%) scale(${hoverType ? 0.5 : 1})`,
+          transition: "transform 0.2s ease-out, opacity 0.2s ease-out",
+          opacity: hoverType ? 0.3 : 1,
         }}
       />
     </>
