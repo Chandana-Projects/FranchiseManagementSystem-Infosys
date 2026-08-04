@@ -2,7 +2,14 @@ const inventoryService = require("../services/inventoryService");
 
 async function getAllItems(req, res) {
   try {
-    const { outlet_id, search } = req.query;
+    let { outlet_id, search } = req.query;
+    const userRole = (req.user?.role || "manager").toLowerCase();
+
+    // Restrict manager search queries to only their designated outlet
+    if (userRole !== "admin" && userRole !== "owner" && req.user?.outlet_id) {
+      outlet_id = req.user.outlet_id;
+    }
+
     const items = await inventoryService.getAllItems({ outlet_id, search });
     res.json(items);
   } catch (err) {
@@ -22,7 +29,12 @@ async function getItemById(req, res) {
 
 async function getSummary(req, res) {
   try {
-    const summary = await inventoryService.getSummary();
+    let outlet_id = null;
+    const userRole = (req.user?.role || "manager").toLowerCase();
+    if (userRole !== "admin" && userRole !== "owner" && req.user?.outlet_id) {
+      outlet_id = req.user.outlet_id;
+    }
+    const summary = await inventoryService.getSummary(outlet_id);
     res.json(summary);
   } catch (err) {
     res.status(500).json({ error: err.message || "Failed to fetch summary" });
