@@ -33,7 +33,9 @@ const { createEmployeeSchema } = require('../schemas/employeeSchema');
  *       201:
  *         description: The created employee
  */
-router.get('/', employeeController.getAllEmployees);
-router.post('/', validateRequest(createEmployeeSchema), employeeController.createEmployee);
+const { authenticateToken, requireRole } = require('../middlewares/authMiddleware');
+
+router.get('/', authenticateToken, employeeController.getAllEmployees);
+router.post('/', authenticateToken, requireRole(['admin', 'owner']), validateRequest(createEmployeeSchema), employeeController.createEmployee);
 
 module.exports = router;
