@@ -33,9 +33,14 @@ app.use(cors({
 
 app.use(express.json());
 
+const sseRoutes = require("./routes/sseRoutes");
+const complianceRoutes = require("./routes/complianceRoutes");
+
 app.use("/api/outlets", outletRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/inventory", inventoryRoutes);
+app.use("/api/events", sseRoutes);
+app.use("/api/compliance", complianceRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/employees", employeeRoutes);
 app.use("/api/agent/franchise-intelligence", intelligenceRoutes);

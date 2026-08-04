@@ -532,6 +532,64 @@ export default function FranchiseOSDashboard() {
   const [intelligenceData, setIntelligenceData] = useState<any>(null);
   const [intelligenceLoading, setIntelligenceLoading] = useState(false);
 
+  // ADDED: Real-time synchronization & Audits state
+  const [sseTrigger, setSseTrigger] = useState(0);
+  const [audits, setAudits] = useState<any[]>([]);
+  const [auditsLoading, setAuditsLoading] = useState(false);
+  const [selectedAuditOutlet, setSelectedAuditOutlet] = useState("");
+  const [auditChecklist, setAuditChecklist] = useState<Record<string, boolean>>({
+    temp: false,
+    machine: false,
+    cleaning: false,
+    uniform: false,
+    cash: false
+  });
+  const [submittingAudit, setSubmittingAudit] = useState(false);
+
+  useEffect(() => {
+    if (!isLoggedIn) return;
+    const eventSource = new EventSource(`${API_BASE_URL}/api/events`);
+
+    eventSource.onmessage = (event) => {
+      try {
+        const message = JSON.parse(event.data);
+        if (
+          message.type === "INVENTORY_UPDATE" ||
+          message.type === "EMPLOYEE_UPDATE" ||
+          message.type === "COMPLIANCE_UPDATE"
+        ) {
+          setSseTrigger((prev) => prev + 1);
+        }
+      } catch (err) {
+        console.error("SSE parsing error:", err);
+      }
+    };
+
+    return () => {
+      eventSource.close();
+    };
+  }, [isLoggedIn]);
+
+  useEffect(() => {
+    if (!isLoggedIn || active !== "audit") return;
+    let isSubscribed = true;
+    setAuditsLoading(true);
+    const token = localStorage.getItem("fops_token");
+    const headers: HeadersInit = token ? { "Authorization": `Bearer ${token}` } : {};
+    fetch(`${API_BASE_URL}/api/compliance`, { headers })
+      .then((res) => res.json())
+      .then((data) => {
+        if (isSubscribed) setAudits(Array.isArray(data) ? data : []);
+      })
+      .catch(() => {
+        if (isSubscribed) setAudits([]);
+      })
+      .finally(() => {
+        if (isSubscribed) setAuditsLoading(false);
+      });
+    return () => { isSubscribed = false; };
+  }, [isLoggedIn, active, sseTrigger]);
+
   useEffect(() => {
     if (!isLoggedIn || active !== "intelligence") return;
     let isSubscribed = true;
@@ -589,7 +647,7 @@ export default function FranchiseOSDashboard() {
         if (isSubscribed) setIntelligenceLoading(false);
       });
     return () => { isSubscribed = false; };
-  }, [isLoggedIn, active]);
+  }, [isLoggedIn, active, sseTrigger]);
 
   useEffect(() => {
     if (!isLoggedIn || active !== "staff") return;
@@ -609,7 +667,7 @@ export default function FranchiseOSDashboard() {
         if (isSubscribed) setStaffLoading(false);
       });
     return () => { isSubscribed = false; };
-  }, [isLoggedIn, active]);
+  }, [isLoggedIn, active, sseTrigger]);
 
   const t = isDark ? themes.dark : themes.light;
   const statusColor = isDark ? statusColorDark : statusColorLight;
@@ -632,7 +690,7 @@ export default function FranchiseOSDashboard() {
       .then((res) => res.json())
       .then((data) => setOutlets(Array.isArray(data) ? data : []))
       .catch(() => setOutlets([]));
-  }, [isLoggedIn]);
+  }, [isLoggedIn, sseTrigger]);
 
   useEffect(() => {
     if (!isLoggedIn || active !== "inventory") return;
@@ -668,7 +726,7 @@ export default function FranchiseOSDashboard() {
       });
 
     return () => { isSubscribed = false; };
-  }, [isLoggedIn, active, inventoryOutletId, inventoryQuery]);
+  }, [isLoggedIn, active, inventoryOutletId, inventoryQuery, sseTrigger]);
 
   function handleSignOut() {
     localStorage.removeItem("fops_token");

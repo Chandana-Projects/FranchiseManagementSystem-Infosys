@@ -41,6 +41,8 @@ async function getSummary(req, res) {
   }
 }
 
+const { broadcast } = require("../services/sseService");
+
 async function createItem(req, res) {
   try {
     const { outlet_id, sku, name } = req.body;
@@ -48,6 +50,7 @@ async function createItem(req, res) {
       return res.status(400).json({ error: "outlet_id, sku, and name are required" });
     }
     const item = await inventoryService.createItem(req.body);
+    broadcast("INVENTORY_UPDATE", item);
     res.status(201).json(item);
   } catch (err) {
     res.status(500).json({ error: err.message || "Failed to create item" });
@@ -57,6 +60,7 @@ async function createItem(req, res) {
 async function updateItem(req, res) {
   try {
     const item = await inventoryService.updateItem(req.params.id, req.body);
+    broadcast("INVENTORY_UPDATE", item);
     res.json(item);
   } catch (err) {
     res.status(500).json({ error: err.message || "Failed to update item" });
@@ -66,6 +70,7 @@ async function updateItem(req, res) {
 async function deleteItem(req, res) {
   try {
     await inventoryService.deleteItem(req.params.id);
+    broadcast("INVENTORY_UPDATE", { item_id: req.params.id });
     res.status(204).send();
   } catch (err) {
     res.status(500).json({ error: err.message || "Failed to delete item" });

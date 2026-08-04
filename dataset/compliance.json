@@ -1,0 +1,29 @@
+[
+  {
+    "id": 1,
+    "outlet_id": 1,
+    "outlet_name": "Nashik City Center",
+    "date": "2026-08-03",
+    "score": 100,
+    "status": "Healthy",
+    "inspector": "Abhishek Pattnaik"
+  },
+  {
+    "id": 2,
+    "outlet_id": 2,
+    "outlet_name": "Pune FC Road",
+    "date": "2026-08-04",
+    "score": 80,
+    "status": "Healthy",
+    "inspector": "Abhishek Pattnaik"
+  },
+  {
+    "id": 3,
+    "outlet_id": 3,
+    "outlet_name": "Mumbai Andheri East",
+    "date": "2026-08-04",
+    "score": 60,
+    "status": "Watch",
+    "inspector": "Abhishek Pattnaik"
+  }
+]

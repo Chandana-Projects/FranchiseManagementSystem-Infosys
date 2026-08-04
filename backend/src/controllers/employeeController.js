@@ -42,6 +42,8 @@ exports.getAllEmployees = async (req, res, next) => {
   }
 };
 
+const { broadcast } = require("../services/sseService");
+
 exports.createEmployee = async (req, res, next) => {
   try {
     const { full_name, email, phone, role, salary, outlet_id, status, joining_date } = req.body;
@@ -57,6 +59,10 @@ exports.createEmployee = async (req, res, next) => {
         joining_date: joining_date ? new Date(joining_date) : undefined
       }
     });
+    
+    // Broadcast real-time change
+    broadcast("EMPLOYEE_UPDATE", newEmployee);
+
     res.status(201).json(newEmployee);
   } catch (error) {
     next(error);
