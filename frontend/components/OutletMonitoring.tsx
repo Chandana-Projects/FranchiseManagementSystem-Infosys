@@ -377,6 +377,7 @@ function CustomCursor({ isDark }: { isDark: boolean }) {
   const [trail, setTrail] = useState({ x: -100, y: -100 });
   const [isVisible, setIsVisible] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+  const [history, setHistory] = useState<Array<{ x: number; y: number }>>([]);
 
   const positionRef = useRef({ x: -100, y: -100 });
 
@@ -434,10 +435,15 @@ function CustomCursor({ isDark }: { isDark: boolean }) {
         const dx = positionRef.current.x - prev.x;
         const dy = positionRef.current.y - prev.y;
         const ease = isHovered ? 0.25 : 0.15;
-        return {
+        const nextTrail = {
           x: prev.x + dx * ease,
           y: prev.y + dy * ease,
         };
+        setHistory((prevHistory) => {
+          const updated = [nextTrail, ...prevHistory].slice(0, 8);
+          return updated;
+        });
+        return nextTrail;
       });
       animationFrameId = requestAnimationFrame(updateTrail);
     };
@@ -450,6 +456,26 @@ function CustomCursor({ isDark }: { isDark: boolean }) {
 
   return (
     <>
+      {/* Trailing Lights */}
+      {history.map((pt, i) => {
+        const ratio = (8 - i) / 8;
+        return (
+          <div
+            key={i}
+            className="pointer-events-none fixed z-40 rounded-full"
+            style={{
+              left: `${pt.x}px`,
+              top: `${pt.y}px`,
+              width: `${6 * ratio}px`,
+              height: `${6 * ratio}px`,
+              background: `rgba(45, 212, 191, ${0.35 * ratio})`,
+              boxShadow: `0 0 ${12 * ratio}px rgba(45, 212, 191, ${0.5 * ratio})`,
+              transform: "translate(-50%, -50%)",
+            }}
+          />
+        );
+      })}
+
       {/* Inner Circle Dot */}
       <div
         className="pointer-events-none fixed z-50 h-2 w-2 rounded-full"
