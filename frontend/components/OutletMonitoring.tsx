@@ -310,6 +310,7 @@ function LoginPage({
 
   return (
     <div className="w-full min-h-[800px] flex items-center justify-center font-sans" style={{ background: t.bg, color: t.text }}>
+      <CustomCursor isDark={true} />
       <div className="w-[380px]">
         <div className="flex items-center justify-center gap-2 mb-7">
           <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-teal-400 to-teal-600 flex items-center justify-center font-bold text-base" style={{ color: t.bg }}>F</div>
@@ -375,6 +376,7 @@ function CustomCursor({ isDark }: { isDark: boolean }) {
   const [position, setPosition] = useState({ x: -100, y: -100 });
   const [trail, setTrail] = useState({ x: -100, y: -100 });
   const [isVisible, setIsVisible] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
@@ -386,12 +388,37 @@ function CustomCursor({ isDark }: { isDark: boolean }) {
       setIsVisible(false);
     };
 
+    const handleMouseOver = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (
+        target &&
+        (target.tagName === "BUTTON" ||
+          target.tagName === "A" ||
+          target.tagName === "INPUT" ||
+          target.tagName === "SELECT" ||
+          target.closest("button") ||
+          target.closest("a") ||
+          target.closest('[role="button"]') ||
+          target.classList.contains("interactive"))
+      ) {
+        setIsHovered(true);
+      }
+    };
+
+    const handleMouseOut = () => {
+      setIsHovered(false);
+    };
+
     window.addEventListener("mousemove", handleMouseMove);
     document.addEventListener("mouseleave", handleMouseLeave);
+    document.addEventListener("mouseover", handleMouseOver);
+    document.addEventListener("mouseout", handleMouseOut);
 
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
       document.removeEventListener("mouseleave", handleMouseLeave);
+      document.removeEventListener("mouseover", handleMouseOver);
+      document.removeEventListener("mouseout", handleMouseOut);
     };
   }, []);
 
@@ -403,7 +430,7 @@ function CustomCursor({ isDark }: { isDark: boolean }) {
       setTrail((prev) => {
         const dx = position.x - prev.x;
         const dy = position.y - prev.y;
-        const ease = 0.15;
+        const ease = isHovered ? 0.22 : 0.12;
         return {
           x: prev.x + dx * ease,
           y: prev.y + dy * ease,
@@ -414,29 +441,36 @@ function CustomCursor({ isDark }: { isDark: boolean }) {
 
     animationFrameId = requestAnimationFrame(updateTrail);
     return () => cancelAnimationFrame(animationFrameId);
-  }, [position, isVisible]);
+  }, [position, isVisible, isHovered]);
 
   if (!isVisible) return null;
 
   return (
     <>
+      {/* Inner Circle Dot */}
       <div
-        className="pointer-events-none fixed z-50 h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full transition-transform duration-75"
+        className="pointer-events-none fixed z-50 h-2 w-2 rounded-full transition-transform duration-200"
         style={{
           left: `${position.x}px`,
           top: `${position.y}px`,
           background: "#2DD4BF",
-          boxShadow: "0 0 8px #2DD4BF",
+          boxShadow: isHovered ? "0 0 16px #2DD4BF" : "0 0 8px #2DD4BF",
+          transform: `translate(-50%, -50%) scale(${isHovered ? 1.5 : 1})`,
         }}
       />
+      {/* Outer Overlapping Circle with a Gap */}
       <div
-        className="pointer-events-none fixed z-50 h-8 w-8 -translate-x-1/2 -translate-y-1/2 rounded-full border transition-all duration-75"
+        className="pointer-events-none fixed z-50 rounded-full border transition-all duration-300 ease-out"
         style={{
           left: `${trail.x}px`,
           top: `${trail.y}px`,
-          borderColor: "#2DD4BF",
-          boxShadow: "0 0 12px rgba(45,212,191,0.25)",
-          opacity: 0.6,
+          width: isHovered ? "48px" : "36px",
+          height: isHovered ? "48px" : "36px",
+          borderColor: isHovered ? "#2DD4BF" : "#2DD4BF50",
+          background: isHovered ? "rgba(45, 212, 191, 0.08)" : "transparent",
+          boxShadow: isHovered ? "0 0 20px rgba(45,212,191,0.4)" : "0 0 10px rgba(45,212,191,0.1)",
+          transform: `translate(-50%, -50%)`,
+          opacity: 0.85,
         }}
       />
     </>
