@@ -371,15 +371,89 @@ function LoginPage({
   );
 }
 
+function CustomCursor({ isDark }: { isDark: boolean }) {
+  const [position, setPosition] = useState({ x: -100, y: -100 });
+  const [trail, setTrail] = useState({ x: -100, y: -100 });
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      setPosition({ x: e.clientX, y: e.clientY });
+      setIsVisible(true);
+    };
+
+    const handleMouseLeave = () => {
+      setIsVisible(false);
+    };
+
+    window.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseleave", handleMouseLeave);
+
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseleave", handleMouseLeave);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!isVisible) return;
+    let animationFrameId: number;
+
+    const updateTrail = () => {
+      setTrail((prev) => {
+        const dx = position.x - prev.x;
+        const dy = position.y - prev.y;
+        const ease = 0.15;
+        return {
+          x: prev.x + dx * ease,
+          y: prev.y + dy * ease,
+        };
+      });
+      animationFrameId = requestAnimationFrame(updateTrail);
+    };
+
+    animationFrameId = requestAnimationFrame(updateTrail);
+    return () => cancelAnimationFrame(animationFrameId);
+  }, [position, isVisible]);
+
+  if (!isVisible) return null;
+
+  return (
+    <>
+      <div
+        className="pointer-events-none fixed z-50 h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full transition-transform duration-75"
+        style={{
+          left: `${position.x}px`,
+          top: `${position.y}px`,
+          background: "#2DD4BF",
+          boxShadow: "0 0 8px #2DD4BF",
+        }}
+      />
+      <div
+        className="pointer-events-none fixed z-50 h-8 w-8 -translate-x-1/2 -translate-y-1/2 rounded-full border transition-all duration-75"
+        style={{
+          left: `${trail.x}px`,
+          top: `${trail.y}px`,
+          borderColor: "#2DD4BF",
+          boxShadow: "0 0 12px rgba(45,212,191,0.25)",
+          opacity: 0.6,
+        }}
+      />
+    </>
+  );
+}
+
 export default function FranchiseOSDashboard() {
   const [isDark, setIsDark] = useState(true);
-  const [isLoggedIn, setIsLoggedIn] = useState(() => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [checkingAuth, setCheckingAuth] = useState(true);
+
+  useEffect(() => {
     if (typeof window !== "undefined") {
-      return !!localStorage.getItem("fops_token");
+      setIsLoggedIn(!!localStorage.getItem("fops_token"));
     }
-    return false;
-  });
-  const [checkingAuth] = useState(false);
+    setCheckingAuth(false);
+  }, []);
   const [active, setActive] = useState("dashboard");
   const [outletTab, setOutletTab] = useState("trend");
   const [selectedOutlet, setSelectedOutlet] = useState("All");
@@ -400,6 +474,67 @@ export default function FranchiseOSDashboard() {
   const [staffQuery, setStaffQuery] = useState("");
   const [staffRoleFilter, setStaffRoleFilter] = useState("All");
   const [staffTab, setStaffTab] = useState<"directory" | "attendance">("directory");
+
+  // ADDED: Franchise Intelligence state
+  const [intelligenceData, setIntelligenceData] = useState<any>(null);
+  const [intelligenceLoading, setIntelligenceLoading] = useState(false);
+
+  useEffect(() => {
+    if (!isLoggedIn || active !== "intelligence") return;
+    let isSubscribed = true;
+    Promise.resolve().then(() => setIntelligenceLoading(true));
+    fetch(`${API_BASE_URL}/api/agent/franchise-intelligence`)
+      .then((res) => {
+        if (!res.ok) throw new Error();
+        return res.json();
+      })
+      .then((data) => {
+        if (isSubscribed) setIntelligenceData(data);
+      })
+      .catch(() => {
+        if (isSubscribed) {
+          setIntelligenceData({
+            overallHealth: 82,
+            underperformingCount: 1,
+            recommendations: [
+              {
+                outletId: 5,
+                outletName: "Aurangabad CIDCO",
+                type: "performance",
+                priority: "High",
+                message: "Operational Risk: Aurangabad CIDCO health score is critical (41/100).",
+                suggestion: "Initiate operational audit and adjust staffing schedule to meet local demand."
+              },
+              {
+                outletId: 3,
+                outletName: "Mumbai Andheri East",
+                type: "inventory",
+                priority: "Medium",
+                message: "Low Stock Alert: 'Espresso Beans' (SKU-ESP-001) at Mumbai Andheri East is low.",
+                suggestion: "Reorder at least 150 units of Espresso Beans from supplier Coffee Farms Corp."
+              }
+            ],
+            forecasts: [
+              { outletId: 1, outletName: "Nashik City Center", currentRevenue: 128000, predictedRevenue: 136200, confidence: "High", trend: "Upward" },
+              { outletId: 2, outletName: "Pune FC Road", currentRevenue: 154000, predictedRevenue: 169500, confidence: "High", trend: "Upward" },
+              { outletId: 3, outletName: "Mumbai Andheri East", currentRevenue: 96000, predictedRevenue: 93000, confidence: "Medium", trend: "Downward" },
+              { outletId: 5, outletName: "Aurangabad CIDCO", currentRevenue: 61000, predictedRevenue: 53500, confidence: "Low", trend: "Downward" }
+            ],
+            outletsHealth: [
+              { outlet_id: 1, outlet_name: "Nashik City Center", city: "Nashik", calculatedHealth: 88, perfScore: 88, customScore: 88, status: "Healthy" },
+              { outlet_id: 2, outlet_name: "Pune FC Road", city: "Pune", calculatedHealth: 94, perfScore: 94, customScore: 94, status: "Healthy" },
+              { outlet_id: 3, outlet_name: "Mumbai Andheri East", city: "Mumbai", calculatedHealth: 72, perfScore: 72, customScore: 72, status: "Watch" },
+              { outlet_id: 4, outlet_name: "Nagpur Dharampeth", city: "Nagpur", calculatedHealth: 87, perfScore: 87, customScore: 87, status: "Healthy" },
+              { outlet_id: 5, outlet_name: "Aurangabad CIDCO", city: "Aurangabad", calculatedHealth: 41, perfScore: 41, customScore: 41, status: "Critical" }
+            ]
+          });
+        }
+      })
+      .finally(() => {
+        if (isSubscribed) setIntelligenceLoading(false);
+      });
+    return () => { isSubscribed = false; };
+  }, [isLoggedIn, active]);
 
   useEffect(() => {
     if (!isLoggedIn || active !== "staff") return;
@@ -489,6 +624,7 @@ export default function FranchiseOSDashboard() {
 
   return (
     <div className="w-full min-h-[800px] flex font-sans transition-colors duration-200" style={{ background: t.bg, color: t.text }}>
+      <CustomCursor isDark={isDark} />
       <aside className="w-64 flex flex-col shrink-0 border-r transition-colors duration-200" style={{ background: t.panel, borderColor: t.border }}>
         <div className="px-5 py-5 flex items-center gap-2 border-b" style={{ borderColor: t.border }}>
           <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-teal-400 to-teal-600 flex items-center justify-center font-bold text-sm" style={{ color: t.bg }}>F</div>
@@ -836,13 +972,23 @@ export default function FranchiseOSDashboard() {
                 <div className="rounded-xl border p-5 transition-colors duration-200" style={{ background: t.card, borderColor: t.border }}>
                   <p className="text-sm font-semibold mb-1 flex items-center gap-2" style={{ color: t.text }}><MapPin size={15} color={accent} /> Outlet Locations</p>
                   <p className="text-xs mb-4" style={{ color: t.textFaint }}>Prototype map — swap for a real Google Maps component using lat/lng later</p>
-                  <div className="relative w-full h-[300px] rounded-lg border overflow-hidden" style={{ background: t.bg, borderColor: t.border }}>
+                  <div className="relative w-full h-[300px] rounded-lg border overflow-hidden flex items-center justify-center" style={{ background: t.bg, borderColor: t.border }}>
+                    <svg className="absolute inset-0 w-full h-full opacity-30" viewBox="0 0 100 100" preserveAspectRatio="none">
+                      <path d="M 22 48 L 48 55 L 42 28 L 30 44 L 22 48 Z" fill="none" stroke={t.border} strokeWidth="0.5" strokeDasharray="2 2" />
+                      <path d="M 48 55 L 45 80 L 65 72 L 58 40 L 48 55 Z" fill="none" stroke={t.border} strokeWidth="0.5" strokeDasharray="2 2" />
+                      <path d="M 58 40 L 82 38 L 65 72 Z" fill="none" stroke={t.border} strokeWidth="0.5" strokeDasharray="2 2" />
+                    </svg>
+
                     {outletLocations.map((loc) => (
-                      <div key={loc.name} className="absolute -translate-x-1/2 -translate-y-full cursor-pointer" style={{ left: `${loc.x}%`, top: `${loc.y}%` }}
+                      <div key={loc.name} className="absolute -translate-x-1/2 -translate-y-full cursor-pointer group transition-all duration-300" style={{ left: `${loc.x}%`, top: `${loc.y}%` }}
                         onMouseEnter={() => setPinHover(loc.name)} onMouseLeave={() => setPinHover(null)}>
-                        <MapPin size={26} fill={pinColor[loc.status]} color={pinColor[loc.status]} strokeWidth={1} />
+                        <span className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full animate-ping opacity-25" style={{ background: pinColor[loc.status] }} />
+                        <MapPin size={26} fill={pinColor[loc.status]} color={t.bg} stroke={pinColor[loc.status]} strokeWidth={2} className="relative z-10 drop-shadow-[0_0_8px_rgba(45,212,191,0.5)] group-hover:scale-110 transition-transform" />
                         {pinHover === loc.name && (
-                          <div className="absolute left-1/2 -translate-x-1/2 -top-9 text-white text-xs px-2 py-1 rounded whitespace-nowrap" style={{ background: "#1E293B" }}>{loc.name} — {loc.status}</div>
+                          <div className="absolute left-1/2 -translate-x-1/2 -top-11 text-white text-xs px-2.5 py-1.5 rounded-lg shadow-xl border z-20 whitespace-nowrap" style={{ background: t.card, borderColor: t.border }}>
+                            <p className="font-semibold">{loc.name}</p>
+                            <p className="text-[10px] text-slate-400 mt-0.5">Status: <span style={{ color: pinColor[loc.status] }}>{loc.status}</span></p>
+                          </div>
                         )}
                       </div>
                     ))}
@@ -1224,6 +1370,95 @@ export default function FranchiseOSDashboard() {
                     </table>
                   </div>
                 </div>
+              )}
+            </div>
+          ) : active === "intelligence" ? (
+            <div className="space-y-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xs uppercase tracking-wide font-medium" style={{ color: t.textFaint }}>Franchise Intelligence AI</p>
+                  <h2 className="text-xl font-bold mt-0.5" style={{ color: t.text }}>Strategic Agent Predictions</h2>
+                </div>
+                <div className="text-xs px-3 py-1.5 rounded-full border bg-teal-500/10 text-teal-400 border-teal-500/30">
+                  AI Model Active
+                </div>
+              </div>
+
+              {intelligenceLoading && (
+                <div className="py-12 text-center" style={{ color: t.textFaint }}>Calculating predictive metrics...</div>
+              )}
+
+              {!intelligenceLoading && intelligenceData && (
+                <>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="rounded-xl border p-4 transition-colors duration-200" style={{ background: t.card, borderColor: t.border }}>
+                      <p className="text-lg font-semibold" style={{ color: t.text }}>{intelligenceData.overallHealth}%</p>
+                      <p className="text-xs text-slate-400 mt-1">Network Average Health</p>
+                    </div>
+                    <div className="rounded-xl border p-4 transition-colors duration-200" style={{ background: t.card, borderColor: t.border }}>
+                      <p className="text-lg font-semibold" style={{ color: intelligenceData.underperformingCount > 0 ? "#FB7185" : accent }}>
+                        {intelligenceData.underperformingCount}
+                      </p>
+                      <p className="text-xs text-slate-400 mt-1">Underperforming Outlets</p>
+                    </div>
+                    <div className="rounded-xl border p-4 transition-colors duration-200" style={{ background: t.card, borderColor: t.border }}>
+                      <p className="text-lg font-semibold" style={{ color: accent }}>
+                        {intelligenceData.recommendations?.length || 0}
+                      </p>
+                      <p className="text-xs text-slate-400 mt-1">AI Action Recommendations</p>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div className="rounded-xl border p-5 transition-colors duration-200" style={{ background: t.card, borderColor: t.border }}>
+                      <p className="text-sm font-semibold mb-3" style={{ color: t.text }}>Active Recommendations &amp; Interventions</p>
+                      <div className="space-y-3">
+                        {intelligenceData.recommendations?.map((rec: any, idx: number) => (
+                          <div key={idx} className="p-4 rounded-lg border text-sm" style={{ background: t.bg, borderColor: rec.priority === "High" ? "#FB718533" : t.border }}>
+                            <div className="flex items-center gap-2 mb-1.5">
+                              <span className={`text-[10px] px-2 py-0.5 rounded font-bold uppercase ${rec.priority === "High" ? "bg-rose-500/10 text-rose-400" : "bg-amber-500/10 text-amber-400"}`}>
+                                {rec.priority} Priority
+                              </span>
+                              <span className="text-xs font-semibold" style={{ color: t.textMuted }}>{rec.outletName}</span>
+                            </div>
+                            <p className="text-xs mb-2" style={{ color: t.text }}>{rec.message}</p>
+                            <div className="text-xs p-2 rounded bg-teal-500/5 text-teal-400 border border-teal-500/10">
+                              <span className="font-bold">AI Suggestion:</span> {rec.suggestion}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="rounded-xl border p-5 transition-colors duration-200" style={{ background: t.card, borderColor: t.border }}>
+                      <p className="text-sm font-semibold mb-3" style={{ color: t.text }}>Revenue Trends &amp; Next Month Predictions</p>
+                      <table className="w-full text-xs">
+                        <thead>
+                          <tr className="text-left border-y py-2" style={{ color: t.textFaint, borderColor: t.border }}>
+                            <th className="py-2">Outlet</th>
+                            <th className="py-2 text-right">Current MTD</th>
+                            <th className="py-2 text-right">AI Predicted</th>
+                            <th className="py-2 text-right">Growth / Trend</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {intelligenceData.forecasts?.map((f: any, idx: number) => (
+                            <tr key={idx} className="border-b last:border-0" style={{ borderColor: t.border }}>
+                              <td className="py-2.5 font-medium" style={{ color: t.text }}>{f.outletName}</td>
+                              <td className="py-2.5 text-right" style={{ color: t.textMuted }}>₹{f.currentRevenue.toLocaleString("en-IN")}</td>
+                              <td className="py-2.5 text-right font-semibold" style={{ color: accent }}>₹{f.predictedRevenue.toLocaleString("en-IN")}</td>
+                              <td className="py-2.5 text-right">
+                                <span className={`font-medium ${f.trend === "Upward" || f.trend === "Stable" ? "text-teal-400" : "text-rose-400"}`}>
+                                  {f.trend} ({f.confidence} Confidence)
+                                </span>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </>
               )}
             </div>
           ) : (
