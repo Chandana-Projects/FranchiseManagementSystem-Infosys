@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, Radar, Legend
@@ -378,8 +378,11 @@ function CustomCursor({ isDark }: { isDark: boolean }) {
   const [isVisible, setIsVisible] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
 
+  const positionRef = useRef({ x: -100, y: -100 });
+
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
+      positionRef.current = { x: e.clientX, y: e.clientY };
       setPosition({ x: e.clientX, y: e.clientY });
       setIsVisible(true);
     };
@@ -428,9 +431,9 @@ function CustomCursor({ isDark }: { isDark: boolean }) {
 
     const updateTrail = () => {
       setTrail((prev) => {
-        const dx = position.x - prev.x;
-        const dy = position.y - prev.y;
-        const ease = isHovered ? 0.22 : 0.12;
+        const dx = positionRef.current.x - prev.x;
+        const dy = positionRef.current.y - prev.y;
+        const ease = isHovered ? 0.25 : 0.15;
         return {
           x: prev.x + dx * ease,
           y: prev.y + dy * ease,
@@ -441,7 +444,7 @@ function CustomCursor({ isDark }: { isDark: boolean }) {
 
     animationFrameId = requestAnimationFrame(updateTrail);
     return () => cancelAnimationFrame(animationFrameId);
-  }, [position, isVisible, isHovered]);
+  }, [isVisible, isHovered]);
 
   if (!isVisible) return null;
 
@@ -449,18 +452,19 @@ function CustomCursor({ isDark }: { isDark: boolean }) {
     <>
       {/* Inner Circle Dot */}
       <div
-        className="pointer-events-none fixed z-50 h-2 w-2 rounded-full transition-transform duration-200"
+        className="pointer-events-none fixed z-50 h-2 w-2 rounded-full"
         style={{
           left: `${position.x}px`,
           top: `${position.y}px`,
           background: "#2DD4BF",
           boxShadow: isHovered ? "0 0 16px #2DD4BF" : "0 0 8px #2DD4BF",
           transform: `translate(-50%, -50%) scale(${isHovered ? 1.5 : 1})`,
+          transition: "transform 0.2s ease-out, box-shadow 0.2s ease-out",
         }}
       />
       {/* Outer Overlapping Circle with a Gap */}
       <div
-        className="pointer-events-none fixed z-50 rounded-full border transition-all duration-300 ease-out"
+        className="pointer-events-none fixed z-50 rounded-full border"
         style={{
           left: `${trail.x}px`,
           top: `${trail.y}px`,
@@ -471,6 +475,7 @@ function CustomCursor({ isDark }: { isDark: boolean }) {
           boxShadow: isHovered ? "0 0 20px rgba(45,212,191,0.4)" : "0 0 10px rgba(45,212,191,0.1)",
           transform: `translate(-50%, -50%)`,
           opacity: 0.85,
+          transition: "width 0.2s ease-out, height 0.2s ease-out, border-color 0.2s ease-out, background-color 0.2s ease-out, box-shadow 0.2s ease-out, opacity 0.2s ease-out",
         }}
       />
     </>
