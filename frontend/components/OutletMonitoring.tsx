@@ -661,7 +661,7 @@ export default function FranchiseOSDashboard() {
         if (isSubscribed) setIntelligenceLoading(false);
       });
     return () => { isSubscribed = false; };
-  }, [isLoggedIn, sseTrigger]);
+  }, [isLoggedIn, active, sseTrigger]);
 
   useEffect(() => {
     if (!isLoggedIn || active !== "staff") return;
