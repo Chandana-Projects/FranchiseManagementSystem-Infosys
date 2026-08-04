@@ -605,7 +605,7 @@ export default function FranchiseOSDashboard() {
   }, [isLoggedIn, active, sseTrigger]);
 
   useEffect(() => {
-    if (!isLoggedIn || active !== "intelligence") return;
+    if (!isLoggedIn) return;
     let isSubscribed = true;
     Promise.resolve().then(() => setIntelligenceLoading(true));
     const token = localStorage.getItem("fops_token");
@@ -661,7 +661,7 @@ export default function FranchiseOSDashboard() {
         if (isSubscribed) setIntelligenceLoading(false);
       });
     return () => { isSubscribed = false; };
-  }, [isLoggedIn, active, sseTrigger]);
+  }, [isLoggedIn, sseTrigger]);
 
   useEffect(() => {
     if (!isLoggedIn || active !== "staff") return;
