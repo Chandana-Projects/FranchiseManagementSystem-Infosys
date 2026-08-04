@@ -266,7 +266,7 @@ function LoginPage({
 }: {
   t: typeof themes.dark;
   accent: string;
-  onLogin: () => void;
+  onLogin: (user: any) => void;
 }) {
   const [showPw, setShowPw] = useState(false);
   const [email, setEmail] = useState("");
@@ -300,7 +300,7 @@ function LoginPage({
       }
       localStorage.setItem("fops_token", data.token);
       localStorage.setItem("fops_user", JSON.stringify(data.user));
-      onLogin();
+      onLogin(data.user);
     } catch {
       setError("Could not reach the server. Is the backend running?");
     } finally {
@@ -500,10 +500,24 @@ export default function FranchiseOSDashboard() {
   const [isDark, setIsDark] = useState(true);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [checkingAuth, setCheckingAuth] = useState(true);
+  const [currentUser, setCurrentUser] = useState<any>(null);
+  const [showProfileDropdown, setShowProfileDropdown] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [showAIOverlay, setShowAIOverlay] = useState(false);
+  const [aiMessages, setAiMessages] = useState<Array<{ sender: "user" | "ai"; text: string }>>([
+    { sender: "ai", text: "Welcome to Franchise Intelligence AI. Ask me about outlet health scores, recommendations, low stock warnings, or revenue predictions." }
+  ]);
+  const [aiInput, setAiInput] = useState("");
 
   useEffect(() => {
     if (typeof window !== "undefined") {
       setIsLoggedIn(!!localStorage.getItem("fops_token"));
+      const stored = localStorage.getItem("fops_user");
+      if (stored) {
+        try {
+          setCurrentUser(JSON.parse(stored));
+        } catch (_) {}
+      }
     }
     setCheckingAuth(false);
   }, []);
@@ -739,7 +753,7 @@ export default function FranchiseOSDashboard() {
   }
 
   if (!isLoggedIn) {
-    return <LoginPage t={t} accent={accent} onLogin={() => setIsLoggedIn(true)} />;
+    return <LoginPage t={t} accent={accent} onLogin={(user) => { setCurrentUser(user); setIsLoggedIn(true); }} />;
   }
 
   return (
@@ -781,11 +795,56 @@ export default function FranchiseOSDashboard() {
 
       <main className="flex-1 overflow-y-auto">
         <div className="border-b px-8 py-4 flex items-center justify-between gap-4 transition-colors duration-200" style={{ background: t.panel, borderColor: t.border }}>
-          <div className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm flex-1 max-w-md border" style={{ background: t.inputBg, borderColor: t.border, color: t.textFaint }}>
-            <Search size={14} />
-            <span>Search outlets, reports, insights...</span>
+          <div className="relative flex items-center gap-2 rounded-lg px-3 py-1.5 text-sm flex-1 max-w-md border" style={{ background: t.inputBg, borderColor: t.border, color: t.text }}>
+            <Search size={14} className="text-slate-400" />
+            <input
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search outlets, employees, SKUs..."
+              className="flex-1 bg-transparent border-0 outline-none text-xs"
+              style={{ color: t.text }}
+            />
+            {searchQuery && (
+              <button onClick={() => setSearchQuery("")} className="text-[10px] text-slate-400 hover:text-slate-200">Clear</button>
+            )}
+
+            {/* Dropdown Floating Search Results */}
+            {searchQuery && (
+              <div className="absolute top-full left-0 right-0 mt-2 rounded-xl border p-4 shadow-xl z-50 text-left" style={{ background: t.card, borderColor: t.border }}>
+                <p className="text-[10px] font-bold uppercase tracking-wider text-teal-400 mb-2">Search Results</p>
+                <div className="space-y-3 max-h-[300px] overflow-y-auto pr-1">
+                  {/* Outlets Match */}
+                  {outlets.filter(o => o.outlet_name.toLowerCase().includes(searchQuery.toLowerCase()) || (o.city && o.city.toLowerCase().includes(searchQuery.toLowerCase()))).map(o => (
+                    <div key={`s-o-${o.outlet_id}`} onClick={() => { setActive("outlet"); setSelectedOutlet(String(o.outlet_id)); setSearchQuery(""); }} className="p-2 rounded hover:bg-teal-500/10 cursor-pointer transition-colors">
+                      <p className="font-semibold text-xs text-slate-200">{o.outlet_name}</p>
+                      <p className="text-[10px] text-slate-400">Outlet Location • {o.city}</p>
+                    </div>
+                  ))}
+                  {/* Employees Match */}
+                  {employees.filter(e => e.full_name?.toLowerCase().includes(searchQuery.toLowerCase()) || e.role?.toLowerCase().includes(searchQuery.toLowerCase())).map(e => (
+                    <div key={`s-e-${e.employee_id}`} onClick={() => { setActive("staff"); setStaffTab("directory"); setSearchQuery(""); }} className="p-2 rounded hover:bg-teal-500/10 cursor-pointer transition-colors">
+                      <p className="font-semibold text-xs text-slate-200">{e.full_name}</p>
+                      <p className="text-[10px] text-slate-400">Employee • {e.role} • {e.outlets?.outlet_name}</p>
+                    </div>
+                  ))}
+                  {/* Inventory SKU Match */}
+                  {inventoryItems.filter(i => i.name.toLowerCase().includes(searchQuery.toLowerCase()) || i.sku.toLowerCase().includes(searchQuery.toLowerCase())).map(i => (
+                    <div key={`s-i-${i.item_id}`} onClick={() => { setActive("inventory"); setInventoryQuery(i.sku); setSearchQuery(""); }} className="p-2 rounded hover:bg-teal-500/10 cursor-pointer transition-colors">
+                      <p className="font-semibold text-xs text-slate-200">{i.name}</p>
+                      <p className="text-[10px] text-slate-400">Inventory SKU • {i.sku} • Stock: {Number(i.quantity)}</p>
+                    </div>
+                  ))}
+                  {/* Empty State */}
+                  {outlets.filter(o => o.outlet_name.toLowerCase().includes(searchQuery.toLowerCase())).length === 0 &&
+                   employees.filter(e => e.full_name?.toLowerCase().includes(searchQuery.toLowerCase())).length === 0 &&
+                   inventoryItems.filter(i => i.name.toLowerCase().includes(searchQuery.toLowerCase()) || i.sku.toLowerCase().includes(searchQuery.toLowerCase())).length === 0 && (
+                    <p className="text-xs text-slate-500 text-center py-4">No matching records found.</p>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
-          <button className="flex items-center gap-2 text-sm px-3 py-2 rounded-lg border transition-colors" style={{ borderColor: `${accent}4D`, color: accent }}>
+          <button onClick={() => setShowAIOverlay(true)} className="flex items-center gap-2 text-sm px-3 py-2 rounded-lg border transition-colors" style={{ borderColor: `${accent}4D`, color: accent }}>
             <Sparkles size={14} /> Ask AI
           </button>
           <button
@@ -797,14 +856,45 @@ export default function FranchiseOSDashboard() {
             {isDark ? <Sun size={14} /> : <Moon size={14} />}
             {isDark ? "Light" : "Dark"}
           </button>
-          <button
-            onClick={handleSignOut}
-            className="w-8 h-8 rounded-full bg-gradient-to-br from-rose-400 to-amber-400 flex items-center justify-center text-xs font-semibold"
-            style={{ color: t.bg }}
-            aria-label="Sign out"
-          >
-            M
-          </button>
+          <div className="relative">
+            <button
+              onClick={() => setShowProfileDropdown(!showProfileDropdown)}
+              className="w-8 h-8 rounded-full bg-gradient-to-br from-rose-400 to-amber-400 flex items-center justify-center text-xs font-semibold hover:opacity-85 transition-opacity"
+              style={{ color: t.bg }}
+              aria-label="Profile Menu"
+            >
+              {currentUser?.full_name?.charAt(0).toUpperCase() || "M"}
+            </button>
+            
+            {showProfileDropdown && (
+              <div className="absolute right-0 mt-2.5 w-64 rounded-xl border p-4 shadow-xl z-50 text-left" style={{ background: t.card, borderColor: t.border }}>
+                <div className="flex items-center gap-2 pb-3 border-b mb-3" style={{ borderColor: t.border }}>
+                  <div className="w-9 h-9 rounded-full bg-gradient-to-br from-rose-400 to-amber-400 flex items-center justify-center font-bold text-sm" style={{ color: t.bg }}>
+                    {currentUser?.full_name?.charAt(0).toUpperCase() || "M"}
+                  </div>
+                  <div className="overflow-hidden">
+                    <p className="font-semibold text-xs truncate" style={{ color: t.text }}>{currentUser?.full_name || "Abhishek Pattnaik"}</p>
+                    <p className="text-[10px] truncate" style={{ color: t.textFaint }}>{currentUser?.email || "abhi@gmail.com"}</p>
+                  </div>
+                </div>
+                <div className="space-y-1.5 text-[10px] mb-4" style={{ color: t.textMuted }}>
+                  <p><span className="font-semibold" style={{ color: t.textFaint }}>Role:</span> <span className="px-1.5 py-0.5 rounded bg-teal-500/10 text-teal-400 font-bold uppercase tracking-wider">{currentUser?.role || "Admin"}</span></p>
+                  {currentUser?.outlet_id && (
+                    <p><span className="font-semibold" style={{ color: t.textFaint }}>Assigned Outlet:</span> Outlet #{currentUser?.outlet_id}</p>
+                  )}
+                </div>
+                <button
+                  onClick={() => {
+                    setShowProfileDropdown(false);
+                    handleSignOut();
+                  }}
+                  className="w-full py-2 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 font-semibold text-xs border border-rose-500/20 transition-colors"
+                >
+                  Logout Session
+                </button>
+              </div>
+            )}
+          </div>
         </div>
 
         <div className="p-8">
@@ -1590,6 +1680,83 @@ export default function FranchiseOSDashboard() {
               </p>
             </div>
           )}
+      {/* Sliding AI Chat Assistant Overlay */}
+      {showAIOverlay && (
+        <div className="fixed inset-y-0 right-0 w-[360px] shadow-2xl z-50 flex flex-col border-l transition-all duration-300" style={{ background: t.card, borderColor: t.border }}>
+          <div className="px-5 py-4 border-b flex items-center justify-between" style={{ borderColor: t.border }}>
+            <div className="flex items-center gap-2">
+              <Sparkles size={16} color={accent} />
+              <p className="font-semibold text-sm" style={{ color: t.text }}>Franchise Intelligence AI</p>
+            </div>
+            <button onClick={() => setShowAIOverlay(false)} className="text-xs text-slate-400 hover:text-slate-200">Close</button>
+          </div>
+
+          {/* Chat Messages */}
+          <div className="flex-1 overflow-y-auto p-4 space-y-3.5">
+            {aiMessages.map((msg, i) => (
+              <div key={i} className={`flex ${msg.sender === "user" ? "justify-end" : "justify-start"}`}>
+                <div
+                  className={`max-w-[85%] rounded-2xl px-3 py-2 text-xs leading-relaxed ${
+                    msg.sender === "user"
+                      ? "bg-teal-500 text-[#0E1015] rounded-tr-none font-medium"
+                      : "bg-[#1A1D24] text-slate-200 border rounded-tl-none"
+                  }`}
+                  style={{ borderColor: msg.sender === "user" ? "transparent" : t.border }}
+                >
+                  {msg.text}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Chat Input */}
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              if (!aiInput.trim()) return;
+
+              const userText = aiInput;
+              setAiMessages(prev => [...prev, { sender: "user", text: userText }]);
+              setAiInput("");
+
+              setTimeout(() => {
+                let reply = "I'm processing that. For detailed stats, please review the Franchise Intelligence AI tab or specify an outlet.";
+                const q = userText.toLowerCase();
+
+                if (q.includes("health")) {
+                  reply = `The average franchise health score is currently ${intelligenceData?.overallHealth || 82}%. We have ${intelligenceData?.underperformingCount || 1} underperforming location.`;
+                } else if (q.includes("reorder") || q.includes("stock") || q.includes("low")) {
+                  const criticalCount = inventorySummary?.critical || 0;
+                  reply = criticalCount > 0 
+                    ? `Warning: There are ${criticalCount} items critically low on stock. Check Andheri East or Nashik Center listings.` 
+                    : `Stock levels are healthy. Nashik Center and Pune FC Road are at 92% inventory health index.`;
+                } else if (q.includes("revenue") || q.includes("sales") || q.includes("trend")) {
+                  reply = `Franchise sales average ₹1.35Cr total revenue this quarter (+14.2% growth). Nashik is currently leading projections.`;
+                } else if (q.includes("nashik")) {
+                  reply = `Nashik City Center health score is 88/100 (Healthy). Target MTD sales is ₹1.28L against a budget of ₹1.20L.`;
+                } else if (q.includes("pune")) {
+                  reply = `Pune FC Road is leading network scores at 94/100. Growth is up +10.1% month-on-month.`;
+                } else if (q.includes("mumbai") || q.includes("andheri")) {
+                  reply = `Mumbai Andheri East is currently flagged as Watch (72/100). Sales MTD is ₹96k vs target of ₹1.30L (-3.2% growth).`;
+                }
+
+                setAiMessages(prev => [...prev, { sender: "ai", text: reply }]);
+              }, 600);
+            }}
+            className="p-3 border-t flex gap-2"
+            style={{ borderColor: t.border }}
+          >
+            <input
+              value={aiInput}
+              onChange={(e) => setAiInput(e.target.value)}
+              placeholder="Ask about inventory, health, outlets..."
+              className="flex-1 text-xs rounded-lg border px-3 py-2 outline-none"
+              style={{ background: t.inputBg, borderColor: t.border, color: t.text }}
+            />
+            <button type="submit" className="px-3 py-2 rounded-lg font-bold text-xs" style={{ background: accent, color: t.bg }}>Send</button>
+          </form>
+        </div>
+      )}
         </div>
       </main>
     </div>
