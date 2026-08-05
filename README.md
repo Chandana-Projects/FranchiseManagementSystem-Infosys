@@ -1,41 +1,109 @@
 # FranchiseOpsAI — High-Resilience AI Franchise Management Portal
 
-FranchiseOpsAI is a robust, multi-service enterprise platform designed for monitoring franchise outlet performance, running predictive machine learning simulations, tracking live sales register events, and auditing compliance.
+FranchiseOpsAI is a full-stack, enterprise-grade franchise operations and management portal. The system coordinates multi-location outlet monitoring, automated inventory tracking, staff audits, campaign ROI analytics, real-time transaction anomalies, and predictive machine learning models in a unified, high-resilience architecture.
 
 ---
 
-## 🛠️ Architecture & Services
+## 🏗️ System Architecture
 
-The platform is structured as a decoupled microservice stack:
+The project is structured as a decoupled, multi-service microservice repository:
 
-1. **Frontend (`/frontend`):** A Next.js Web App featuring a dashboard with real-time SSE data charts, custom styling accent controls, glassmorphic layout configurations, an interactive audit panel, and a sliding AI strategic copilot.
-2. **Backend Orchestrator (`/backend`):** A Node.js Express service managing API routing, live POS register simulations, anomaly detection broadcasts via Server-Sent Events (SSE), and fallback mappings.
-3. **ML Microservice (`/ml_service`):** A Python FastAPI server hosting scikit-learn and XGBoost pipelines for time-series forecasting, store category classification, and transaction anomaly scoring.
-4. **Database Storage:** Prisma ORM connected to PostgreSQL, equipped with a static JSON data fallback in case the database server goes offline.
-
----
-
-## 🚀 Key Features
-
-* **🔬 What-If ML Simulation Sandbox:** Test discount rates and marketing spends to predict monthly revenue changes via machine learning regression models.
-* **📡 Real-Time POS & Anomaly Ticker:** Express POS simulator continuously broadcasts register sales to clients. Active streams pass through an **Isolation Forest** anomaly model, instantly flashing alerts for irregular transaction spikes or drops.
-* **⚙️ MLOps Console:** View gauges for Mean Absolute Error (MAE), feature importances, and trigger asynchronous training loops from the UI console.
-* **🤖 Gemini AI Analyst Copilot:** Configure Gemini API keys to load context-aware Strategic SWOT recommendations inside the dashboard chat panel.
-* **💾 Fault-Tolerant Resiliency:** Manually toggle mock database outages in settings to verify the system falls back onto local JSON file storage.
-
----
-
-## 🐳 Docker Deployment
-
-The entire stack can be launched via Docker Compose:
-
-```bash
-# Build and run the entire multi-service suite
-docker-compose up --build
+```
+FranchiseManagementSystem/
+├── docker-compose.yml           # Unified multi-container orchestration config
+├── backend/                     # Node.js Express API orchestrator
+│   ├── Dockerfile
+│   ├── prisma/                  # Database schemas (PostgreSQL client configurations)
+│   └── src/                     # Route endpoints, simulation loops, & services
+├── frontend/                    # Next.js React user interface dashboard
+│   ├── Dockerfile
+│   ├── app/                     # Next.js routing and entry layers
+│   └── components/              # React dashboard view layers (OutletMonitoring.tsx)
+└── ml_service/                  # Python FastAPI machine learning server
+    ├── Dockerfile
+    ├── main.py                  # API endpoints for predictions and anomalies
+    └── models/                  # Programmatic training loops and predictors
 ```
 
-This starts:
-* PostgreSQL on port `5432`
-* Python ML microservice on port `8000`
-* Express backend API on port `5000`
-* Next.js web client on port `3000`
+---
+
+## 📦 Database Schema (Prisma DB Layer)
+
+The database schema is mapped via Prisma ORM connecting to **PostgreSQL**. The core database models are:
+
+* **`outlets`:** Mapped locations, status (Healthy/Watch/Critical), addresses, coordinates (lat/long), and manager associations.
+* **`users` / `managers`:** Secure credentials, roles (admin/manager), and manager work statistics.
+* **`sales`:** Tracks historical daily revenue logs, orders, and customer counts across outlets.
+* **`inventory_items`:** Tracks raw material SKUs, stock levels, reorder thresholds, and suppliers.
+* **`monthly_targets` / `performance`:** Financial budgets, actual revenues, targets, and percentage achievements.
+* **`outlet_health` / `outlet_ratings`:** Aggregated performance dimensions (sales, inventory, audits) and direct customer NPS reviews.
+* **`expenses`:** Tracks store operating costs (rent, utilities, raw materials).
+* **`notifications`:** Local notifications ledger for system-wide flags.
+
+---
+
+## 🛠️ Main Codebase Modules
+
+### 1. Authentication & Session Control (`/backend/src/routes/authRoutes.js`)
+* Manages secure user session creation, passwords encryption hashes, and JWT tokens.
+* Enforces role-based permissions (admin/manager scope controls) across the API routers.
+
+### 2. Outlet Directory & Map HUD (`/backend/src/routes/outletRoutes.js`)
+* Serves complete geographic mappings of all franchise stores.
+* Calculates actual revenue achievements relative to target metrics to status stores.
+
+### 3. Inventory Control & Reorder Registry (`/backend/src/routes/inventoryRoutes.js`)
+* Houses raw materials listings (e.g. coffee beans, cups, milk).
+* Flags low quantities relative to safety thresholds and coordinates supplier reorder pipelines.
+
+### 4. Staff Management & Directories (`/backend/src/routes/employeeRoutes.js`)
+* Stores attendance logs, schedules, and shift planning parameters.
+* Feeds daily clock-in compliance indices (present, late, absent) directly into the outlet health scores.
+
+### 5. Audit Compliance Checklist (`/backend/src/routes/complianceRoutes.js`)
+* Daily checklists tracking food safety temperatures, cleaning protocols, and register balances.
+* Completed sheets compute overall store compliance percentages.
+
+### 6. Server-Sent Events (SSE) Broadcast Hub (`/backend/src/routes/sseRoutes.js`)
+* Exposes an active HTTP streaming channel linking Next.js clients directly to the backend.
+* Automatically broadcasts register events, alerts, and model updates in real-time.
+
+### 7. POS Register simulator (`/backend/src/services/posSimulator.js`)
+* Triggers mock transaction register sales every 3 to 30 seconds.
+* Deducts matching stock quantities, logs revenue, and queries FastAPI to scan for transaction anomalies.
+
+### 8. FastAPI Python Machine Learning Service (`/ml_service`)
+* **XGBoost (Revenue):** Predicts revenue trajectories based on lag parameters, discounts, and spends.
+* **Random Forest (Classification):** Categorizes stores into demand levels.
+* **Ridge Regression (Reorders):** Calculates optimized stock orders.
+* **Isolation Forest (Anomalies):** Evaluates POS transaction streams to flag outlier volume drops/spikes.
+* **Retraining Pipeline (`trainer.py`):** Re-fits models asynchronously on command.
+
+### 9. Interactive Settings page (`/frontend/components/OutletMonitoring.tsx`)
+* **Theme Customizer:** Accent color highlights chooser (Teal, Purple, Amber, Electric Blue, Rose), glow levels, and blur depth variables.
+* **ML Tuner:** Direct adjustments for learning rates, RF trees count, and Ridge alpha weights.
+* **AI Copilot Selector:** Toggle personalities (Strategic Coach, Sarcastic Consultant) and enter Gemini API keys.
+* **Resilience Switch:** Manually toggle mock database outages to verify the system falls back onto local JSON datasets.
+* **Terminal Feed:** Visual logs tracking system activity.
+
+---
+
+## 💾 Resiliency & Offline Fallbacks
+
+* **Database Fallback:** If PostgreSQL goes offline, the Express backend captures the Prisma error and loads static JSON datasets (e.g. `outlets.json`, `inventory.json`) and generates average transaction logs, keeping the microservices and UI fully functional.
+* **ML Fallback:** If the FastAPI Python microservice is offline, the Next.js frontend hides predictive panels, and the backend handles prediction timeouts (2-second limits) safely.
+
+---
+
+## 🚀 Docker Setup
+
+Run the multi-service stack with a single command:
+
+```bash
+docker-compose up --build
+```
+This builds and exposes:
+* **Next.js Web Client:** `http://localhost:3000`
+* **Express Orchestrator API:** `http://localhost:5000`
+* **FastAPI ML Service:** `http://localhost:8000`
+* **PostgreSQL:** `localhost:5432`
