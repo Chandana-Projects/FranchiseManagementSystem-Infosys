@@ -38,4 +38,7 @@ export const api = {
 
   // Employees
   getEmployees: () => fetchWithAuth("/api/employees"),
+
+  // Intelligence AI
+  getFranchiseIntelligence: () => fetchWithAuth("/api/agent/franchise-intelligence"),
 };
