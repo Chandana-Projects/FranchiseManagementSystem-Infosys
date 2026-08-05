@@ -9,6 +9,7 @@ router.get("/dashboard", outletController.getDashboard);
 router.get("/locations", outletController.getLocations);
 
 router.get("/revenue-trend", outletController.getRevenueTrend);
+router.get("/:id/risk", outletController.getRiskLevel);
 
 router.get("/underperforming", outletController.getUnderperforming);
 
