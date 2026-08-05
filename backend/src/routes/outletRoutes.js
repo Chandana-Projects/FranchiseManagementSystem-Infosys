@@ -17,5 +17,6 @@ router.post("/", outletController.createOutlet);
 router.put("/:id", outletController.updateOutlet);
 
 router.delete("/:id", outletController.deleteOutlet);
+router.get("/:id/recommendations", outletController.getRecommendations);
 router.get("/:id", outletController.getOutletById);
 module.exports = router;
