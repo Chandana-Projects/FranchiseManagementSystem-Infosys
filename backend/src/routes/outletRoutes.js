@@ -12,11 +12,15 @@ router.get("/locations", outletController.getLocations);
 router.get("/revenue-trend", outletController.getRevenueTrend);
 
 router.get("/underperforming", outletController.getUnderperforming);
+router.get("/:id/recommendations", outletController.getRecommendations);
+router.get("/:id/nearby", outletController.getNearbyOutlets);
 
 router.post("/", outletController.createOutlet);
 
 router.put("/:id", outletController.updateOutlet);
 
 router.delete("/:id", outletController.deleteOutlet);
+router.get("/:id/risk", outletController.getRiskLevel);
 router.get("/:id", outletController.getOutletById);
+
 module.exports = router;

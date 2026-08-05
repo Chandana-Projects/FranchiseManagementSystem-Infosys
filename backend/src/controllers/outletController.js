@@ -84,9 +84,41 @@ exports.getOutletById = async (req, res, next) => {
                 message: "Outlet not found"
             });
         }
+exports.getNearbyOutlets = async (req, res, next) => {
+    try {
+        const data = await outletService.getNearbyOutlets(req.params.id);
+        res.status(200).json(data);
+    } catch (error) {
+        next(error);
+    }
+};
 
         res.status(200).json(outlet);
     } catch (error) {
         next(error);
     }
-};
+};
+exports.getNearbyOutlets = async (req, res, next) => {
+    try {
+        const data = await outletService.getNearbyOutlets(req.params.id);
+        res.status(200).json(data);
+    } catch (error) {
+        next(error);
+    }
+};
+exports.getRecommendations = async (req, res, next) => {
+    try {
+        const data = await outletService.getRecommendations(req.params.id);
+        res.status(200).json(data);
+    } catch (error) {
+        next(error);
+    }
+};
+exports.getRiskLevel = async (req, res, next) => {
+    try {
+        const data = await outletService.getRiskLevel(req.params.id);
+        res.status(200).json(data);
+    } catch (error) {
+        next(error);
+    }
+};
