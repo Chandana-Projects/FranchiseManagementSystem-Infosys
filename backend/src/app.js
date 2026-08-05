@@ -8,6 +8,8 @@ const inventoryRoutes = require("./routes/inventoryRoutes");
 const productRoutes = require("./routes/productRoutes");
 const employeeRoutes = require("./routes/employeeRoutes");
 const intelligenceRoutes = require("./routes/intelligenceRoutes");
+const campaignRoutes = require("./routes/campaignRoutes");
+const reportsRoutes = require("./routes/reportsRoutes");
 const setupSwagger = require("./swagger");
 const errorHandler = require("./middlewares/errorHandler");
 
@@ -44,6 +46,8 @@ app.use("/api/compliance", complianceRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/employees", employeeRoutes);
 app.use("/api/agent/franchise-intelligence", intelligenceRoutes);
+app.use("/api/campaigns", campaignRoutes);
+app.use("/api/reports", reportsRoutes);
 
 setupSwagger(app);
 
