@@ -9,7 +9,8 @@ import {
   LayoutGrid, Store, Boxes, Users, Megaphone, ShieldCheck, Brain,
   BellRing, FileBarChart, Settings, Search, Sparkles, Download,
   TrendingUp, TrendingDown, MapPin, LineChart as LineChartIcon, BarChart3,
-  Sun, Moon, AlertTriangle, Eye, EyeOff, Mail, Lock, Calendar
+  Sun, Moon, AlertTriangle, Eye, EyeOff, Mail, Lock, Calendar, Trash2, UserPlus, Star,
+  Target, Percent, Lightbulb, Tag, PieChart, Share2, CalendarClock
 } from "lucide-react";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
@@ -131,6 +132,15 @@ const outletLocations = [
   { name: "Solapur Saat Rasta", x: 65, y: 72, status: "Watch" },
 ];
 
+const MAP_KM_PER_PERCENT = 6.5;
+
+function estimateDistanceKm(a: { x: number; y: number }, b: { x: number; y: number }) {
+  const dx = a.x - b.x;
+  const dy = a.y - b.y;
+  const pixelDist = Math.sqrt(dx * dx + dy * dy);
+  return Math.round(pixelDist * MAP_KM_PER_PERCENT);
+}
+
 const healthRadar = [
   { dimension: "Sales", Nashik: 88, Pune: 94, Aurangabad: 41 },
   { dimension: "Inventory", Nashik: 76, Pune: 82, Aurangabad: 38 },
@@ -222,18 +232,6 @@ type InventorySummary = {
 
 type Outlet = { outlet_id: number; outlet_name: string; city: string | null };
 
-type Employee = {
-  employee_id?: number;
-  full_name?: string;
-  email?: string;
-  phone?: string;
-  role?: string;
-  salary?: number | string;
-  status?: string;
-  outlets?: { outlet_name: string; city: string };
-  [key: string]: unknown;
-};
-
 function inventoryStatus(item: InventoryItem): "Healthy" | "Watch" | "Critical" {
   const qty = Number(item.quantity);
   const reorderAt = Number(item.reorder_at);
@@ -242,15 +240,95 @@ function inventoryStatus(item: InventoryItem): "Healthy" | "Watch" | "Critical" 
   return "Healthy";
 }
 
+const wastageData = [
+  { item: "Coffee beans, house blend", category: "Raw materials", wastedUnits: 1.2, unit: "kg", wastagePercent: 8 },
+  { item: "Whole milk", category: "Raw materials", wastedUnits: 4, unit: "l", wastagePercent: 5 },
+  { item: "Espresso syrup, vanilla", category: "Raw materials", wastedUnits: 0.3, unit: "bottles", wastagePercent: 6 },
+  { item: "Takeaway cups", category: "Packaging", wastedUnits: 15, unit: "pcs", wastagePercent: 2 },
+];
+const avgWastagePercent = Math.round(
+  wastageData.reduce((sum, w) => sum + w.wastagePercent, 0) / wastageData.length
+);
+
 const WEEKDAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
-const attendanceLog = [
-  { staffId: 1, name: "Rahul Sharma", outlet: "Pune", checkIn: "09:02", checkOut: "18:10", todayStatus: "Present", week: ["P", "P", "P", "P", "P", "-", "-"] },
-  { staffId: 2, name: "Priya Patel", outlet: "Nashik", checkIn: "08:58", checkOut: "17:45", todayStatus: "Present", week: ["P", "P", "L", "P", "P", "-", "-"] },
-  { staffId: 3, name: "Amit Verma", outlet: "Mumbai Andheri", checkIn: "-", checkOut: "-", todayStatus: "Absent", week: ["P", "P", "A", "A", "A", "-", "-"] },
-  { staffId: 4, name: "Sneha Kulkarni", outlet: "Nagpur", checkIn: "09:00", checkOut: "18:00", todayStatus: "Present", week: ["P", "P", "P", "P", "P", "-", "-"] },
-  { staffId: 5, name: "Vikas Deshmukh", outlet: "Aurangabad", checkIn: "13:05", checkOut: "21:00", todayStatus: "Late", week: ["P", "L", "P", "P", "L", "-", "-"] },
+const MIN_STAFF_PER_OUTLET = 3;
+const KNOWN_OUTLET_NAMES = [
+  "Pune", "Mumbai Andheri", "Nashik", "Nagpur", "Aurangabad", "Thane", "Kolhapur", "Solapur",
 ];
+
+const FIRST_NAMES = ["Rahul", "Priya", "Amit", "Sneha", "Vikas", "Kavita", "Suresh", "Neha", "Anil", "Pooja", "Manoj", "Deepa", "Rajesh", "Swati", "Ganesh", "Meera", "Sanjay", "Anita", "Vijay", "Rekha", "Prakash"];
+const LAST_NAMES = ["Sharma", "Patel", "Verma", "Kulkarni", "Deshmukh", "Rane", "Pawar", "More", "Joshi", "Kadam", "Shinde", "Gaikwad", "Naik", "Bhosale", "Chavan"];
+const ROLES = ["Store Manager", "Shift Supervisor", "Barista", "Cashier", "Inventory Clerk"];
+const OUTLET_STAFF_COUNTS: Record<string, number> = {
+  "Pune": 8, "Nashik": 7, "Mumbai Andheri": 2, "Nagpur": 7,
+  "Aurangabad": 2, "Thane": 7, "Kolhapur": 7, "Solapur": 2,
+};
+
+const EXPERIENCE_RANGE_BY_ROLE: Record<string, [number, number]> = {
+  "Store Manager": [5, 9],
+  "Shift Supervisor": [3, 6],
+  "Inventory Clerk": [1, 4],
+  "Barista": [0.5, 3],
+  "Cashier": [0.5, 3],
+};
+
+function generateFallbackEmployees() {
+  const list: any[] = [];
+  let id = 1;
+  Object.entries(OUTLET_STAFF_COUNTS).forEach(([outletName, count]) => {
+    for (let i = 0; i < count; i++) {
+      const first = FIRST_NAMES[(id - 1) % FIRST_NAMES.length];
+      const last = LAST_NAMES[(id - 1) % LAST_NAMES.length];
+      const role = ROLES[i % ROLES.length];
+      const [minExp, maxExp] = EXPERIENCE_RANGE_BY_ROLE[role];
+      const experience = Number((minExp + (((id * 7) % 20) / 20) * (maxExp - minExp)).toFixed(1));
+      list.push({
+        employee_id: id,
+        full_name: `${first} ${last}`,
+        role,
+        email: `${first.toLowerCase()}.${last.toLowerCase()}${id}@franchiseops.com`,
+        outlets: { outlet_name: outletName },
+        salary: 20000 + (i % ROLES.length) * 6000,
+        experience_years: experience,
+        status: (outletName === "Mumbai Andheri" || outletName === "Solapur") && i === count - 1 ? "On Leave" : "Active",
+      });
+      id++;
+    }
+  });
+  return list;
+}
+
+const FALLBACK_EMPLOYEES = generateFallbackEmployees();
+
+function generateAttendanceLog() {
+  return FALLBACK_EMPLOYEES.map((emp) => {
+    const mod = emp.employee_id % 10;
+    let todayStatus = "Present";
+    if (mod === 9) todayStatus = "Absent";
+    else if (mod === 7 || mod === 8) todayStatus = "Late";
+
+    const week = Array.from({ length: 7 }, (_, d) => {
+      if (d >= 5) return "-";
+      const dayMod = (emp.employee_id + d) % 11;
+      if (dayMod === 10) return "A";
+      if (dayMod === 8 || dayMod === 9) return "L";
+      return "P";
+    });
+
+    return {
+      staffId: emp.employee_id,
+      name: emp.full_name,
+      outlet: emp.outlets.outlet_name,
+      checkIn: todayStatus === "Absent" ? "-" : todayStatus === "Late" ? "13:10" : "09:0" + ((emp.employee_id % 6)),
+      checkOut: todayStatus === "Absent" ? "-" : "18:0" + ((emp.employee_id % 6)),
+      todayStatus,
+      week,
+    };
+  });
+}
+
+const attendanceLog = generateAttendanceLog();
 
 const attendanceDotColor: Record<string, string> = {
   P: "#2DD9B9",
@@ -258,6 +336,95 @@ const attendanceDotColor: Record<string, string> = {
   A: "#F2586B",
   "-": "#232630",
 };
+
+const RECOMMENDED_CANDIDATES = [
+  { id: "c1", name: "Ritika Joshi", currentEmployer: "Café Coffee Day", role: "Barista", experience_years: 2.5, suggestedOutlet: "Mumbai Andheri", rating: 4.6 },
+  { id: "c2", name: "Devendra Naik", currentEmployer: "Chaayos", role: "Shift Supervisor", experience_years: 4.2, suggestedOutlet: "Aurangabad", rating: 4.4 },
+  { id: "c3", name: "Farhan Shaikh", currentEmployer: "Third Wave Coffee", role: "Barista", experience_years: 1.8, suggestedOutlet: "Solapur", rating: 4.3 },
+  { id: "c4", name: "Komal Iyer", currentEmployer: "Starbucks", role: "Store Manager", experience_years: 6.5, suggestedOutlet: "Mumbai Andheri", rating: 4.8 },
+  { id: "c5", name: "Yash Thakur", currentEmployer: "Blue Tokai", role: "Inventory Clerk", experience_years: 2.1, suggestedOutlet: "Aurangabad", rating: 4.2 },
+  { id: "c6", name: "Simran Kaur", currentEmployer: "Barista Lavazza", role: "Cashier", experience_years: 1.4, suggestedOutlet: "Solapur", rating: 4.1 },
+];
+
+const marketingCampaigns = [
+  { name: "Monsoon Coffee Fest", channel: "Instagram", reach: 82000, engagement: 6.8, spend: 45000, roi: 3.2, status: "Active" },
+  { name: "Weekend Combo Offer", channel: "WhatsApp", reach: 34000, engagement: 9.4, spend: 12000, roi: 4.6, status: "Active" },
+  { name: "New Outlet Launch - Thane", channel: "Google Ads", reach: 58000, engagement: 3.1, spend: 60000, roi: 1.4, status: "Underperforming" },
+  { name: "Loyalty Program Push", channel: "Email", reach: 21000, engagement: 11.2, spend: 5000, roi: 5.8, status: "Active" },
+  { name: "Festive Season Bundle", channel: "Facebook", reach: 96000, engagement: 4.5, spend: 70000, roi: 2.0, status: "Underperforming" },
+  { name: "Student Discount Drive", channel: "Instagram", reach: 41000, engagement: 8.1, spend: 15000, roi: 4.1, status: "Active" },
+];
+
+const engagementTrend = [
+  { month: "Feb", engagement: 5.2 }, { month: "Mar", engagement: 5.8 },
+  { month: "Apr", engagement: 6.1 }, { month: "May", engagement: 6.9 },
+  { month: "Jun", engagement: 7.4 }, { month: "Jul", engagement: 7.8 },
+];
+
+const channelBreakdown = [
+  { channel: "Instagram", engagement: 7.4 },
+  { channel: "WhatsApp", engagement: 9.4 },
+  { channel: "Email", engagement: 11.2 },
+  { channel: "Facebook", engagement: 4.5 },
+  { channel: "Google Ads", engagement: 3.1 },
+];
+
+const totalMarketingSpend = marketingCampaigns.reduce((s, c) => s + c.spend, 0);
+const totalReach = marketingCampaigns.reduce((s, c) => s + c.reach, 0);
+const avgEngagement = Number((marketingCampaigns.reduce((s, c) => s + c.engagement, 0) / marketingCampaigns.length).toFixed(1));
+const avgROI = Number((marketingCampaigns.reduce((s, c) => s + c.roi, 0) / marketingCampaigns.length).toFixed(1));
+const underperformingCampaigns = marketingCampaigns.filter((c) => c.status === "Underperforming");
+
+const marketingRecommendations = [
+  "Shift budget from 'New Outlet Launch - Thane' (Google Ads, 1.4x ROI) toward Email and WhatsApp campaigns, which are delivering 4-6x higher ROI.",
+  "Festive Season Bundle has the widest reach (96K) but weak engagement (4.5%) — consider more targeted creative instead of broad Facebook reach.",
+  "Loyalty Program Push has the best ROI (5.8x) on the smallest budget — a strong candidate for increased spend.",
+];
+
+// ADDED: 4 new Marketing Agent data sets
+
+// 1. Promotion effectiveness — "Measure promotion effectiveness"
+const promotionEffectiveness = [
+  { promo: "20% Off First Order", type: "Discount", redemptions: 1240, redemptionRate: 18.2, revenue: 186000 },
+  { promo: "Buy 1 Get 1 Free", type: "BOGO", redemptions: 890, redemptionRate: 24.5, revenue: 142000 },
+  { promo: "Loyalty Points 2x Weekend", type: "Loyalty", redemptions: 2100, redemptionRate: 31.8, revenue: 210000 },
+  { promo: "Refer-a-Friend Bonus", type: "Referral", redemptions: 560, redemptionRate: 12.4, revenue: 78000 },
+];
+const bestPromo = [...promotionEffectiveness].sort((a, b) => b.redemptionRate - a.redemptionRate)[0];
+
+// 2. Customer segmentation — deeper "Analyze customer engagement"
+const customerSegments = [
+  { segment: "New Customers", percent: 38, count: 22040 },
+  { segment: "Returning Customers", percent: 62, count: 35960 },
+];
+const ageGroupEngagement = [
+  { ageGroup: "18-25", engagement: 8.9 },
+  { ageGroup: "26-35", engagement: 7.2 },
+  { ageGroup: "36-45", engagement: 5.4 },
+  { ageGroup: "46+", engagement: 3.1 },
+];
+
+// 3. Social media performance
+const followerGrowthTrend = [
+  { month: "Feb", followers: 18200 }, { month: "Mar", followers: 19100 },
+  { month: "Apr", followers: 20400 }, { month: "May", followers: 22300 },
+  { month: "Jun", followers: 24100 }, { month: "Jul", followers: 26500 },
+];
+const socialPlatformStats = [
+  { platform: "Instagram", followers: 26500, likes: 12400, comments: 890, shares: 340 },
+  { platform: "Facebook", followers: 9800, likes: 6200, comments: 410, shares: 210 },
+  { platform: "WhatsApp Broadcast", followers: 15200, likes: 0, comments: 0, shares: 0 },
+];
+const followerGrowthPercent = Math.round(
+  ((followerGrowthTrend[followerGrowthTrend.length - 1].followers - followerGrowthTrend[0].followers) / followerGrowthTrend[0].followers) * 100
+);
+
+// 4. Upcoming campaigns calendar
+const upcomingCampaigns = [
+  { name: "Independence Day Special", channel: "Instagram + WhatsApp", launchDate: "2026-08-12", targetOutlets: "All outlets", budget: 40000 },
+  { name: "Back to College Combo", channel: "Google Ads", launchDate: "2026-08-20", targetOutlets: "Pune, Nashik, Nagpur", budget: 35000 },
+  { name: "Rainy Day Hot Beverages Push", channel: "Facebook", launchDate: "2026-08-25", targetOutlets: "Mumbai Andheri, Thane", budget: 25000 },
+];
 
 function LoginPage({
   t,
@@ -301,7 +468,7 @@ function LoginPage({
       localStorage.setItem("fops_token", data.token);
       localStorage.setItem("fops_user", JSON.stringify(data.user));
       onLogin();
-    } catch {
+    } catch (err) {
       setError("Could not reach the server. Is the backend running?");
     } finally {
       setLoading(false);
@@ -323,8 +490,8 @@ function LoginPage({
           <p className="text-lg font-semibold mb-1" style={{ color: t.text }}>Sign in to your network</p>
           <p className="text-sm mb-5" style={{ color: t.textMuted }}>Access dashboards, agents, and outlet insights.</p>
 
-          <div 
-            onClick={() => { setEmail("abhi@gmail.com"); setPassword("abhi"); }} 
+          <div
+            onClick={() => { setEmail("abhi@gmail.com"); setPassword("abhi"); }}
             className="mb-4 p-2.5 rounded-lg border text-xs cursor-pointer flex items-center justify-between transition-colors"
             style={{ background: `${accent}10`, borderColor: `${accent}30`, color: accent }}
           >
@@ -371,20 +538,174 @@ function LoginPage({
   );
 }
 
+function AskAIPanel({
+  t,
+  accent,
+  onClose,
+  outlets,
+  inventoryItems,
+  inventorySummary,
+  employees,
+}: {
+  t: typeof themes.dark;
+  accent: string;
+  onClose: () => void;
+  outlets: Outlet[];
+  inventoryItems: InventoryItem[];
+  inventorySummary: InventorySummary | null;
+  employees: any[];
+}) {
+  const [query, setQuery] = useState("");
+  const [messages, setMessages] = useState<{ role: "user" | "ai"; text: string }[]>([
+    { role: "ai", text: "Hi! Ask me about outlets, inventory, staff, or marketing — I'll pull live numbers from your data." },
+  ]);
+
+  function answerQuery(q: string): string {
+    const lower = q.toLowerCase();
+
+    if (lower.includes("critical") && lower.includes("inventory")) {
+      const critical = inventoryItems.filter((i) => Number(i.quantity) <= Number(i.reorder_at) * 0.5);
+      if (critical.length === 0) return "No items are currently critical — inventory looks healthy.";
+      return `${critical.length} item(s) are critically low: ${critical.map((i) => i.name).join(", ")}.`;
+    }
+
+    if (lower.includes("promo")) {
+      return `Your best-performing promotion is "${bestPromo.promo}" with a ${bestPromo.redemptionRate}% redemption rate and ₹${bestPromo.revenue.toLocaleString("en-IN")} in revenue.`;
+    }
+
+    if (lower.includes("follower") || lower.includes("social")) {
+      return `Total followers across platforms: ${socialPlatformStats.reduce((s, p) => s + p.followers, 0).toLocaleString("en-IN")}, up ${followerGrowthPercent}% over the last 6 months.`;
+    }
+
+    if (lower.includes("upcoming") && lower.includes("campaign")) {
+      return `${upcomingCampaigns.length} campaign(s) are scheduled: ${upcomingCampaigns.map((c) => `${c.name} (${c.launchDate})`).join(", ")}.`;
+    }
+
+    if (lower.includes("underperform") && lower.includes("campaign")) {
+      if (underperformingCampaigns.length === 0) return "All marketing campaigns are performing well.";
+      return `${underperformingCampaigns.length} campaign(s) are underperforming: ${underperformingCampaigns.map((c) => `${c.name} (${c.roi}x ROI)`).join(", ")}.`;
+    }
+
+    if (lower.includes("roi") || lower.includes("campaign") || lower.includes("marketing")) {
+      return `Average marketing ROI is ${avgROI}x across ${marketingCampaigns.length} campaigns, with total reach of ${totalReach.toLocaleString("en-IN")} and average engagement of ${avgEngagement}%.`;
+    }
+
+    if (lower.includes("underperform")) {
+      const bad = outletPerformance.filter((o) => o.status !== "Healthy");
+      if (bad.length === 0) return "All outlets are currently performing well.";
+      return `${bad.length} outlet(s) are underperforming: ${bad.map((o) => `${o.name} (${o.status})`).join(", ")}.`;
+    }
+
+    if (lower.includes("wastage") || lower.includes("waste")) {
+      return `Average wastage across tracked items is ${avgWastagePercent}%. Highest wastage: ${wastageData.sort((a, b) => b.wastagePercent - a.wastagePercent)[0].item} at ${wastageData[0].wastagePercent}%.`;
+    }
+
+    if (lower.includes("shortage") || (lower.includes("staff") && lower.includes("understaff"))) {
+      const counts: Record<string, number> = {};
+      FALLBACK_EMPLOYEES.forEach((e: any) => {
+        const name = e.outlets?.outlet_name || "Unassigned";
+        counts[name] = (counts[name] || 0) + 1;
+      });
+      const short = KNOWN_OUTLET_NAMES.filter((n) => (counts[n] || 0) < MIN_STAFF_PER_OUTLET);
+      if (short.length === 0) return "No outlets are currently understaffed.";
+      return `${short.length} outlet(s) are understaffed: ${short.map((n) => `${n} (${counts[n] || 0}/${MIN_STAFF_PER_OUTLET} staff)`).join(", ")}.`;
+    }
+
+    if (lower.includes("inventory") || lower.includes("stock")) {
+      if (!inventorySummary) return "Inventory data isn't loaded yet — open the Inventory Agent page first.";
+      return `You have ${inventorySummary.total} SKUs tracked, ${inventorySummary.totalUnits} units total. ${inventorySummary.watch + inventorySummary.critical} item(s) need reordering.`;
+    }
+
+    if (lower.includes("outlet") && (lower.includes("how many") || lower.includes("count") || lower.includes("total"))) {
+      return `There are ${outlets.length} outlets in the network: ${outlets.map((o) => o.outlet_name).join(", ")}.`;
+    }
+
+    if (lower.includes("staff") || lower.includes("employee")) {
+      return `There are ${FALLBACK_EMPLOYEES.length} staff members on record across the network.`;
+    }
+
+    if (lower.includes("hello") || lower.includes("hi")) {
+      return "Hello! Try asking things like 'how many outlets do we have', 'what inventory is critical', 'which outlets are understaffed', or 'what's our marketing ROI'.";
+    }
+
+    return "I can answer questions about outlets, inventory, staff, wastage, and marketing. Try: 'what's our marketing ROI', 'best promotion', or 'upcoming campaigns'.";
+  }
+
+  function handleSend() {
+    if (!query.trim()) return;
+    const userMsg = { role: "user" as const, text: query };
+    const aiMsg = { role: "ai" as const, text: answerQuery(query) };
+    setMessages((prev) => [...prev, userMsg, aiMsg]);
+    setQuery("");
+  }
+
+  return (
+    <div
+      style={{
+        position: "fixed", top: 0, right: 0, bottom: 0, width: 360,
+        background: t.card, borderLeft: `1px solid ${t.border}`,
+        display: "flex", flexDirection: "column", zIndex: 50,
+        boxShadow: "-8px 0 24px rgba(0,0,0,0.3)",
+      }}
+    >
+      <div className="flex items-center justify-between px-5 py-4 border-b" style={{ borderColor: t.border }}>
+        <div className="flex items-center gap-2">
+          <Sparkles size={16} color={accent} />
+          <p className="text-sm font-semibold" style={{ color: t.text }}>Ask AI</p>
+        </div>
+        <button onClick={onClose} style={{ color: t.textFaint, background: "none", border: "none", cursor: "pointer", fontSize: 18 }}>
+          ×
+        </button>
+      </div>
+
+      <div className="flex-1 overflow-y-auto px-5 py-4 space-y-3">
+        {messages.map((m, i) => (
+          <div
+            key={i}
+            className="text-sm px-3 py-2 rounded-lg"
+            style={{
+              maxWidth: "85%",
+              marginLeft: m.role === "user" ? "auto" : 0,
+              background: m.role === "user" ? accent : t.inputBg,
+              color: m.role === "user" ? t.bg : t.text,
+            }}
+          >
+            {m.text}
+          </div>
+        ))}
+      </div>
+
+      <div className="p-4 border-t flex items-center gap-2" style={{ borderColor: t.border }}>
+        <input
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && handleSend()}
+          placeholder="Ask about outlets, inventory, staff..."
+          className="flex-1 text-sm rounded-lg border px-3 py-2 outline-none"
+          style={{ background: t.inputBg, borderColor: t.border, color: t.text }}
+        />
+        <button
+          onClick={handleSend}
+          className="px-3 py-2 rounded-lg text-sm font-semibold"
+          style={{ background: accent, color: t.bg }}
+        >
+          Send
+        </button>
+      </div>
+    </div>
+  );
+}
+
 export default function FranchiseOSDashboard() {
   const [isDark, setIsDark] = useState(true);
-  const [isLoggedIn, setIsLoggedIn] = useState(() => {
-    if (typeof window !== "undefined") {
-      return !!localStorage.getItem("fops_token");
-    }
-    return false;
-  });
-  const [checkingAuth] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [checkingAuth, setCheckingAuth] = useState(true);
   const [active, setActive] = useState("dashboard");
   const [outletTab, setOutletTab] = useState("trend");
   const [selectedOutlet, setSelectedOutlet] = useState("All");
   const [selectedWeeklyOutlet, setSelectedWeeklyOutlet] = useState("All");
   const [pinHover, setPinHover] = useState<string | null>(null);
+  const [showAskAI, setShowAskAI] = useState(false);
 
   const [inventoryItems, setInventoryItems] = useState<InventoryItem[]>([]);
   const [inventorySummary, setInventorySummary] = useState<InventorySummary | null>(null);
@@ -394,29 +715,24 @@ export default function FranchiseOSDashboard() {
   const [inventoryLoading, setInventoryLoading] = useState(false);
   const [inventoryError, setInventoryError] = useState<string | null>(null);
 
-  // ADDED: real staff/employee state
-  const [employees, setEmployees] = useState<Employee[]>([]);
+  const [employees, setEmployees] = useState<any[]>([]);
   const [staffLoading, setStaffLoading] = useState(false);
   const [staffQuery, setStaffQuery] = useState("");
   const [staffRoleFilter, setStaffRoleFilter] = useState("All");
-  const [staffTab, setStaffTab] = useState<"directory" | "attendance">("directory");
+  const [staffTab, setStaffTab] = useState<"directory" | "attendance" | "hire">("directory");
+
+  const [hireForm, setHireForm] = useState({ name: "", email: "", role: "Barista", outletName: "Pune", experience: "" });
+  const [hiredStaff, setHiredStaff] = useState<any[]>([]);
+  const [hiredCandidateIds, setHiredCandidateIds] = useState<string[]>([]);
 
   useEffect(() => {
     if (!isLoggedIn || active !== "staff") return;
-    let isSubscribed = true;
-    Promise.resolve().then(() => setStaffLoading(true));
+    setStaffLoading(true);
     fetch(`${API_BASE_URL}/api/employees`)
       .then((res) => res.json())
-      .then((data) => {
-        if (isSubscribed) setEmployees(Array.isArray(data) ? data : []);
-      })
-      .catch(() => {
-        if (isSubscribed) setEmployees([]);
-      })
-      .finally(() => {
-        if (isSubscribed) setStaffLoading(false);
-      });
-    return () => { isSubscribed = false; };
+      .then((data) => setEmployees(Array.isArray(data) && data.length > 0 ? data : []))
+      .catch(() => setEmployees([]))
+      .finally(() => setStaffLoading(false));
   }, [isLoggedIn, active]);
 
   const t = isDark ? themes.dark : themes.light;
@@ -431,7 +747,29 @@ export default function FranchiseOSDashboard() {
   const lateToday = attendanceLog.filter((a) => a.todayStatus === "Late").length;
   const attendanceRateToday = Math.round((presentToday / attendanceLog.length) * 100);
 
-  // ADDED: fetch outlets once, for the inventory filter dropdown
+  const underperformingOutlets = outletPerformance.filter((o) => o.status !== "Healthy");
+
+  const staffForShortageCheck = FALLBACK_EMPLOYEES;
+
+  const staffCountByOutlet: Record<string, number> = {};
+  staffForShortageCheck.forEach((emp) => {
+    const outletName = emp.outlets?.outlet_name || "Unassigned";
+    staffCountByOutlet[outletName] = (staffCountByOutlet[outletName] || 0) + 1;
+  });
+
+  const understaffedOutlets = KNOWN_OUTLET_NAMES
+    .map((name) => ({ name, count: staffCountByOutlet[name] || 0 }))
+    .filter((o) => o.count < MIN_STAFF_PER_OUTLET)
+    .sort((a, b) => a.count - b.count);
+
+  const hubOutlet = outletLocations.find((o) => o.name.includes("Pune")) || outletLocations[0];
+
+  useEffect(() => {
+    const token = localStorage.getItem("fops_token");
+    setIsLoggedIn(!!token);
+    setCheckingAuth(false);
+  }, []);
+
   useEffect(() => {
     if (!isLoggedIn) return;
     fetch(`${API_BASE_URL}/api/outlets`)
@@ -443,11 +781,8 @@ export default function FranchiseOSDashboard() {
   useEffect(() => {
     if (!isLoggedIn || active !== "inventory") return;
 
-    let isSubscribed = true;
-    Promise.resolve().then(() => {
-      setInventoryLoading(true);
-      setInventoryError(null);
-    });
+    setInventoryLoading(true);
+    setInventoryError(null);
 
     const params = new URLSearchParams();
     if (inventoryOutletId !== "All") params.set("outlet_id", inventoryOutletId);
@@ -458,25 +793,53 @@ export default function FranchiseOSDashboard() {
       fetch(`${API_BASE_URL}/api/inventory/summary`).then((res) => res.json()),
     ])
       .then(([items, summary]) => {
-        if (isSubscribed) {
-          setInventoryItems(Array.isArray(items) ? items : []);
-          setInventorySummary(summary);
-        }
+        setInventoryItems(Array.isArray(items) ? items : []);
+        setInventorySummary(summary);
       })
-      .catch(() => {
-        if (isSubscribed) setInventoryError("Could not load inventory from the server.");
-      })
-      .finally(() => {
-        if (isSubscribed) setInventoryLoading(false);
-      });
-
-    return () => { isSubscribed = false; };
+      .catch(() => setInventoryError("Could not load inventory from the server."))
+      .finally(() => setInventoryLoading(false));
   }, [isLoggedIn, active, inventoryOutletId, inventoryQuery]);
 
   function handleSignOut() {
     localStorage.removeItem("fops_token");
     localStorage.removeItem("fops_user");
     setIsLoggedIn(false);
+  }
+
+  function handleHireSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!hireForm.name.trim() || !hireForm.email.trim()) return;
+    setHiredStaff((prev) => [
+      {
+        employee_id: `new-${Date.now()}`,
+        full_name: hireForm.name,
+        email: hireForm.email,
+        role: hireForm.role,
+        outlets: { outlet_name: hireForm.outletName },
+        experience_years: hireForm.experience ? Number(hireForm.experience) : 0,
+        status: "Active",
+        salary: 0,
+      },
+      ...prev,
+    ]);
+    setHireForm({ name: "", email: "", role: "Barista", outletName: "Pune", experience: "" });
+  }
+
+  function handleQuickHire(candidate: typeof RECOMMENDED_CANDIDATES[number]) {
+    setHiredStaff((prev) => [
+      {
+        employee_id: `cand-${candidate.id}`,
+        full_name: candidate.name,
+        email: `${candidate.name.toLowerCase().replace(/\s+/g, ".")}@franchiseops.com`,
+        role: candidate.role,
+        outlets: { outlet_name: candidate.suggestedOutlet },
+        experience_years: candidate.experience_years,
+        status: "Active",
+        salary: 0,
+      },
+      ...prev,
+    ]);
+    setHiredCandidateIds((prev) => [...prev, candidate.id]);
   }
 
   if (checkingAuth) {
@@ -529,7 +892,11 @@ export default function FranchiseOSDashboard() {
             <Search size={14} />
             <span>Search outlets, reports, insights...</span>
           </div>
-          <button className="flex items-center gap-2 text-sm px-3 py-2 rounded-lg border transition-colors" style={{ borderColor: `${accent}4D`, color: accent }}>
+          <button
+            onClick={() => setShowAskAI(true)}
+            className="flex items-center gap-2 text-sm px-3 py-2 rounded-lg border transition-colors"
+            style={{ borderColor: `${accent}4D`, color: accent }}
+          >
             <Sparkles size={14} /> Ask AI
           </button>
           <button
@@ -620,7 +987,7 @@ export default function FranchiseOSDashboard() {
                       <CartesianGrid strokeDasharray="3 3" stroke={t.gridLine} />
                       <XAxis dataKey="month" tick={{ fontSize: 12, fill: t.textFaint }} stroke={t.gridLine} />
                       <YAxis tick={{ fontSize: 12, fill: t.textFaint }} stroke={t.gridLine} />
-                      <Tooltip contentStyle={{ background: t.card, border: `1px solid ${t.border}`, borderRadius: 8, color: t.text }} formatter={(v) => `₹${Number((v as number) || 0).toLocaleString("en-IN")}`} />
+                      <Tooltip contentStyle={{ background: t.card, border: `1px solid ${t.border}`, borderRadius: 8, color: t.text }} formatter={(v: any) => `₹${Number(v || 0).toLocaleString("en-IN")}`} />
                       <Line type="monotone" dataKey="revenue" stroke={accent} strokeWidth={2.5} dot={{ r: 3 }} />
                     </LineChart>
                   </ResponsiveContainer>
@@ -733,6 +1100,33 @@ export default function FranchiseOSDashboard() {
             </div>
           ) : active === "outlet" ? (
             <div className="space-y-6">
+              {underperformingOutlets.length > 0 && (
+                <div className="rounded-xl p-5 border border-l-4" style={{ background: t.card, borderTopColor: t.border, borderRightColor: t.border, borderBottomColor: t.border, borderLeftColor: "#FB7185" }}>
+                  <div className="flex items-center gap-2 mb-1">
+                    <AlertTriangle size={15} color="#FB7185" />
+                    <p className="text-sm font-semibold" style={{ color: t.text }}>Underperforming Outlets</p>
+                  </div>
+                  <p className="text-sm leading-relaxed mb-3" style={{ color: t.textMuted }}>
+                    {underperformingOutlets.length} outlet(s) are below target or showing negative growth and need attention.
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {underperformingOutlets.map((o) => (
+                      <span
+                        key={o.name}
+                        className="text-xs px-2.5 py-1 rounded-full border"
+                        style={{
+                          background: o.status === "Critical" ? "#FB71851A" : "#F59E0B1A",
+                          color: o.status === "Critical" ? "#FB7185" : "#F59E0B",
+                          borderColor: o.status === "Critical" ? "#FB718533" : "#F59E0B33",
+                        }}
+                      >
+                        {o.name}: {o.growth}% ({o.status})
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               <div className="flex flex-wrap gap-2">
                 {[
                   { id: "trend", label: "Sales Revenue Trend", icon: LineChartIcon },
@@ -778,7 +1172,7 @@ export default function FranchiseOSDashboard() {
                       <CartesianGrid strokeDasharray="3 3" stroke={t.gridLine} />
                       <XAxis dataKey="month" tick={{ fontSize: 12, fill: t.textFaint }} stroke={t.gridLine} />
                       <YAxis tick={{ fontSize: 12, fill: t.textFaint }} stroke={t.gridLine} />
-                      <Tooltip contentStyle={{ background: t.card, border: `1px solid ${t.border}`, borderRadius: 8, color: t.text }} formatter={(v) => `₹${Number((v as number) || 0).toLocaleString("en-IN")}`} />
+                      <Tooltip contentStyle={{ background: t.card, border: `1px solid ${t.border}`, borderRadius: 8, color: t.text }} formatter={(v: any) => `₹${Number(v || 0).toLocaleString("en-IN")}`} />
                       <Line type="monotone" dataKey="revenue" stroke={accent} strokeWidth={2.5} dot={{ r: 3 }} />
                     </LineChart>
                   </ResponsiveContainer>
@@ -825,7 +1219,7 @@ export default function FranchiseOSDashboard() {
                       <CartesianGrid strokeDasharray="3 3" stroke={t.gridLine} />
                       <XAxis dataKey="outlet" tick={{ fontSize: 12, fill: t.textFaint }} stroke={t.gridLine} />
                       <YAxis tick={{ fontSize: 12, fill: t.textFaint }} stroke={t.gridLine} />
-                      <Tooltip contentStyle={{ background: t.card, border: `1px solid ${t.border}`, borderRadius: 8, color: t.text }} formatter={(v) => `₹${Number((v as number) || 0).toLocaleString("en-IN")}`} />
+                      <Tooltip contentStyle={{ background: t.card, border: `1px solid ${t.border}`, borderRadius: 8, color: t.text }} formatter={(v: any) => `₹${Number(v || 0).toLocaleString("en-IN")}`} />
                       <Bar dataKey="revenue" fill="#F59E0B" radius={[4, 4, 0, 0]} />
                     </BarChart>
                   </ResponsiveContainer>
@@ -835,17 +1229,41 @@ export default function FranchiseOSDashboard() {
               {outletTab === "map" && (
                 <div className="rounded-xl border p-5 transition-colors duration-200" style={{ background: t.card, borderColor: t.border }}>
                   <p className="text-sm font-semibold mb-1 flex items-center gap-2" style={{ color: t.text }}><MapPin size={15} color={accent} /> Outlet Locations</p>
-                  <p className="text-xs mb-4" style={{ color: t.textFaint }}>Prototype map — swap for a real Google Maps component using lat/lng later</p>
+                  <p className="text-xs mb-4" style={{ color: t.textFaint }}>Prototype map — distances are estimated from map position, not real GPS. Hover a pin to see distance from Pune HQ.</p>
                   <div className="relative w-full h-[300px] rounded-lg border overflow-hidden" style={{ background: t.bg, borderColor: t.border }}>
                     {outletLocations.map((loc) => (
                       <div key={loc.name} className="absolute -translate-x-1/2 -translate-y-full cursor-pointer" style={{ left: `${loc.x}%`, top: `${loc.y}%` }}
                         onMouseEnter={() => setPinHover(loc.name)} onMouseLeave={() => setPinHover(null)}>
                         <MapPin size={26} fill={pinColor[loc.status]} color={pinColor[loc.status]} strokeWidth={1} />
                         {pinHover === loc.name && (
-                          <div className="absolute left-1/2 -translate-x-1/2 -top-9 text-white text-xs px-2 py-1 rounded whitespace-nowrap" style={{ background: "#1E293B" }}>{loc.name} — {loc.status}</div>
+                          <div className="absolute left-1/2 -translate-x-1/2 -top-9 text-white text-xs px-2 py-1 rounded whitespace-nowrap" style={{ background: "#1E293B" }}>
+                            {loc.name} — {loc.status}
+                            {loc.name !== hubOutlet.name && ` · ${estimateDistanceKm(loc, hubOutlet)} km from Pune HQ`}
+                          </div>
                         )}
                       </div>
                     ))}
+                  </div>
+
+                  <div className="mt-4 rounded-lg border overflow-hidden" style={{ borderColor: t.border }}>
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr className="text-left text-xs border-b" style={{ color: t.textFaint, borderColor: t.border }}>
+                          <th className="px-4 py-2 font-medium">Outlet</th>
+                          <th className="px-4 py-2 font-medium text-right">Distance from Pune HQ (approx)</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {outletLocations.map((loc) => (
+                          <tr key={loc.name} className="border-b last:border-0" style={{ borderColor: t.border }}>
+                            <td className="px-4 py-2" style={{ color: t.text }}>{loc.name}</td>
+                            <td className="px-4 py-2 text-right" style={{ color: t.textMuted }}>
+                              {loc.name === hubOutlet.name ? "— (HQ)" : `${estimateDistanceKm(loc, hubOutlet)} km`}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
                   </div>
                 </div>
               )}
@@ -928,6 +1346,41 @@ export default function FranchiseOSDashboard() {
                     </div>
                   );
                 })}
+              </div>
+
+              <div className="rounded-xl p-5 border border-l-4" style={{ background: t.card, borderTopColor: t.border, borderRightColor: t.border, borderBottomColor: t.border, borderLeftColor: "#F59E0B" }}>
+                <div className="flex items-center justify-between mb-1 flex-wrap gap-2">
+                  <div className="flex items-center gap-2">
+                    <Trash2 size={15} color="#F59E0B" />
+                    <p className="text-sm font-semibold" style={{ color: t.text }}>Reduce Waste</p>
+                  </div>
+                  <span className="text-xs px-2.5 py-1 rounded-full border" style={{ background: "#F59E0B1A", color: "#F59E0B", borderColor: "#F59E0B33" }}>
+                    Avg wastage: {avgWastagePercent}%
+                  </span>
+                </div>
+                <p className="text-sm leading-relaxed mb-3" style={{ color: t.textMuted }}>
+                  Tracking spoilage and waste by item helps cut losses — items above 5% wastage are flagged for review.
+                </p>
+                <div className="space-y-2">
+                  {wastageData.map((w) => (
+                    <div key={w.item} className="flex items-center justify-between text-sm">
+                      <span style={{ color: t.text }}>{w.item}</span>
+                      <div className="flex items-center gap-3">
+                        <span style={{ color: t.textFaint }}>{w.wastedUnits} {w.unit} wasted</span>
+                        <span
+                          className="text-xs px-2 py-0.5 rounded-full border"
+                          style={{
+                            background: w.wastagePercent > 5 ? "#FB71851A" : "#2DD4BF1A",
+                            color: w.wastagePercent > 5 ? "#FB7185" : accent,
+                            borderColor: "transparent",
+                          }}
+                        >
+                          {w.wastagePercent}%
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
 
               <div className="flex flex-wrap items-center gap-2">
@@ -1021,17 +1474,41 @@ export default function FranchiseOSDashboard() {
                 </div>
               </div>
 
+              {understaffedOutlets.length > 0 && (
+                <div className="rounded-xl p-5 border border-l-4" style={{ background: t.card, borderTopColor: t.border, borderRightColor: t.border, borderBottomColor: t.border, borderLeftColor: "#FB7185" }}>
+                  <div className="flex items-center gap-2 mb-1">
+                    <AlertTriangle size={15} color="#FB7185" />
+                    <p className="text-sm font-semibold" style={{ color: t.text }}>Staff Shortage Alert</p>
+                  </div>
+                  <p className="text-sm leading-relaxed mb-3" style={{ color: t.textMuted }}>
+                    {understaffedOutlets.length} outlet(s) are below the minimum staffing level of {MIN_STAFF_PER_OUTLET} — coverage may be at risk during peak hours.
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {understaffedOutlets.map((o) => (
+                      <span
+                        key={o.name}
+                        className="text-xs px-2.5 py-1 rounded-full border"
+                        style={{ background: "#FB71851A", color: "#FB7185", borderColor: "#FB718533" }}
+                      >
+                        {o.name}: {o.count}/{MIN_STAFF_PER_OUTLET} staff
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               <div className="flex flex-wrap gap-2">
                 {[
                   { id: "directory", label: "Staff Directory", icon: Users },
                   { id: "attendance", label: "Attendance", icon: ShieldCheck },
+                  { id: "hire", label: "Hire Staff", icon: UserPlus },
                 ].map((tb) => {
                   const Icon = tb.icon;
                   const isActive = staffTab === tb.id;
                   return (
                     <button
                       key={tb.id}
-                      onClick={() => setStaffTab(tb.id as "directory" | "attendance")}
+                      onClick={() => setStaffTab(tb.id as "directory" | "attendance" | "hire")}
                       className="flex items-center gap-2 text-sm px-4 py-2 rounded-lg border transition-colors"
                       style={{
                         background: isActive ? `${accent}1A` : t.card,
@@ -1048,12 +1525,13 @@ export default function FranchiseOSDashboard() {
 
               {staffTab === "directory" && (
                 <div className="space-y-6">
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
                     {[
-                      { label: "Total Staff", value: String(employees.length > 0 ? employees.length : 148), icon: Users },
+                      { label: "Total Staff", value: String(FALLBACK_EMPLOYEES.length + hiredStaff.length), icon: Users },
                       { label: "Active Shifts", value: "94.2%", icon: TrendingUp },
                       { label: "Monthly Payroll", value: "₹18.4L", icon: FileBarChart },
                       { label: "Attendance Score", value: "96%", icon: ShieldCheck },
+                      { label: "Understaffed Outlets", value: String(understaffedOutlets.length), icon: AlertTriangle },
                     ].map((k) => {
                       const Icon = k.icon;
                       return (
@@ -1096,50 +1574,47 @@ export default function FranchiseOSDashboard() {
                     <p className="text-sm font-semibold px-5 pt-5 pb-1 flex items-center gap-2" style={{ color: t.text }}>
                       <Users size={15} color={accent} /> Employee Roster
                     </p>
-                    <table className="w-full text-sm mt-3">
-                      <thead>
-                        <tr className="text-left text-xs border-y" style={{ color: t.textFaint, borderColor: t.border }}>
-                          <th className="px-5 py-2 font-medium">Employee Name</th>
-                          <th className="px-5 py-2 font-medium">Role</th>
-                          <th className="px-5 py-2 font-medium">Contact Email</th>
-                          <th className="px-5 py-2 font-medium">Outlet</th>
-                          <th className="px-5 py-2 font-medium text-right">Salary</th>
-                          <th className="px-5 py-2 font-medium">Status</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {staffLoading && (
-                          <tr><td colSpan={6} className="px-5 py-6 text-center" style={{ color: t.textFaint }}>Loading staff roster...</td></tr>
-                        )}
-                        {!staffLoading &&
-                          (employees.length > 0
-                            ? employees
-                            : [
-                                { employee_id: 1, full_name: "Rahul Sharma", role: "Store Manager", email: "rahul.s@franchiseops.com", outlets: { outlet_name: "Pune" }, salary: 45000, status: "Active" },
-                                { employee_id: 2, full_name: "Priya Patel", role: "Shift Supervisor", email: "priya.p@franchiseops.com", outlets: { outlet_name: "Nashik" }, salary: 32000, status: "Active" },
-                                { employee_id: 3, full_name: "Amit Verma", role: "Barista", email: "amit.v@franchiseops.com", outlets: { outlet_name: "Mumbai Andheri" }, salary: 22000, status: "On Leave" },
-                                { employee_id: 4, full_name: "Sneha Kulkarni", role: "Cashier", email: "sneha.k@franchiseops.com", outlets: { outlet_name: "Nagpur" }, salary: 20000, status: "Active" },
-                                { employee_id: 5, full_name: "Vikas Deshmukh", role: "Executive", email: "vikas.d@franchiseops.com", outlets: { outlet_name: "Aurangabad" }, salary: 26000, status: "Active" },
-                              ]
-                          )
-                            .filter((emp) => staffRoleFilter === "All" || (emp.role || "").toLowerCase().includes(staffRoleFilter.toLowerCase()))
-                            .filter((emp) => !staffQuery || (emp.full_name || "").toLowerCase().includes(staffQuery.toLowerCase()) || (emp.role || "").toLowerCase().includes(staffQuery.toLowerCase()))
-                            .map((emp) => (
-                              <tr key={emp.employee_id} className="border-b last:border-0" style={{ borderColor: t.border }}>
-                                <td className="px-5 py-3 font-medium" style={{ color: t.text }}>{emp.full_name}</td>
-                                <td className="px-5 py-3" style={{ color: t.textMuted }}>{emp.role}</td>
-                                <td className="px-5 py-3 font-mono text-xs" style={{ color: t.textFaint }}>{emp.email}</td>
-                                <td className="px-5 py-3" style={{ color: t.textMuted }}>{emp.outlets?.outlet_name || "Network"}</td>
-                                <td className="px-5 py-3 text-right font-medium" style={{ color: t.text }}>₹{Number(emp.salary || 0).toLocaleString("en-IN")}</td>
-                                <td className="px-5 py-3">
-                                  <span className={`text-xs px-2 py-0.5 rounded-full border ${emp.status === "Active" ? "bg-teal-500/15 text-teal-400 border-teal-500/30" : "bg-amber-500/15 text-amber-400 border-amber-500/30"}`}>
-                                    {emp.status || "Active"}
-                                  </span>
-                                </td>
-                              </tr>
-                            ))}
-                      </tbody>
-                    </table>
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-sm mt-3">
+                        <thead>
+                          <tr className="text-left text-xs border-y" style={{ color: t.textFaint, borderColor: t.border }}>
+                            <th className="px-5 py-2 font-medium">Employee Name</th>
+                            <th className="px-5 py-2 font-medium">Role</th>
+                            <th className="px-5 py-2 font-medium">Contact Email</th>
+                            <th className="px-5 py-2 font-medium">Outlet</th>
+                            <th className="px-5 py-2 font-medium text-right">Experience</th>
+                            <th className="px-5 py-2 font-medium text-right">Salary</th>
+                            <th className="px-5 py-2 font-medium">Status</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {staffLoading && (
+                            <tr><td colSpan={7} className="px-5 py-6 text-center" style={{ color: t.textFaint }}>Loading staff roster...</td></tr>
+                          )}
+                          {!staffLoading &&
+                            [...hiredStaff, ...FALLBACK_EMPLOYEES]
+                              .filter((emp: any) => staffRoleFilter === "All" || emp.role.toLowerCase().includes(staffRoleFilter.toLowerCase()))
+                              .filter((emp: any) => !staffQuery || emp.full_name.toLowerCase().includes(staffQuery.toLowerCase()) || emp.role.toLowerCase().includes(staffQuery.toLowerCase()))
+                              .map((emp: any) => (
+                                <tr key={emp.employee_id} className="border-b last:border-0" style={{ borderColor: t.border }}>
+                                  <td className="px-5 py-3 font-medium" style={{ color: t.text }}>{emp.full_name}</td>
+                                  <td className="px-5 py-3" style={{ color: t.textMuted }}>{emp.role}</td>
+                                  <td className="px-5 py-3 font-mono text-xs" style={{ color: t.textFaint }}>{emp.email}</td>
+                                  <td className="px-5 py-3" style={{ color: t.textMuted }}>{emp.outlets?.outlet_name || "Network"}</td>
+                                  <td className="px-5 py-3 text-right" style={{ color: t.textMuted }}>
+                                    {emp.experience_years != null ? `${emp.experience_years} yrs` : "—"}
+                                  </td>
+                                  <td className="px-5 py-3 text-right font-medium" style={{ color: t.text }}>₹{Number(emp.salary || 0).toLocaleString("en-IN")}</td>
+                                  <td className="px-5 py-3">
+                                    <span className={`text-xs px-2 py-0.5 rounded-full border ${emp.status === "Active" ? "bg-teal-500/15 text-teal-400 border-teal-500/30" : "bg-amber-500/15 text-amber-400 border-amber-500/30"}`}>
+                                      {emp.status || "Active"}
+                                    </span>
+                                  </td>
+                                </tr>
+                              ))}
+                        </tbody>
+                      </table>
+                    </div>
                   </div>
                 </div>
               )}
@@ -1170,54 +1645,228 @@ export default function FranchiseOSDashboard() {
                     <p className="text-sm font-semibold px-5 pt-5 pb-1 flex items-center gap-2" style={{ color: t.text }}>
                       <ShieldCheck size={15} color={accent} /> Today&apos;s attendance log
                     </p>
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-sm mt-3">
+                        <thead>
+                          <tr className="text-left text-xs border-y" style={{ color: t.textFaint, borderColor: t.border }}>
+                            <th className="px-5 py-2 font-medium">Name</th>
+                            <th className="px-5 py-2 font-medium">Outlet</th>
+                            <th className="px-5 py-2 font-medium">Check-in</th>
+                            <th className="px-5 py-2 font-medium">Check-out</th>
+                            <th className="px-5 py-2 font-medium">Today</th>
+                            <th className="px-5 py-2 font-medium">Last 7 days</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {attendanceLog.map((a) => (
+                            <tr key={a.staffId} className="border-b last:border-0" style={{ borderColor: t.border }}>
+                              <td className="px-5 py-3 font-medium" style={{ color: t.text }}>{a.name}</td>
+                              <td className="px-5 py-3" style={{ color: t.textMuted }}>{a.outlet}</td>
+                              <td className="px-5 py-3" style={{ color: t.textMuted }}>{a.checkIn}</td>
+                              <td className="px-5 py-3" style={{ color: t.textMuted }}>{a.checkOut}</td>
+                              <td className="px-5 py-3">
+                                <span
+                                  className="text-xs px-2 py-0.5 rounded-full border"
+                                  style={{
+                                    background:
+                                      a.todayStatus === "Present" ? `${accent}1A` :
+                                      a.todayStatus === "Absent" ? "#FB71851A" :
+                                      a.todayStatus === "Late" ? "#F59E0B1A" : "#64748B1A",
+                                    color:
+                                      a.todayStatus === "Present" ? accent :
+                                      a.todayStatus === "Absent" ? "#FB7185" :
+                                      a.todayStatus === "Late" ? "#F59E0B" : "#94A3B8",
+                                    borderColor: "transparent",
+                                  }}
+                                >
+                                  {a.todayStatus}
+                                </span>
+                              </td>
+                              <td className="px-5 py-3">
+                                <div className="flex items-center gap-1">
+                                  {a.week.map((day, i) => (
+                                    <span
+                                      key={i}
+                                      title={`${WEEKDAYS[i]}: ${day === "P" ? "Present" : day === "L" ? "Late" : day === "A" ? "Absent" : "Off"}`}
+                                      className="w-3.5 h-3.5 rounded-[3px]"
+                                      style={{ background: attendanceDotColor[day] }}
+                                    />
+                                  ))}
+                                </div>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {staffTab === "hire" && (
+                <div className="space-y-6">
+                  <div className="rounded-xl border overflow-hidden transition-colors duration-200" style={{ background: t.card, borderColor: t.border }}>
+                    <div className="px-5 pt-5 pb-1">
+                      <p className="text-sm font-semibold flex items-center gap-2" style={{ color: t.text }}>
+                        <Star size={15} color={accent} /> Recommended Candidates
+                      </p>
+                      <p className="text-xs mt-0.5" style={{ color: t.textFaint }}>
+                        People currently working elsewhere who match your understaffed outlets — hire in one click.
+                      </p>
+                    </div>
                     <table className="w-full text-sm mt-3">
                       <thead>
                         <tr className="text-left text-xs border-y" style={{ color: t.textFaint, borderColor: t.border }}>
                           <th className="px-5 py-2 font-medium">Name</th>
-                          <th className="px-5 py-2 font-medium">Outlet</th>
-                          <th className="px-5 py-2 font-medium">Check-in</th>
-                          <th className="px-5 py-2 font-medium">Check-out</th>
-                          <th className="px-5 py-2 font-medium">Today</th>
-                          <th className="px-5 py-2 font-medium">Last 7 days</th>
+                          <th className="px-5 py-2 font-medium">Currently at</th>
+                          <th className="px-5 py-2 font-medium">Role</th>
+                          <th className="px-5 py-2 font-medium text-right">Experience</th>
+                          <th className="px-5 py-2 font-medium">Suggested Outlet</th>
+                          <th className="px-5 py-2 font-medium">Rating</th>
+                          <th className="px-5 py-2 font-medium"></th>
                         </tr>
                       </thead>
                       <tbody>
-                        {attendanceLog.map((a) => (
-                          <tr key={a.staffId} className="border-b last:border-0" style={{ borderColor: t.border }}>
-                            <td className="px-5 py-3 font-medium" style={{ color: t.text }}>{a.name}</td>
-                            <td className="px-5 py-3" style={{ color: t.textMuted }}>{a.outlet}</td>
-                            <td className="px-5 py-3" style={{ color: t.textMuted }}>{a.checkIn}</td>
-                            <td className="px-5 py-3" style={{ color: t.textMuted }}>{a.checkOut}</td>
-                            <td className="px-5 py-3">
-                              <span
-                                className="text-xs px-2 py-0.5 rounded-full border"
-                                style={{
-                                  background:
-                                    a.todayStatus === "Present" ? `${accent}1A` :
-                                    a.todayStatus === "Absent" ? "#FB71851A" :
-                                    a.todayStatus === "Late" ? "#F59E0B1A" : "#64748B1A",
-                                  color:
-                                    a.todayStatus === "Present" ? accent :
-                                    a.todayStatus === "Absent" ? "#FB7185" :
-                                    a.todayStatus === "Late" ? "#F59E0B" : "#94A3B8",
-                                  borderColor: "transparent",
-                                }}
-                              >
-                                {a.todayStatus}
-                              </span>
-                            </td>
-                            <td className="px-5 py-3">
-                              <div className="flex items-center gap-1">
-                                {a.week.map((day, i) => (
-                                  <span
-                                    key={i}
-                                    title={`${WEEKDAYS[i]}: ${day === "P" ? "Present" : day === "L" ? "Late" : day === "A" ? "Absent" : "Off"}`}
-                                    className="w-3.5 h-3.5 rounded-[3px]"
-                                    style={{ background: attendanceDotColor[day] }}
-                                  />
-                                ))}
-                              </div>
-                            </td>
+                        {RECOMMENDED_CANDIDATES.map((c) => {
+                          const alreadyHired = hiredCandidateIds.includes(c.id);
+                          return (
+                            <tr key={c.id} className="border-b last:border-0" style={{ borderColor: t.border }}>
+                              <td className="px-5 py-3 font-medium" style={{ color: t.text }}>{c.name}</td>
+                              <td className="px-5 py-3" style={{ color: t.textMuted }}>{c.currentEmployer}</td>
+                              <td className="px-5 py-3" style={{ color: t.textMuted }}>{c.role}</td>
+                              <td className="px-5 py-3 text-right" style={{ color: t.textMuted }}>{c.experience_years} yrs</td>
+                              <td className="px-5 py-3">
+                                <span className="text-xs px-2 py-0.5 rounded-full border" style={{ background: "#FB71851A", color: "#FB7185", borderColor: "#FB718533" }}>
+                                  {c.suggestedOutlet}
+                                </span>
+                              </td>
+                              <td className="px-5 py-3" style={{ color: t.textMuted }}>
+                                <span className="flex items-center gap-1">
+                                  <Star size={12} color="#F59E0B" fill="#F59E0B" /> {c.rating}
+                                </span>
+                              </td>
+                              <td className="px-5 py-3">
+                                <button
+                                  onClick={() => handleQuickHire(c)}
+                                  disabled={alreadyHired}
+                                  className="text-xs px-3 py-1.5 rounded-lg font-semibold"
+                                  style={{
+                                    background: alreadyHired ? t.inputBg : accent,
+                                    color: alreadyHired ? t.textFaint : t.bg,
+                                    cursor: alreadyHired ? "default" : "pointer",
+                                  }}
+                                >
+                                  {alreadyHired ? "Hired" : "Hire"}
+                                </button>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <div className="rounded-xl border p-5 transition-colors duration-200" style={{ background: t.card, borderColor: t.border }}>
+                    <p className="text-sm font-semibold mb-1 flex items-center gap-2" style={{ color: t.text }}>
+                      <UserPlus size={15} color={accent} /> Hire New Staff
+                    </p>
+                    <p className="text-xs mb-4" style={{ color: t.textFaint }}>Or add someone manually.</p>
+                    <form onSubmit={handleHireSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <p className="text-xs mb-1.5" style={{ color: t.textMuted }}>Full name</p>
+                        <input
+                          value={hireForm.name}
+                          onChange={(e) => setHireForm({ ...hireForm, name: e.target.value })}
+                          placeholder="e.g. Anjali Mehta"
+                          required
+                          className="w-full text-sm rounded-lg border px-3 py-2 outline-none"
+                          style={{ background: t.inputBg, borderColor: t.border, color: t.text }}
+                        />
+                      </div>
+                      <div>
+                        <p className="text-xs mb-1.5" style={{ color: t.textMuted }}>Email</p>
+                        <input
+                          type="email"
+                          value={hireForm.email}
+                          onChange={(e) => setHireForm({ ...hireForm, email: e.target.value })}
+                          placeholder="anjali.m@franchiseops.com"
+                          required
+                          className="w-full text-sm rounded-lg border px-3 py-2 outline-none"
+                          style={{ background: t.inputBg, borderColor: t.border, color: t.text }}
+                        />
+                      </div>
+                      <div>
+                        <p className="text-xs mb-1.5" style={{ color: t.textMuted }}>Role</p>
+                        <select
+                          value={hireForm.role}
+                          onChange={(e) => setHireForm({ ...hireForm, role: e.target.value })}
+                          className="w-full text-sm rounded-lg border px-3 py-2 outline-none"
+                          style={{ background: t.inputBg, borderColor: t.border, color: t.text }}
+                        >
+                          {ROLES.map((r) => <option key={r} value={r}>{r}</option>)}
+                        </select>
+                      </div>
+                      <div>
+                        <p className="text-xs mb-1.5" style={{ color: t.textMuted }}>Outlet</p>
+                        <select
+                          value={hireForm.outletName}
+                          onChange={(e) => setHireForm({ ...hireForm, outletName: e.target.value })}
+                          className="w-full text-sm rounded-lg border px-3 py-2 outline-none"
+                          style={{ background: t.inputBg, borderColor: t.border, color: t.text }}
+                        >
+                          {KNOWN_OUTLET_NAMES.map((o) => <option key={o} value={o}>{o}</option>)}
+                        </select>
+                      </div>
+                      <div>
+                        <p className="text-xs mb-1.5" style={{ color: t.textMuted }}>Experience (years)</p>
+                        <input
+                          type="number"
+                          step="0.1"
+                          min="0"
+                          value={hireForm.experience}
+                          onChange={(e) => setHireForm({ ...hireForm, experience: e.target.value })}
+                          placeholder="e.g. 2.5"
+                          className="w-full text-sm rounded-lg border px-3 py-2 outline-none"
+                          style={{ background: t.inputBg, borderColor: t.border, color: t.text }}
+                        />
+                      </div>
+                      <div className="flex items-end">
+                        <button
+                          type="submit"
+                          className="w-full py-2.5 rounded-lg font-semibold text-sm"
+                          style={{ background: accent, color: t.bg }}
+                        >
+                          Add Staff
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+
+                  <div className="rounded-xl border overflow-hidden transition-colors duration-200" style={{ background: t.card, borderColor: t.border }}>
+                    <p className="text-sm font-semibold px-5 pt-5 pb-1 flex items-center gap-2" style={{ color: t.text }}>
+                      <Users size={15} color={accent} /> Recently Hired
+                    </p>
+                    <table className="w-full text-sm mt-3">
+                      <thead>
+                        <tr className="text-left text-xs border-y" style={{ color: t.textFaint, borderColor: t.border }}>
+                          <th className="px-5 py-2 font-medium">Name</th>
+                          <th className="px-5 py-2 font-medium">Email</th>
+                          <th className="px-5 py-2 font-medium">Role</th>
+                          <th className="px-5 py-2 font-medium">Outlet</th>
+                          <th className="px-5 py-2 font-medium text-right">Experience</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {hiredStaff.length === 0 && (
+                          <tr><td colSpan={5} className="px-5 py-6 text-center" style={{ color: t.textFaint }}>No staff hired yet — use the table or form above.</td></tr>
+                        )}
+                        {hiredStaff.map((emp) => (
+                          <tr key={emp.employee_id} className="border-b last:border-0" style={{ borderColor: t.border }}>
+                            <td className="px-5 py-3 font-medium" style={{ color: t.text }}>{emp.full_name}</td>
+                            <td className="px-5 py-3 font-mono text-xs" style={{ color: t.textFaint }}>{emp.email}</td>
+                            <td className="px-5 py-3" style={{ color: t.textMuted }}>{emp.role}</td>
+                            <td className="px-5 py-3" style={{ color: t.textMuted }}>{emp.outlets.outlet_name}</td>
+                            <td className="px-5 py-3 text-right" style={{ color: t.textMuted }}>{emp.experience_years} yrs</td>
                           </tr>
                         ))}
                       </tbody>
@@ -1225,6 +1874,281 @@ export default function FranchiseOSDashboard() {
                   </div>
                 </div>
               )}
+            </div>
+          ) : active === "marketing" ? (
+            <div className="space-y-6">
+              <div className="rounded-xl p-5 border border-l-4" style={{ background: t.card, borderTopColor: t.border, borderRightColor: t.border, borderBottomColor: t.border, borderLeftColor: accent }}>
+                <div className="flex items-center gap-2 mb-1">
+                  <Sparkles size={15} color={accent} />
+                  <p className="text-sm font-semibold" style={{ color: t.text }}>AI Briefing</p>
+                </div>
+                <p className="text-sm leading-relaxed" style={{ color: t.textMuted }}>
+                  {underperformingCampaigns.length > 0
+                    ? `${underperformingCampaigns.length} campaign(s) are underperforming on ROI — see recommendations below to reallocate budget toward higher-performing channels.`
+                    : "All campaigns are performing at or above target ROI this month."}
+                </p>
+                <div className="flex flex-wrap gap-2 mt-3">
+                  <span className="text-xs px-2.5 py-1 rounded-full border" style={{ background: `${accent}1A`, color: accent, borderColor: `${accent}33` }}>Avg ROI: {avgROI}x</span>
+                  <span className="text-xs px-2.5 py-1 rounded-full border" style={{ background: "#F59E0B1A", color: "#F59E0B", borderColor: "#F59E0B33" }}>Avg engagement: {avgEngagement}%</span>
+                  <span className="text-xs px-2.5 py-1 rounded-full border" style={{ background: "#FB71851A", color: "#FB7185", borderColor: "#FB718533" }}>Underperforming: {underperformingCampaigns.length}</span>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {[
+                  { label: "Active Campaigns", value: String(marketingCampaigns.length), icon: Megaphone },
+                  { label: "Total Reach", value: totalReach.toLocaleString("en-IN"), icon: Users },
+                  { label: "Avg Engagement", value: `${avgEngagement}%`, icon: Percent },
+                  { label: "Avg ROI", value: `${avgROI}x`, icon: Target },
+                ].map((k) => {
+                  const Icon = k.icon;
+                  return (
+                    <div key={k.label} className="rounded-xl border p-4 transition-colors duration-200" style={{ background: t.card, borderColor: t.border }}>
+                      <div className="w-7 h-7 rounded-md flex items-center justify-center mb-3" style={{ background: `${accent}1A` }}>
+                        <Icon size={13} color={accent} />
+                      </div>
+                      <p className="text-lg font-semibold" style={{ color: t.text }}>{k.value}</p>
+                      <p className="text-[11px] mt-0.5" style={{ color: t.textFaint }}>{k.label}</p>
+                    </div>
+                  );
+                })}
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                <div className="rounded-xl border p-5 transition-colors duration-200" style={{ background: t.card, borderColor: t.border }}>
+                  <p className="text-sm font-semibold mb-1" style={{ color: t.text }}>Customer Engagement Trend</p>
+                  <p className="text-xs mb-4" style={{ color: t.textFaint }}>Average engagement rate, last 6 months</p>
+                  <ResponsiveContainer width="100%" height={220}>
+                    <LineChart data={engagementTrend}>
+                      <CartesianGrid strokeDasharray="3 3" stroke={t.gridLine} />
+                      <XAxis dataKey="month" tick={{ fontSize: 12, fill: t.textFaint }} stroke={t.gridLine} />
+                      <YAxis tick={{ fontSize: 12, fill: t.textFaint }} stroke={t.gridLine} />
+                      <Tooltip contentStyle={{ background: t.card, border: `1px solid ${t.border}`, borderRadius: 8, color: t.text }} formatter={(v: any) => `${v}%`} />
+                      <Line type="monotone" dataKey="engagement" stroke={accent} strokeWidth={2.5} dot={{ r: 3 }} />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+
+                <div className="rounded-xl border p-5 transition-colors duration-200" style={{ background: t.card, borderColor: t.border }}>
+                  <p className="text-sm font-semibold mb-1" style={{ color: t.text }}>Engagement by Channel</p>
+                  <p className="text-xs mb-4" style={{ color: t.textFaint }}>Which channels drive the most engagement</p>
+                  <ResponsiveContainer width="100%" height={220}>
+                    <BarChart data={channelBreakdown}>
+                      <CartesianGrid strokeDasharray="3 3" stroke={t.gridLine} />
+                      <XAxis dataKey="channel" tick={{ fontSize: 11, fill: t.textFaint }} stroke={t.gridLine} />
+                      <YAxis tick={{ fontSize: 12, fill: t.textFaint }} stroke={t.gridLine} />
+                      <Tooltip contentStyle={{ background: t.card, border: `1px solid ${t.border}`, borderRadius: 8, color: t.text }} formatter={(v: any) => `${v}%`} />
+                      <Bar dataKey="engagement" fill={accent} radius={[4, 4, 0, 0]} />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+
+              {/* ADDED FEATURE 1: Promotion Effectiveness */}
+              <div className="rounded-xl border overflow-hidden transition-colors duration-200" style={{ background: t.card, borderColor: t.border }}>
+                <div className="px-5 pt-5 pb-1 flex items-center justify-between flex-wrap gap-2">
+                  <p className="text-sm font-semibold flex items-center gap-2" style={{ color: t.text }}>
+                    <Tag size={15} color={accent} /> Promotion Effectiveness
+                  </p>
+                  <span className="text-xs px-2.5 py-1 rounded-full border" style={{ background: `${accent}1A`, color: accent, borderColor: `${accent}33` }}>
+                    Best: {bestPromo.promo} ({bestPromo.redemptionRate}%)
+                  </span>
+                </div>
+                <table className="w-full text-sm mt-3">
+                  <thead>
+                    <tr className="text-left text-xs border-y" style={{ color: t.textFaint, borderColor: t.border }}>
+                      <th className="px-5 py-2 font-medium">Promotion</th>
+                      <th className="px-5 py-2 font-medium">Type</th>
+                      <th className="px-5 py-2 font-medium text-right">Redemptions</th>
+                      <th className="px-5 py-2 font-medium text-right">Redemption Rate</th>
+                      <th className="px-5 py-2 font-medium text-right">Revenue</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {promotionEffectiveness.map((p) => (
+                      <tr key={p.promo} className="border-b last:border-0" style={{ borderColor: t.border }}>
+                        <td className="px-5 py-3 font-medium" style={{ color: t.text }}>{p.promo}</td>
+                        <td className="px-5 py-3" style={{ color: t.textMuted }}>{p.type}</td>
+                        <td className="px-5 py-3 text-right" style={{ color: t.text }}>{p.redemptions.toLocaleString("en-IN")}</td>
+                        <td className="px-5 py-3 text-right font-medium" style={{ color: accent }}>{p.redemptionRate}%</td>
+                        <td className="px-5 py-3 text-right" style={{ color: t.textFaint }}>₹{p.revenue.toLocaleString("en-IN")}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* ADDED FEATURE 2: Customer Segmentation */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                <div className="rounded-xl border p-5 transition-colors duration-200" style={{ background: t.card, borderColor: t.border }}>
+                  <p className="text-sm font-semibold mb-1 flex items-center gap-2" style={{ color: t.text }}>
+                    <PieChart size={15} color={accent} /> Customer Segmentation
+                  </p>
+                  <p className="text-xs mb-4" style={{ color: t.textFaint }}>New vs. returning customers</p>
+                  <div className="space-y-3">
+                    {customerSegments.map((s) => (
+                      <div key={s.segment}>
+                        <div className="flex items-center justify-between text-sm mb-1">
+                          <span style={{ color: t.text }}>{s.segment}</span>
+                          <span style={{ color: t.textMuted }}>{s.percent}% · {s.count.toLocaleString("en-IN")}</span>
+                        </div>
+                        <div className="w-full h-2 rounded-full" style={{ background: t.inputBg }}>
+                          <div className="h-2 rounded-full" style={{ width: `${s.percent}%`, background: accent }} />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="rounded-xl border p-5 transition-colors duration-200" style={{ background: t.card, borderColor: t.border }}>
+                  <p className="text-sm font-semibold mb-1" style={{ color: t.text }}>Engagement by Age Group</p>
+                  <p className="text-xs mb-4" style={{ color: t.textFaint }}>Which audience responds most</p>
+                  <ResponsiveContainer width="100%" height={160}>
+                    <BarChart data={ageGroupEngagement}>
+                      <CartesianGrid strokeDasharray="3 3" stroke={t.gridLine} />
+                      <XAxis dataKey="ageGroup" tick={{ fontSize: 11, fill: t.textFaint }} stroke={t.gridLine} />
+                      <YAxis tick={{ fontSize: 12, fill: t.textFaint }} stroke={t.gridLine} />
+                      <Tooltip contentStyle={{ background: t.card, border: `1px solid ${t.border}`, borderRadius: 8, color: t.text }} formatter={(v: any) => `${v}%`} />
+                      <Bar dataKey="engagement" fill="#F59E0B" radius={[4, 4, 0, 0]} />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+
+              {/* ADDED FEATURE 3: Social Media Performance */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                <div className="rounded-xl border p-5 transition-colors duration-200" style={{ background: t.card, borderColor: t.border }}>
+                  <div className="flex items-center justify-between mb-1">
+                    <p className="text-sm font-semibold flex items-center gap-2" style={{ color: t.text }}>
+                      <Share2 size={15} color={accent} /> Follower Growth
+                    </p>
+                    <span className="text-xs px-2 py-0.5 rounded-full border" style={{ background: `${accent}1A`, color: accent, borderColor: "transparent" }}>
+                      +{followerGrowthPercent}%
+                    </span>
+                  </div>
+                  <p className="text-xs mb-4" style={{ color: t.textFaint }}>Total followers across platforms, last 6 months</p>
+                  <ResponsiveContainer width="100%" height={180}>
+                    <LineChart data={followerGrowthTrend}>
+                      <CartesianGrid strokeDasharray="3 3" stroke={t.gridLine} />
+                      <XAxis dataKey="month" tick={{ fontSize: 12, fill: t.textFaint }} stroke={t.gridLine} />
+                      <YAxis tick={{ fontSize: 12, fill: t.textFaint }} stroke={t.gridLine} />
+                      <Tooltip contentStyle={{ background: t.card, border: `1px solid ${t.border}`, borderRadius: 8, color: t.text }} formatter={(v: any) => Number(v).toLocaleString("en-IN")} />
+                      <Line type="monotone" dataKey="followers" stroke={accent} strokeWidth={2.5} dot={{ r: 3 }} />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+
+                <div className="rounded-xl border overflow-hidden transition-colors duration-200" style={{ background: t.card, borderColor: t.border }}>
+                  <p className="text-sm font-semibold px-5 pt-5 pb-1" style={{ color: t.text }}>Platform Breakdown</p>
+                  <table className="w-full text-sm mt-3">
+                    <thead>
+                      <tr className="text-left text-xs border-y" style={{ color: t.textFaint, borderColor: t.border }}>
+                        <th className="px-5 py-2 font-medium">Platform</th>
+                        <th className="px-5 py-2 font-medium text-right">Followers</th>
+                        <th className="px-5 py-2 font-medium text-right">Likes</th>
+                        <th className="px-5 py-2 font-medium text-right">Comments</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {socialPlatformStats.map((p) => (
+                        <tr key={p.platform} className="border-b last:border-0" style={{ borderColor: t.border }}>
+                          <td className="px-5 py-3 font-medium" style={{ color: t.text }}>{p.platform}</td>
+                          <td className="px-5 py-3 text-right" style={{ color: t.text }}>{p.followers.toLocaleString("en-IN")}</td>
+                          <td className="px-5 py-3 text-right" style={{ color: t.textMuted }}>{p.likes.toLocaleString("en-IN")}</td>
+                          <td className="px-5 py-3 text-right" style={{ color: t.textFaint }}>{p.comments.toLocaleString("en-IN")}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              {/* ADDED FEATURE 4: Upcoming Campaigns */}
+              <div className="rounded-xl border overflow-hidden transition-colors duration-200" style={{ background: t.card, borderColor: t.border }}>
+                <p className="text-sm font-semibold px-5 pt-5 pb-1 flex items-center gap-2" style={{ color: t.text }}>
+                  <CalendarClock size={15} color={accent} /> Upcoming Campaigns
+                </p>
+                <table className="w-full text-sm mt-3">
+                  <thead>
+                    <tr className="text-left text-xs border-y" style={{ color: t.textFaint, borderColor: t.border }}>
+                      <th className="px-5 py-2 font-medium">Campaign</th>
+                      <th className="px-5 py-2 font-medium">Channel</th>
+                      <th className="px-5 py-2 font-medium">Launch Date</th>
+                      <th className="px-5 py-2 font-medium">Target Outlets</th>
+                      <th className="px-5 py-2 font-medium text-right">Budget</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {upcomingCampaigns.map((c) => (
+                      <tr key={c.name} className="border-b last:border-0" style={{ borderColor: t.border }}>
+                        <td className="px-5 py-3 font-medium" style={{ color: t.text }}>{c.name}</td>
+                        <td className="px-5 py-3" style={{ color: t.textMuted }}>{c.channel}</td>
+                        <td className="px-5 py-3" style={{ color: t.textMuted }}>{c.launchDate}</td>
+                        <td className="px-5 py-3" style={{ color: t.textMuted }}>{c.targetOutlets}</td>
+                        <td className="px-5 py-3 text-right" style={{ color: t.text }}>₹{c.budget.toLocaleString("en-IN")}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              <div className="rounded-xl p-5 border border-l-4" style={{ background: t.card, borderTopColor: t.border, borderRightColor: t.border, borderBottomColor: t.border, borderLeftColor: "#F59E0B" }}>
+                <div className="flex items-center gap-2 mb-3">
+                  <Lightbulb size={15} color="#F59E0B" />
+                  <p className="text-sm font-semibold" style={{ color: t.text }}>Recommended Campaign Improvements</p>
+                </div>
+                <div className="space-y-2">
+                  {marketingRecommendations.map((rec, i) => (
+                    <div key={i} className="flex items-start gap-2 text-sm" style={{ color: t.textMuted }}>
+                      <span className="mt-1.5 w-1.5 h-1.5 rounded-full shrink-0" style={{ background: "#F59E0B" }} />
+                      <span>{rec}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="rounded-xl border overflow-hidden transition-colors duration-200" style={{ background: t.card, borderColor: t.border }}>
+                <p className="text-sm font-semibold px-5 pt-5 pb-1 flex items-center gap-2" style={{ color: t.text }}>
+                  <Megaphone size={15} color={accent} /> Campaign Performance
+                </p>
+                <table className="w-full text-sm mt-3">
+                  <thead>
+                    <tr className="text-left text-xs border-y" style={{ color: t.textFaint, borderColor: t.border }}>
+                      <th className="px-5 py-2 font-medium">Campaign</th>
+                      <th className="px-5 py-2 font-medium">Channel</th>
+                      <th className="px-5 py-2 font-medium text-right">Reach</th>
+                      <th className="px-5 py-2 font-medium text-right">Engagement</th>
+                      <th className="px-5 py-2 font-medium text-right">Spend</th>
+                      <th className="px-5 py-2 font-medium text-right">ROI</th>
+                      <th className="px-5 py-2 font-medium">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {marketingCampaigns.map((c) => (
+                      <tr key={c.name} className="border-b last:border-0" style={{ borderColor: t.border }}>
+                        <td className="px-5 py-3 font-medium" style={{ color: t.text }}>{c.name}</td>
+                        <td className="px-5 py-3" style={{ color: t.textMuted }}>{c.channel}</td>
+                        <td className="px-5 py-3 text-right" style={{ color: t.text }}>{c.reach.toLocaleString("en-IN")}</td>
+                        <td className="px-5 py-3 text-right" style={{ color: t.textMuted }}>{c.engagement}%</td>
+                        <td className="px-5 py-3 text-right" style={{ color: t.textFaint }}>₹{c.spend.toLocaleString("en-IN")}</td>
+                        <td className="px-5 py-3 text-right font-medium" style={{ color: c.roi >= 3 ? accent : "#F59E0B" }}>{c.roi}x</td>
+                        <td className="px-5 py-3">
+                          <span
+                            className="text-xs px-2 py-0.5 rounded-full border"
+                            style={{
+                              background: c.status === "Active" ? `${accent}1A` : "#FB71851A",
+                              color: c.status === "Active" ? accent : "#FB7185",
+                              borderColor: "transparent",
+                            }}
+                          >
+                            {c.status}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
           ) : (
             <div className="rounded-2xl border p-12 text-center transition-colors duration-200" style={{ background: t.card, borderColor: t.border }}>
@@ -1237,6 +2161,18 @@ export default function FranchiseOSDashboard() {
           )}
         </div>
       </main>
+
+      {showAskAI && (
+        <AskAIPanel
+          t={t}
+          accent={accent}
+          onClose={() => setShowAskAI(false)}
+          outlets={outlets}
+          inventoryItems={inventoryItems}
+          inventorySummary={inventorySummary}
+          employees={employees}
+        />
+      )}
     </div>
   );
 }
