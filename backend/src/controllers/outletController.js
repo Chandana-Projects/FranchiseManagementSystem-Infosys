@@ -84,15 +84,6 @@ exports.getOutletById = async (req, res, next) => {
                 message: "Outlet not found"
             });
         }
-exports.getNearbyOutlets = async (req, res, next) => {
-    try {
-        const data = await outletService.getNearbyOutlets(req.params.id);
-        res.status(200).json(data);
-    } catch (error) {
-        next(error);
-    }
-};
-
         res.status(200).json(outlet);
     } catch (error) {
         next(error);

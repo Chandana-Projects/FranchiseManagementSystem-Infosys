@@ -1,6 +1,15 @@
 const request = require('supertest');
 const app = require('../src/app');
 
+jest.mock('../src/middlewares/authMiddleware', () => ({
+  authenticateToken: (req, res, next) => {
+    req.user = { role: 'admin' };
+    next();
+  },
+  requireRole: () => (req, res, next) => next(),
+}));
+
+
 jest.mock('@prisma/client', () => {
   const mPrismaClient = {
     employees: {
