@@ -728,7 +728,9 @@ export default function FranchiseOSDashboard() {
   useEffect(() => {
     if (!isLoggedIn || active !== "staff") return;
     setStaffLoading(true);
-    fetch(`${API_BASE_URL}/api/employees`)
+    fetch(`${API_BASE_URL}/api/employees`, {
+      headers: { Authorization: `Bearer ${localStorage.getItem("fops_token")}` },
+    })
       .then((res) => res.json())
       .then((data) => setEmployees(Array.isArray(data) && data.length > 0 ? data : []))
       .catch(() => setEmployees([]))
@@ -772,7 +774,9 @@ export default function FranchiseOSDashboard() {
 
   useEffect(() => {
     if (!isLoggedIn) return;
-    fetch(`${API_BASE_URL}/api/outlets`)
+    fetch(`${API_BASE_URL}/api/outlets`, {
+      headers: { Authorization: `Bearer ${localStorage.getItem("fops_token")}` },
+    })
       .then((res) => res.json())
       .then((data) => setOutlets(Array.isArray(data) ? data : []))
       .catch(() => setOutlets([]));
@@ -788,9 +792,11 @@ export default function FranchiseOSDashboard() {
     if (inventoryOutletId !== "All") params.set("outlet_id", inventoryOutletId);
     if (inventoryQuery) params.set("search", inventoryQuery);
 
+    const authHeaders = { Authorization: `Bearer ${localStorage.getItem("fops_token")}` };
+
     Promise.all([
-      fetch(`${API_BASE_URL}/api/inventory?${params.toString()}`).then((res) => res.json()),
-      fetch(`${API_BASE_URL}/api/inventory/summary`).then((res) => res.json()),
+      fetch(`${API_BASE_URL}/api/inventory?${params.toString()}`, { headers: authHeaders }).then((res) => res.json()),
+      fetch(`${API_BASE_URL}/api/inventory/summary`, { headers: authHeaders }).then((res) => res.json()),
     ])
       .then(([items, summary]) => {
         setInventoryItems(Array.isArray(items) ? items : []);
