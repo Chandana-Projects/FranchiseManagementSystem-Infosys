@@ -39,5 +39,5 @@ if (-not (Test-Path $modelFile)) {
 
 # 5. Start FastAPI server
 Write-Host "`n🚀 Starting ML microservice on http://localhost:8000 ..." -ForegroundColor Cyan
-Write-Host "   Press Ctrl+C to stop`n" -ForegroundColor Gray
+Write-Host "   Press Ctrl+C to stop" -ForegroundColor Gray
 uvicorn main:app --host 0.0.0.0 --port 8000 --reload
