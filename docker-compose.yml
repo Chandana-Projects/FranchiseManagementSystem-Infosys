@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: franchiseops-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: franchise_mgmt
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  ml-service:
+    build: ./ml_service
+    container_name: franchiseops-ml
+    ports:
+      - "8000:8000"
+    environment:
+      - PYTHONIOENCODING=utf-8
+    volumes:
+      - ./ml_service:/app
+
+  backend:
+    build: ./backend
+    container_name: franchiseops-backend
+    ports:
+      - "5000:5000"
+    environment:
+      - DATABASE_URL=postgresql://postgres:password@db:5432/franchise_mgmt
+      - ML_SERVICE_URL=http://ml-service:8000
+    depends_on:
+      - db
+      - ml-service
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+
+  frontend:
+    build: ./frontend
+    container_name: franchiseops-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_BASE_URL=http://localhost:5000
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+
+volumes:
+  pgdata:

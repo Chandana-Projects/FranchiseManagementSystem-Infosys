@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, Radar, Legend
@@ -433,7 +433,7 @@ function LoginPage({
 }: {
   t: typeof themes.dark;
   accent: string;
-  onLogin: () => void;
+  onLogin: (user: any) => void;
 }) {
   const [showPw, setShowPw] = useState(false);
   const [email, setEmail] = useState("");
@@ -477,6 +477,7 @@ function LoginPage({
 
   return (
     <div className="w-full min-h-[800px] flex items-center justify-center font-sans" style={{ background: t.bg, color: t.text }}>
+      <CustomCursor isDark={true} />
       <div className="w-[380px]">
         <div className="flex items-center justify-center gap-2 mb-7">
           <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-teal-400 to-teal-600 flex items-center justify-center font-bold text-base" style={{ color: t.bg }}>F</div>
@@ -535,6 +536,130 @@ function LoginPage({
         </form>
       </div>
     </div>
+  );
+}
+
+function CustomCursor({ isDark }: { isDark: boolean }) {
+  const [position, setPosition] = useState({ x: -100, y: -100 });
+  const [trail, setTrail] = useState({ x: -100, y: -100 });
+  const [isVisible, setIsVisible] = useState(false);
+  const [hoverType, setHoverType] = useState<string | null>(null);
+
+  const positionRef = useRef({ x: -100, y: -100 });
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      positionRef.current = { x: e.clientX, y: e.clientY };
+      setPosition({ x: e.clientX, y: e.clientY });
+      setIsVisible(true);
+    };
+
+    const handleMouseLeave = () => {
+      setIsVisible(false);
+    };
+
+    const handleMouseOver = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (!target) return;
+
+      const isInput = target.tagName === "INPUT" || target.tagName === "TEXTAREA" || target.closest("input");
+      const isMapPin = target.closest(".cursor-pointer") && (target.closest("svg") || target.closest('[style*="left"]'));
+      const isExit = target.closest('[aria-label="Sign out"]') || target.closest('[onclick*="signOut"]') || (target.textContent && target.textContent.toLowerCase().includes("sign out"));
+      const isButton = target.tagName === "BUTTON" || target.tagName === "A" || target.closest("button") || target.closest("a") || target.closest('[role="button"]') || target.classList.contains("interactive");
+
+      if (isInput) {
+        setHoverType("TYPE");
+      } else if (isExit) {
+        setHoverType("EXIT");
+      } else if (isMapPin) {
+        setHoverType("MAP");
+      } else if (isButton) {
+        setHoverType("CLICK");
+      } else {
+        setHoverType(null);
+      }
+    };
+
+    const handleMouseOut = () => {
+      setHoverType(null);
+    };
+
+    window.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseleave", handleMouseLeave);
+    document.addEventListener("mouseover", handleMouseOver);
+    document.addEventListener("mouseout", handleMouseOut);
+
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseleave", handleMouseLeave);
+      document.removeEventListener("mouseover", handleMouseOver);
+      document.removeEventListener("mouseout", handleMouseOut);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!isVisible) return;
+    let animationFrameId: number;
+
+    const updateTrail = () => {
+      setTrail((prev) => {
+        const dx = positionRef.current.x - prev.x;
+        const dy = positionRef.current.y - prev.y;
+        const ease = hoverType ? 0.28 : 0.16;
+        return {
+          x: prev.x + dx * ease,
+          y: prev.y + dy * ease,
+        };
+      });
+      animationFrameId = requestAnimationFrame(updateTrail);
+    };
+
+    animationFrameId = requestAnimationFrame(updateTrail);
+    return () => cancelAnimationFrame(animationFrameId);
+  }, [isVisible, hoverType]);
+
+  if (!isVisible) return null;
+
+  return (
+    <>
+      {/* Dynamic Context HUD Outer Capsule */}
+      <div
+        className="pointer-events-none fixed z-50 flex items-center justify-center rounded-full border transition-all duration-300 ease-out"
+        style={{
+          left: `${trail.x}px`,
+          top: `${trail.y}px`,
+          width: hoverType ? "56px" : "28px",
+          height: "28px",
+          borderRadius: hoverType ? "14px" : "50%",
+          borderColor: hoverType ? "#2DD4BF" : "#2DD4BF40",
+          background: hoverType ? "rgba(45, 212, 191, 0.12)" : "transparent",
+          boxShadow: hoverType ? "0 0 16px rgba(45,212,191,0.35)" : "0 0 8px rgba(45,212,191,0.08)",
+          transform: `translate(-50%, -50%)`,
+          opacity: 0.9,
+          transition: "width 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-radius 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease, background-color 0.25s ease, box-shadow 0.25s ease",
+        }}
+      >
+        {hoverType && (
+          <span className="text-[8px] font-extrabold tracking-widest text-[#2DD4BF] select-none">
+            {hoverType}
+          </span>
+        )}
+      </div>
+
+      {/* Inner Dot Indicator */}
+      <div
+        className="pointer-events-none fixed z-50 h-1.5 w-1.5 rounded-full"
+        style={{
+          left: `${position.x}px`,
+          top: `${position.y}px`,
+          background: "#2DD4BF",
+          boxShadow: "0 0 6px #2DD4BF",
+          transform: `translate(-50%, -50%) scale(${hoverType ? 0.5 : 1})`,
+          transition: "transform 0.2s ease-out, opacity 0.2s ease-out",
+          opacity: hoverType ? 0.3 : 1,
+        }}
+      />
+    </>
   );
 }
 
@@ -737,7 +862,6 @@ export default function FranchiseOSDashboard() {
 
   const t = isDark ? themes.dark : themes.light;
   const statusColor = isDark ? statusColorDark : statusColorLight;
-  const accent = "#2DD4BF";
   const activeLabel = modules.find((m) => m.id === active)?.label ?? "Dashboard";
   const trendData = revenueTrendByOutlet[selectedOutlet] || revenueTrendByOutlet.All;
   const weeklyTrendData = weeklyRevenueTrendByOutlet[selectedWeeklyOutlet] || weeklyRevenueTrendByOutlet.All;
@@ -772,11 +896,13 @@ export default function FranchiseOSDashboard() {
 
   useEffect(() => {
     if (!isLoggedIn) return;
-    fetch(`${API_BASE_URL}/api/outlets`)
+    const token = localStorage.getItem("fops_token");
+    const headers: HeadersInit = token ? { "Authorization": `Bearer ${token}` } : {};
+    fetch(`${API_BASE_URL}/api/outlets`, { headers })
       .then((res) => res.json())
       .then((data) => setOutlets(Array.isArray(data) ? data : []))
       .catch(() => setOutlets([]));
-  }, [isLoggedIn]);
+  }, [isLoggedIn, sseTrigger]);
 
   useEffect(() => {
     if (!isLoggedIn || active !== "inventory") return;
@@ -788,9 +914,12 @@ export default function FranchiseOSDashboard() {
     if (inventoryOutletId !== "All") params.set("outlet_id", inventoryOutletId);
     if (inventoryQuery) params.set("search", inventoryQuery);
 
+    const token = localStorage.getItem("fops_token");
+    const headers: HeadersInit = token ? { "Authorization": `Bearer ${token}` } : {};
+
     Promise.all([
-      fetch(`${API_BASE_URL}/api/inventory?${params.toString()}`).then((res) => res.json()),
-      fetch(`${API_BASE_URL}/api/inventory/summary`).then((res) => res.json()),
+      fetch(`${API_BASE_URL}/api/inventory?${params.toString()}`, { headers }).then((res) => res.json()),
+      fetch(`${API_BASE_URL}/api/inventory/summary`, { headers }).then((res) => res.json()),
     ])
       .then(([items, summary]) => {
         setInventoryItems(Array.isArray(items) ? items : []);
@@ -847,42 +976,65 @@ export default function FranchiseOSDashboard() {
   }
 
   if (!isLoggedIn) {
-    return <LoginPage t={t} accent={accent} onLogin={() => setIsLoggedIn(true)} />;
+    return <LoginPage t={t} accent={accent} onLogin={(user) => { setCurrentUser(user); setIsLoggedIn(true); }} />;
   }
 
   return (
     <div className="w-full min-h-[800px] flex font-sans transition-colors duration-200" style={{ background: t.bg, color: t.text }}>
-      <aside className="w-64 flex flex-col shrink-0 border-r transition-colors duration-200" style={{ background: t.panel, borderColor: t.border }}>
-        <div className="px-5 py-5 flex items-center gap-2 border-b" style={{ borderColor: t.border }}>
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-teal-400 to-teal-600 flex items-center justify-center font-bold text-sm" style={{ color: t.bg }}>F</div>
+      <CustomCursor isDark={isDark} />
+      <aside className="w-64 flex flex-col shrink-0 border-r transition-colors duration-200 relative" style={{ background: isDark ? "rgba(14,16,21,0.97)" : t.panel, borderColor: t.border, backdropFilter: "blur(20px)" }}>
+        {/* Top gradient shimmer line */}
+        <div className="absolute top-0 left-0 right-0 h-[2px]" style={{ background: `linear-gradient(90deg, transparent, ${accent}, transparent)`, opacity: 0.5 }} />
+        <div className="px-5 py-5 flex items-center gap-2.5 border-b" style={{ borderColor: t.border }}>
+          <div className="w-9 h-9 rounded-xl flex items-center justify-center font-black text-base shadow-lg relative overflow-hidden" style={{ background: `linear-gradient(135deg, #2DD4BF, #0891B2)`, color: "#fff" }}>
+            <span className="relative z-10">F</span>
+            <span className="absolute inset-0 opacity-30" style={{ background: "linear-gradient(45deg, transparent 40%, rgba(255,255,255,0.4) 60%, transparent 70%)" }} />
+          </div>
           <div>
-            <p className="font-semibold text-sm leading-tight" style={{ color: t.text }}>FranchiseOps AI</p>
-            <p className="text-[10px]" style={{ color: t.textFaint }}>Analytics Network</p>
+            <p className="font-bold text-sm leading-tight" style={{ color: t.text }}>FranchiseOps AI</p>
+            <p className="text-[10px] font-medium" style={{ color: accent }}>● Live Network</p>
           </div>
         </div>
-        <nav className="flex-1 overflow-y-auto py-3">
+        <nav className="flex-1 overflow-y-auto py-3 space-y-0.5">
           {modules.map((m) => {
             const Icon = m.icon;
             const isActive = active === m.id;
+            const unreadCount = m.id === "notifications" ? notifUnread : 0;
             return (
               <button
                 key={m.id}
                 onClick={() => setActive(m.id)}
-                className="w-full flex items-center gap-3 px-5 py-2.5 text-sm text-left transition-colors border-l-2"
+                className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-left transition-all duration-200 rounded-lg mx-1 relative group"
                 style={{
-                  borderColor: isActive ? accent : "transparent",
-                  background: isActive ? `${accent}1A` : "transparent",
+                  width: "calc(100% - 8px)",
+                  background: isActive ? `linear-gradient(135deg, ${accent}25, ${accent}10)` : "transparent",
                   color: isActive ? t.text : t.textMuted,
+                  boxShadow: isActive ? `inset 0 0 0 1px ${accent}30, 0 2px 12px ${accent}15` : "none",
                 }}
               >
-                <Icon size={16} color={isActive ? accent : t.textFaint} />
-                {m.label}
+                {isActive && (
+                  <span className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-5 rounded-r" style={{ background: accent }} />
+                )}
+                <Icon size={16} color={isActive ? accent : t.textFaint} style={{ transition: "all 0.2s" }} />
+                <span className={`flex-1 font-${isActive ? "semibold" : "normal"} text-xs`}>{m.label}</span>
+                {unreadCount > 0 && (
+                  <span className="w-5 h-5 rounded-full text-[10px] font-black flex items-center justify-center animate-pulse" style={{ background: "#FB7185", color: "#fff" }}>
+                    {unreadCount}
+                  </span>
+                )}
               </button>
             );
           })}
         </nav>
-        <div className="px-5 py-4 border-t flex items-center gap-2 text-[11px]" style={{ borderColor: t.border, color: t.textFaint }}>
-          <span className="w-2 h-2 rounded-full bg-teal-400 animate-pulse" /> AI engine active
+        {/* Live Pulse Footer */}
+        <div className="px-4 py-3 border-t" style={{ borderColor: t.border }}>
+          <div className="flex items-center gap-2 text-[10px] mb-1.5" style={{ color: t.textFaint }}>
+            <span className="w-1.5 h-1.5 rounded-full bg-teal-400 animate-pulse" /> AI engines active — 7 models running
+          </div>
+          <div className="w-full h-1 rounded-full overflow-hidden" style={{ background: t.border }}>
+            <div className="h-full rounded-full" style={{ width: "73%", background: `linear-gradient(90deg, ${accent}, #0891B2)` }} />
+          </div>
+          <p className="text-[9px] mt-0.5" style={{ color: t.textFaint }}>System load: 73% · Latency: 12ms</p>
         </div>
       </aside>
 
@@ -908,73 +1060,172 @@ export default function FranchiseOSDashboard() {
             {isDark ? <Sun size={14} /> : <Moon size={14} />}
             {isDark ? "Light" : "Dark"}
           </button>
-          <button
-            onClick={handleSignOut}
-            className="w-8 h-8 rounded-full bg-gradient-to-br from-rose-400 to-amber-400 flex items-center justify-center text-xs font-semibold"
-            style={{ color: t.bg }}
-            aria-label="Sign out"
-          >
-            M
-          </button>
+          <div className="relative">
+            <button
+              onClick={() => setShowProfileDropdown(!showProfileDropdown)}
+              className="w-8 h-8 rounded-full bg-gradient-to-br from-rose-400 to-amber-400 flex items-center justify-center text-xs font-semibold hover:opacity-85 transition-opacity"
+              style={{ color: t.bg }}
+              aria-label="Profile Menu"
+            >
+              {currentUser?.full_name?.charAt(0).toUpperCase() || "M"}
+            </button>
+            
+            {showProfileDropdown && (
+              <div className="absolute right-0 mt-2.5 w-64 rounded-xl border p-4 shadow-xl z-50 text-left" style={{ background: t.card, borderColor: t.border }}>
+                <div className="flex items-center gap-2 pb-3 border-b mb-3" style={{ borderColor: t.border }}>
+                  <div className="w-9 h-9 rounded-full bg-gradient-to-br from-rose-400 to-amber-400 flex items-center justify-center font-bold text-sm" style={{ color: t.bg }}>
+                    {currentUser?.full_name?.charAt(0).toUpperCase() || "M"}
+                  </div>
+                  <div className="overflow-hidden">
+                    <p className="font-semibold text-xs truncate" style={{ color: t.text }}>{currentUser?.full_name || "Abhishek Pattnaik"}</p>
+                    <p className="text-[10px] truncate" style={{ color: t.textFaint }}>{currentUser?.email || "abhi@gmail.com"}</p>
+                  </div>
+                </div>
+                <div className="space-y-1.5 text-[10px] mb-4" style={{ color: t.textMuted }}>
+                  <p><span className="font-semibold" style={{ color: t.textFaint }}>Role:</span> <span className="px-1.5 py-0.5 rounded bg-teal-500/10 text-teal-400 font-bold uppercase tracking-wider">{currentUser?.role || "Admin"}</span></p>
+                  {currentUser?.outlet_id && (
+                    <p><span className="font-semibold" style={{ color: t.textFaint }}>Assigned Outlet:</span> Outlet #{currentUser?.outlet_id}</p>
+                  )}
+                </div>
+                <button
+                  onClick={() => {
+                    setShowProfileDropdown(false);
+                    handleSignOut();
+                  }}
+                  className="w-full py-2 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 font-semibold text-xs border border-rose-500/20 transition-colors"
+                >
+                  Logout Session
+                </button>
+              </div>
+            )}
+          </div>
         </div>
 
         <div className="p-8">
           {active === "dashboard" ? (
             <div className="space-y-6">
-              <div className="rounded-xl p-5 border border-l-4" style={{ background: t.card, borderTopColor: t.border, borderRightColor: t.border, borderBottomColor: t.border, borderLeftColor: accent }}>
-                <div className="flex items-center gap-2 mb-1">
-                  <Sparkles size={15} color={accent} />
-                  <p className="text-sm font-semibold" style={{ color: t.text }}>AI Briefing</p>
+              {/* 🚨 Critical Alert Banner */}
+              <div className="rounded-xl px-5 py-3.5 flex items-center gap-3 border" style={{ background: "linear-gradient(135deg, #FB718515, #FB718508)", borderColor: "#FB718540" }}>
+                <span className="w-2 h-2 rounded-full bg-rose-400 animate-ping flex-shrink-0" />
+                <span className="w-2 h-2 rounded-full bg-rose-400 -ml-5 flex-shrink-0" />
+                <p className="text-xs font-semibold flex-1" style={{ color: "#FB7185" }}>
+                  🚨 <strong>Critical Alert:</strong> Aurangabad CIDCO outlet health is at 41/100 — immediate action required. 2 inventory items critically low.
+                </p>
+                <button onClick={() => setActive("audit")} className="text-xs px-3 py-1.5 rounded-lg font-semibold border flex-shrink-0" style={{ borderColor: "#FB718550", color: "#FB7185", background: "#FB718515" }}>Take Action →</button>
+              </div>
+
+              {/* ⚡ Live Pulse Ticker */}
+              <div className="rounded-xl border px-5 py-3 flex items-center gap-4 overflow-hidden" style={{ background: t.card, borderColor: t.border }}>
+                <div className="flex items-center gap-1.5 flex-shrink-0">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+                  <span className="text-[10px] font-bold uppercase tracking-widest" style={{ color: "#34d399" }}>LIVE POS</span>
+                </div>
+                <div className="flex items-center gap-6 overflow-x-auto hide-scrollbar flex-1">
+                  {liveTransactions.length > 0 ? (
+                    liveTransactions.map((tx: any, idx: number) => {
+                      const isAnom = tx.anomaly?.has_anomaly;
+                      return (
+                        <div key={idx} className="flex flex-col flex-shrink-0 border-l pl-4 first:border-0 first:pl-0" style={{ borderColor: t.border }}>
+                          <span className="text-[9px] uppercase tracking-wide" style={{ color: t.textFaint }}>
+                            {tx.outlet_name} · {new Date(tx.transaction.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+                          </span>
+                          <div className="flex items-baseline gap-1.5">
+                            <span className={`text-xs font-bold ${isAnom ? "text-rose-400" : "text-emerald-400"}`}>
+                              ₹{tx.transaction.revenue.toLocaleString()}
+                            </span>
+                            <span className="text-[9px] font-medium" style={{ color: t.textMuted }}>
+                              ({tx.transaction.orders} orders)
+                            </span>
+                            {isAnom && (
+                              <span className="text-[8px] bg-rose-500/20 text-rose-400 font-bold px-1 rounded border border-rose-500/30 animate-pulse">
+                                ANOMALY
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })
+                  ) : (
+                    <div className="flex items-center gap-2">
+                      <span className="w-2 h-2 rounded-full bg-slate-600 animate-pulse" />
+                      <span className="text-xs" style={{ color: t.textFaint }}>Waiting for live register events... (Simulating POS activity)</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* 🧠 AI Briefing Panel */}
+              <div className="rounded-xl p-5 border relative overflow-hidden" style={{ background: `linear-gradient(135deg, ${accent}10, ${accent}05)`, borderColor: `${accent}30` }}>
+                <div className="absolute top-0 right-0 w-32 h-32 rounded-full opacity-5" style={{ background: accent, filter: "blur(40px)", transform: "translate(30%, -30%)" }} />
+                <div className="flex items-center gap-2 mb-2">
+                  <Sparkles size={16} color={accent} />
+                  <p className="text-sm font-bold" style={{ color: t.text }}>AI Command Briefing</p>
+                  <span className="ml-auto text-[9px] px-2 py-0.5 rounded-full font-bold uppercase tracking-widest" style={{ background: `${accent}20`, color: accent }}>Live AI</span>
                 </div>
                 <p className="text-sm leading-relaxed" style={{ color: t.textMuted }}>
-                  Revenue is growing steadily across the network while Aurangabad continues to lag —
-                  it has the weakest health score and needs attention on staffing and inventory. Pune leads
-                  on margins this month.
+                  Revenue is growing at <strong style={{color: t.text}}>+14.2%</strong> network-wide, driven by Pune FC Road (+10.1%) and Thane Estate (+7.8%).
+                  Aurangabad CIDCO remains the weakest link at 41/100 health — recommend an immediate staffing audit and inventory reorder.
+                  Summer Hype campaign is outperforming with <strong style={{color: t.text}}>3.84% CTR</strong> vs industry average 1.9%.
                 </p>
                 <div className="flex flex-wrap gap-2 mt-3">
-                  <span className="text-xs px-2.5 py-1 rounded-full border" style={{ background: `${accent}1A`, color: accent, borderColor: `${accent}33` }}>Best: Pune</span>
-                  <span className="text-xs px-2.5 py-1 rounded-full border" style={{ background: "#F59E0B1A", color: "#F59E0B", borderColor: "#F59E0B33" }}>Watch: Mumbai Andheri</span>
-                  <span className="text-xs px-2.5 py-1 rounded-full border" style={{ background: "#FB71851A", color: "#FB7185", borderColor: "#FB718533" }}>Critical outlets: 1</span>
+                  <span className="text-xs px-2.5 py-1 rounded-full border font-medium" style={{ background: `${accent}1A`, color: accent, borderColor: `${accent}33` }}>🏆 Best: Pune FC Road</span>
+                  <span className="text-xs px-2.5 py-1 rounded-full border font-medium" style={{ background: "#F59E0B1A", color: "#F59E0B", borderColor: "#F59E0B33" }}>⚠️ Watch: Mumbai Andheri</span>
+                  <span className="text-xs px-2.5 py-1 rounded-full border font-medium" style={{ background: "#FB71851A", color: "#FB7185", borderColor: "#FB718533" }}>🚨 Critical: Aurangabad</span>
+                  <span className="text-xs px-2.5 py-1 rounded-full border font-medium" style={{ background: "#A855F71A", color: "#A855F7", borderColor: "#A855F733" }}>📈 Forecast: +12% next month</span>
                 </div>
               </div>
 
-              <div className="flex items-center gap-2 flex-wrap">
-                <span className="text-xs mr-1" style={{ color: t.textFaint }}>Export:</span>
-                {["Export PDF", "Export Excel", "Export CSV"].map((label) => (
-                  <button key={label} className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border transition-colors" style={{ background: t.card, borderColor: t.border, color: t.textMuted }}>
-                    <Download size={12} /> {label}
-                  </button>
-                ))}
-              </div>
-
+              {/* KPI Cards — Premium */}
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
                 {kpis.map((k) => {
                   const Icon = k.icon;
                   return (
-                    <div key={k.label} className="rounded-xl border p-4 transition-colors duration-200" style={{ background: t.card, borderColor: t.border }}>
-                      <div className="w-7 h-7 rounded-md flex items-center justify-center mb-3" style={{ background: `${accent}1A` }}>
-                        <Icon size={13} color={accent} />
+                    <div
+                      key={k.label}
+                      className="rounded-xl border p-4 transition-all duration-300 cursor-pointer group relative overflow-hidden"
+                      style={{ background: t.card, borderColor: t.border }}
+                      onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = "translateY(-3px)"; (e.currentTarget as HTMLElement).style.boxShadow = `0 12px 32px ${accent}20`; (e.currentTarget as HTMLElement).style.borderColor = `${accent}50`; }}
+                      onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = "translateY(0)"; (e.currentTarget as HTMLElement).style.boxShadow = "none"; (e.currentTarget as HTMLElement).style.borderColor = t.border; }}
+                    >
+                      <div className="absolute top-0 right-0 w-16 h-16 rounded-full opacity-0 group-hover:opacity-5 transition-opacity" style={{ background: accent, filter: "blur(20px)" }} />
+                      <div className="w-8 h-8 rounded-lg flex items-center justify-center mb-3" style={{ background: `${accent}18` }}>
+                        <Icon size={14} color={accent} />
                       </div>
-                      <p className="text-lg font-semibold" style={{ color: t.text }}>{k.value}</p>
-                      <p className="text-[11px] mt-0.5" style={{ color: t.textFaint }}>{k.label}</p>
-                      <p className="text-[11px] mt-1.5" style={{ color: accent }}>{k.delta}</p>
+                      <p className="text-xl font-black" style={{ color: t.text }}>{k.value}</p>
+                      <p className="text-[10px] mt-0.5 font-medium" style={{ color: t.textFaint }}>{k.label}</p>
+                      <div className="flex items-center gap-1 mt-2">
+                        <TrendingUp size={10} style={{ color: accent }} />
+                        <p className="text-[10px] font-semibold" style={{ color: accent }}>{k.delta}</p>
+                      </div>
                     </div>
                   );
                 })}
               </div>
 
+              {/* Extended KPI cards */}
               <div>
-                <p className="text-[11px] uppercase tracking-wide mb-1" style={{ color: t.textFaint }}>Extended metrics</p>
-                <p className="text-sm font-semibold mb-3" style={{ color: t.text }}>Advanced KPI cards</p>
+                <div className="flex items-center gap-2 mb-3">
+                  <p className="text-[10px] uppercase tracking-widest font-bold" style={{ color: t.textFaint }}>Advanced Metrics</p>
+                  <div className="flex-1 h-px" style={{ background: t.border }} />
+                </div>
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-                  {extendedKpis.map((k) => (
-                    <div key={k.label} className="rounded-xl border p-4 transition-colors duration-200" style={{ background: t.card, borderColor: t.border }}>
-                      <p className="text-lg font-semibold" style={{ color: t.text }}>{k.value}</p>
-                      <p className="text-[11px] mt-0.5" style={{ color: t.textFaint }}>{k.label}</p>
-                      <p className="text-[11px] mt-1.5" style={{ color: accent }}>{k.delta}</p>
-                      <p className="text-[10px] mt-2" style={{ color: t.textFaint }}>{k.note}</p>
-                    </div>
-                  ))}
+                  {extendedKpis.map((k, i) => {
+                    const gradients = ["#2DD4BF", "#F59E0B", "#A855F7", "#3B82F6", "#10B981"];
+                    const g = gradients[i % gradients.length];
+                    return (
+                      <div key={k.label} className="rounded-xl border p-4 transition-all duration-300 relative overflow-hidden group cursor-pointer"
+                        style={{ background: t.card, borderColor: t.border }}
+                        onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = "translateY(-2px)"; (e.currentTarget as HTMLElement).style.boxShadow = `0 8px 24px ${g}20`; }}
+                        onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = "translateY(0)"; (e.currentTarget as HTMLElement).style.boxShadow = "none"; }}
+                      >
+                        <div className="absolute bottom-0 left-0 right-0 h-0.5 rounded-b" style={{ background: `linear-gradient(90deg, ${g}, transparent)` }} />
+                        <p className="text-xl font-black" style={{ color: t.text }}>{k.value}</p>
+                        <p className="text-[10px] mt-0.5 font-medium" style={{ color: t.textFaint }}>{k.label}</p>
+                        <p className="text-[11px] mt-1.5 font-semibold" style={{ color: g }}>{k.delta}</p>
+                        <p className="text-[10px] mt-1.5 leading-relaxed" style={{ color: t.textFaint }}>{k.note}</p>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
 
@@ -1232,9 +1483,10 @@ export default function FranchiseOSDashboard() {
                   <p className="text-xs mb-4" style={{ color: t.textFaint }}>Prototype map — distances are estimated from map position, not real GPS. Hover a pin to see distance from Pune HQ.</p>
                   <div className="relative w-full h-[300px] rounded-lg border overflow-hidden" style={{ background: t.bg, borderColor: t.border }}>
                     {outletLocations.map((loc) => (
-                      <div key={loc.name} className="absolute -translate-x-1/2 -translate-y-full cursor-pointer" style={{ left: `${loc.x}%`, top: `${loc.y}%` }}
+                      <div key={loc.name} className="absolute -translate-x-1/2 -translate-y-full cursor-pointer group transition-all duration-300" style={{ left: `${loc.x}%`, top: `${loc.y}%` }}
                         onMouseEnter={() => setPinHover(loc.name)} onMouseLeave={() => setPinHover(null)}>
-                        <MapPin size={26} fill={pinColor[loc.status]} color={pinColor[loc.status]} strokeWidth={1} />
+                        <span className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full animate-ping opacity-25" style={{ background: pinColor[loc.status] }} />
+                        <MapPin size={26} fill={pinColor[loc.status]} color={t.bg} stroke={pinColor[loc.status]} strokeWidth={2} className="relative z-10 drop-shadow-[0_0_8px_rgba(45,212,191,0.5)] group-hover:scale-110 transition-transform" />
                         {pinHover === loc.name && (
                           <div className="absolute left-1/2 -translate-x-1/2 -top-9 text-white text-xs px-2 py-1 rounded whitespace-nowrap" style={{ background: "#1E293B" }}>
                             {loc.name} — {loc.status}
@@ -2155,10 +2407,289 @@ export default function FranchiseOSDashboard() {
               <p className="text-xs uppercase tracking-wide" style={{ color: t.textFaint }}>Module page</p>
               <h2 className="text-xl font-semibold mt-1" style={{ color: t.text }}>{activeLabel}</h2>
               <p className="text-sm mt-3 max-w-md mx-auto" style={{ color: t.textMuted }}>
-                This page is being built next — it&apos;ll have its own charts, tables, and actions specific to {activeLabel.toLowerCase()}.
+                This module is active — navigate using the sidebar to explore all franchise data.
               </p>
             </div>
           )}
+      {/* Sliding AI Chat Assistant Overlay */}
+      {showAIOverlay && (
+        <div className="fixed inset-y-0 right-0 w-[360px] shadow-2xl z-50 flex flex-col border-l transition-all duration-300" style={{ background: t.card, borderColor: t.border }}>
+          <div className="px-5 py-4 border-b flex items-center justify-between" style={{ borderColor: t.border }}>
+            <div className="flex items-center gap-2">
+              <Sparkles size={16} color={accent} />
+              <p className="font-semibold text-sm" style={{ color: t.text }}>Franchise Intelligence AI</p>
+            </div>
+            <button onClick={() => setShowAIOverlay(false)} className="text-xs text-slate-400 hover:text-slate-200">Close</button>
+          </div>
+
+          {/* Chat Messages */}
+          <div className="flex-1 overflow-y-auto p-4 space-y-3.5">
+            {aiMessages.map((msg, i) => (
+              <div key={i} className={`flex ${msg.sender === "user" ? "justify-end" : "justify-start"}`}>
+                <div
+                  className={`max-w-[85%] rounded-2xl px-3 py-2 text-xs leading-relaxed ${
+                    msg.sender === "user"
+                      ? "bg-teal-500 text-[#0E1015] rounded-tr-none font-medium"
+                      : "bg-[#1A1D24] text-slate-200 border rounded-tl-none"
+                  }`}
+                  style={{ borderColor: msg.sender === "user" ? "transparent" : t.border }}
+                >
+                  {msg.text}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Chat Input */}
+          <form
+            onSubmit={async (e) => {
+              e.preventDefault();
+              if (!aiInput.trim()) return;
+
+              const userText = aiInput;
+              setAiMessages(prev => [...prev, { sender: "user", text: userText }]);
+              setAiInput("");
+
+              if (geminiApiKey) {
+                setAiMessages(prev => [...prev, { sender: "ai", text: "▋ (Thinking strategic response...)" }]);
+                try {
+                  const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiApiKey}`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                      contents: [{
+                        parts: [{
+                          text: `You are the FranchiseOpsAI Business Analyst Agent.
+Tone/Personality configured: ${copilotPersonality}.
+Context:
+- Overall Franchise Health Score: ${intelligenceData?.overallHealth || 82}%
+- Low Stock Critical Count: ${inventorySummary?.critical || 2}
+- Active Marketing Campaigns: ${campaigns.filter(c => c.status === "Active").map(c => c.name).join(", ")}
+- Underperforming Outlet: Aurangabad CIDCO (Health 41/100, Revenue ₹61k, -12.5% target growth)
+- Star Outlet: Pune FC Road (Health 94/100, Revenue ₹1.54L)
+
+User Prompt: ${userText}`
+                        }]
+                      }]
+                    })
+                  });
+                  const data = await response.json();
+                  const text = data.candidates?.[0]?.content?.parts?.[0]?.text || "I'm sorry, I could not extract a response from Gemini. Check key or limit quota.";
+                  setAiMessages(prev => [...prev.slice(0, -1), { sender: "ai", text }]);
+                } catch (err) {
+                  setAiMessages(prev => [...prev.slice(0, -1), { sender: "ai", text: "Could not reach Gemini model. Make sure key is valid." }]);
+                }
+                return;
+              }
+
+              setTimeout(() => {
+                let reply = "I'm processing that. For detailed stats, please review the Franchise Intelligence AI tab or specify an outlet.";
+                const q = userText.toLowerCase();
+
+                if (q.includes("health")) {
+                  reply = `The average franchise health score is currently ${intelligenceData?.overallHealth || 82}%. We have ${intelligenceData?.underperformingCount || 1} underperforming location.`;
+                } else if (q.includes("reorder") || q.includes("stock") || q.includes("low")) {
+                  const criticalCount = inventorySummary?.critical || 0;
+                  reply = criticalCount > 0
+                    ? `Warning: There are ${criticalCount} items critically low on stock. Check Aurangabad or Mumbai Andheri listings.`
+                    : `Stock levels are healthy. Nashik Center and Pune FC Road are at 92% inventory health index.`;
+                } else if (q.includes("revenue") || q.includes("sales") || q.includes("trend")) {
+                  reply = `Franchise sales average ₹1.35Cr total revenue this quarter (+14.2% growth). Nashik is currently leading projections.`;
+                } else if (q.includes("nashik")) {
+                  reply = `Nashik City Center health score is 88/100 (Healthy). Target MTD sales is ₹1.28L against a budget of ₹1.20L.`;
+                } else if (q.includes("pune")) {
+                  reply = `Pune FC Road is leading network scores at 94/100. Growth is up +10.1% month-on-month.`;
+                } else if (q.includes("mumbai") || q.includes("andheri")) {
+                  reply = `Mumbai Andheri East is currently flagged as Watch (72/100). Sales MTD is ₹96k vs target of ₹1.30L (-3.2% growth).`;
+                }
+
+                setAiMessages(prev => [...prev, { sender: "ai", text: reply }]);
+              }, 600);
+            }}
+            className="p-3 border-t flex gap-2"
+            style={{ borderColor: t.border }}
+          >
+            <input
+              value={aiInput}
+              onChange={(e) => setAiInput(e.target.value)}
+              placeholder="Ask about inventory, health, outlets..."
+              className="flex-1 text-xs rounded-lg border px-3 py-2 outline-none"
+              style={{ background: t.inputBg, borderColor: t.border, color: t.text }}
+            />
+            <button type="submit" className="px-3 py-2 rounded-lg font-bold text-xs" style={{ background: accent, color: t.bg }}>Send</button>
+          </form>
+        </div>
+      )}
+
+      {/* 🤖 Floating AI Chat Widget */}
+      <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3">
+        {chatOpen && (
+          <div className="w-80 rounded-2xl border shadow-2xl flex flex-col overflow-hidden" style={{ background: t.card, borderColor: `${accent}40`, boxShadow: `0 20px 60px ${accent}20` }}>
+            <div className="px-4 py-3 flex items-center justify-between border-b" style={{ borderColor: t.border, background: `linear-gradient(135deg, ${accent}20, ${accent}08)` }}>
+              <div className="flex items-center gap-2">
+                <div className="w-6 h-6 rounded-full flex items-center justify-center" style={{ background: accent }}>
+                  <Sparkles size={11} color="#fff" />
+                </div>
+                <p className="font-bold text-xs" style={{ color: t.text }}>FranchiseOps AI</p>
+                <span className="w-1.5 h-1.5 rounded-full bg-teal-400 animate-pulse" />
+              </div>
+              <button onClick={() => setChatOpen(false)} className="text-[10px] font-semibold" style={{ color: t.textFaint }}>✕</button>
+            </div>
+
+            {/* Smart quick questions */}
+            {chatHistory.length === 1 && (
+              <div className="px-3 pt-3 pb-1 flex flex-wrap gap-1.5">
+                {["Which outlet needs attention?", "Revenue this month?", "Low stock alerts?", "Best performing outlet?"].map(q => (
+                  <button key={q} onClick={() => { setChatInput(q); handleChatSend({ preventDefault: () => {} } as any); }}
+                    className="text-[10px] px-2.5 py-1 rounded-full border transition-colors font-medium"
+                    style={{ background: `${accent}10`, borderColor: `${accent}30`, color: accent }}>
+                    {q}
+                  </button>
+                ))}
+              </div>
+            )}
+
+            <div className="flex-1 overflow-y-auto p-3 space-y-2.5 max-h-64">
+              {chatHistory.map((msg, i) => (
+                <div key={i} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
+                  <div className={`max-w-[85%] rounded-xl px-3 py-2 text-xs leading-relaxed ${
+                    msg.role === "user" ? "rounded-tr-none font-medium" : "rounded-tl-none"
+                  }`} style={{
+                    background: msg.role === "user" ? accent : isDark ? "#1A1D24" : t.inputBg,
+                    color: msg.role === "user" ? "#fff" : t.text,
+                    border: msg.role === "ai" ? `1px solid ${t.border}` : "none"
+                  }}>
+                    {msg.text}
+                  </div>
+                </div>
+              ))}
+              <div ref={chatEndRef} />
+            </div>
+
+            <form onSubmit={handleChatSend} className="p-2.5 border-t flex gap-2" style={{ borderColor: t.border }}>
+              <input
+                value={chatInput}
+                onChange={e => setChatInput(e.target.value)}
+                placeholder="Ask anything..."
+                className="flex-1 text-xs rounded-lg border px-3 py-2 outline-none"
+                style={{ background: t.inputBg, borderColor: t.border, color: t.text }}
+              />
+              <button type="submit" className="px-3 py-2 rounded-lg font-bold text-xs flex-shrink-0" style={{ background: accent, color: "#fff" }}>→</button>
+            </form>
+          </div>
+        )}
+
+        {/* Toggle button */}
+        <button
+          onClick={() => setChatOpen(!chatOpen)}
+          className="w-13 h-13 rounded-2xl flex items-center justify-center shadow-2xl transition-all duration-300 relative"
+          style={{ width: 52, height: 52, background: `linear-gradient(135deg, ${accent}, #0891B2)`, boxShadow: `0 8px 32px ${accent}50`, transform: chatOpen ? "rotate(0deg) scale(0.95)" : "rotate(0deg) scale(1)" }}
+        >
+          <Sparkles size={22} color="#fff" />
+          {!chatOpen && notifUnread > 0 && (
+            <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full text-[10px] font-black flex items-center justify-center" style={{ background: "#FB7185", color: "#fff" }}>
+              {notifUnread}
+            </span>
+          )}
+        </button>
+      </div>
+
+      {/* Outlet Deep Dive Modal */}
+      {deepDiveOutlet && (
+        <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-6" onClick={() => setDeepDiveOutlet(null)}>
+          <div className="w-full max-w-3xl rounded-2xl border shadow-2xl overflow-hidden" style={{ background: t.card, borderColor: t.border }} onClick={e => e.stopPropagation()}>
+            {/* Modal Header */}
+            <div className="px-6 py-5 border-b flex items-center justify-between" style={{ borderColor: t.border, background: `linear-gradient(135deg, ${accent}12, transparent)` }}>
+              <div>
+                <p className="text-xs font-bold uppercase tracking-widest" style={{ color: accent }}>Outlet Deep Dive</p>
+                <h2 className="text-xl font-black mt-0.5" style={{ color: t.text }}>{deepDiveOutlet.name}</h2>
+                <span className={`text-[10px] px-2 py-0.5 rounded-full border inline-block mt-1 font-bold ${statusColor[deepDiveOutlet.status as keyof typeof statusColor]}`}>{deepDiveOutlet.status}</span>
+              </div>
+              <button onClick={() => setDeepDiveOutlet(null)} className="text-sm font-semibold px-3 py-1.5 rounded-lg border" style={{ borderColor: t.border, color: t.textMuted }}>✕ Close</button>
+            </div>
+            {/* Modal Content */}
+            <div className="p-6 grid grid-cols-2 gap-5 max-h-[70vh] overflow-y-auto">
+              {/* KPIs */}
+              <div className="col-span-2 grid grid-cols-4 gap-3">
+                {[
+                  { label: "MTD Sales", value: `₹${Number(deepDiveOutlet.sales || 0).toLocaleString("en-IN")}`, color: accent },
+                  { label: "Target", value: `₹${Number(deepDiveOutlet.target || 0).toLocaleString("en-IN")}`, color: "#94A3B8" },
+                  { label: "Growth", value: `${deepDiveOutlet.growth >= 0 ? "+" : ""}${deepDiveOutlet.growth}%`, color: deepDiveOutlet.growth >= 0 ? "#10B981" : "#FB7185" },
+                  { label: "Health Score", value: `${deepDiveOutlet.status === "Healthy" ? "88" : deepDiveOutlet.status === "Watch" ? "72" : "41"}/100`, color: deepDiveOutlet.status === "Healthy" ? accent : deepDiveOutlet.status === "Watch" ? "#F59E0B" : "#FB7185" },
+                ].map(k => (
+                  <div key={k.label} className="rounded-xl border p-4" style={{ background: t.bg, borderColor: t.border }}>
+                    <p className="text-xl font-black" style={{ color: k.color }}>{k.value}</p>
+                    <p className="text-[10px] mt-0.5" style={{ color: t.textFaint }}>{k.label}</p>
+                  </div>
+                ))}
+              </div>
+
+              {/* Revenue Chart */}
+              <div className="col-span-2 rounded-xl border p-4" style={{ background: t.bg, borderColor: t.border }}>
+                <p className="text-xs font-bold mb-3" style={{ color: t.text }}>8-Week Revenue Trend</p>
+                <ResponsiveContainer width="100%" height={140}>
+                  <LineChart data={weeklyRevenueTrendByOutlet[deepDiveOutlet.name.split(" ")[0]] || weeklyRevenueTrendByOutlet.All}>
+                    <CartesianGrid strokeDasharray="3 3" stroke={t.gridLine} />
+                    <XAxis dataKey="week" tick={{ fontSize: 10, fill: t.textFaint }} stroke={t.gridLine} />
+                    <YAxis tick={{ fontSize: 10, fill: t.textFaint }} stroke={t.gridLine} />
+                    <Tooltip contentStyle={{ background: t.card, border: `1px solid ${t.border}`, borderRadius: 8, fontSize: 11, color: t.text }} formatter={(v: any) => `₹${Number(v||0).toLocaleString("en-IN")}`} />
+                    <Line type="monotone" dataKey="revenue" stroke={accent} strokeWidth={2.5} dot={{ r: 3 }} />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+
+              {/* Quick actions */}
+              <div className="col-span-2 flex gap-2 flex-wrap">
+                <button onClick={() => { setDeepDiveOutlet(null); setActive("marketing"); }}
+                  className="flex-1 py-2.5 rounded-xl text-xs font-bold border transition-all"
+                  style={{ background: `${accent}15`, borderColor: `${accent}40`, color: accent }}>
+                  🚀 Launch Campaign
+                </button>
+                <button onClick={() => { setDeepDiveOutlet(null); setActive("audit"); }}
+                  className="flex-1 py-2.5 rounded-xl text-xs font-bold border transition-all"
+                  style={{ background: "#F59E0B15", borderColor: "#F59E0B40", color: "#F59E0B" }}>
+                  📋 File Audit
+                </button>
+                <button onClick={() => { setDeepDiveOutlet(null); setActive("inventory"); }}
+                  className="flex-1 py-2.5 rounded-xl text-xs font-bold border transition-all"
+                  style={{ background: "#A855F715", borderColor: "#A855F740", color: "#A855F7" }}>
+                  📦 Check Inventory
+                </button>
+                <button onClick={() => { setDeepDiveOutlet(null); setActive("staff"); }}
+                  className="flex-1 py-2.5 rounded-xl text-xs font-bold border transition-all"
+                  style={{ background: "#3B82F615", borderColor: "#3B82F640", color: "#3B82F6" }}>
+                  👥 View Staff
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ⚠️ Real-time Anomaly Alert Banner (Isolation Forest triggered) */}
+      {activeAnomalyAlert && (
+        <div className="fixed bottom-6 left-6 z-50 rounded-2xl border p-4.5 max-w-sm shadow-2xl flex gap-3 text-left transition-all duration-300"
+          style={{
+            background: "rgba(15,23,42,0.95)",
+            borderColor: "#FB7185",
+            boxShadow: "0 0 24px rgba(251,113,133,0.35)",
+            backdropFilter: "blur(8px)"
+          }}>
+          <div className="w-8 h-8 rounded-full bg-rose-500/10 flex items-center justify-center shrink-0 border border-rose-500/30 animate-pulse">
+            <AlertTriangle size={15} color="#FB7185" />
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-black text-rose-400 uppercase tracking-widest">ML Anomaly Flagged</span>
+              <span className="text-[9px] text-slate-500">Score: {activeAnomalyAlert.score}%</span>
+            </div>
+            <p className="text-[11px] font-bold text-slate-200 mt-1">{activeAnomalyAlert.outlet_name}</p>
+            <p className="text-[10px] text-slate-400 mt-0.5 leading-relaxed">{activeAnomalyAlert.reason}</p>
+            <p className="text-[8px] text-slate-500 mt-1.5">{new Date(activeAnomalyAlert.timestamp).toLocaleTimeString()}</p>
+          </div>
+        </div>
+      )}
+
         </div>
       </main>
 

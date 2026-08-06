@@ -63,15 +63,21 @@ async function getItemById(item_id) {
   });
 }
 
-async function getSummary() {
+async function getSummary(outlet_id) {
   let items = [];
   try {
-    items = await prisma.inventory_items.findMany();
+    const where = {};
+    if (outlet_id && outlet_id !== "All") where.outlet_id = Number(outlet_id);
+    items = await prisma.inventory_items.findMany({ where });
     if (!Array.isArray(items) || items.length === 0) {
       items = loadDatasetItems();
     }
   } catch (_) {
     items = loadDatasetItems();
+  }
+
+  if (outlet_id && outlet_id !== "All") {
+    items = items.filter((i) => String(i.outlet_id) === String(outlet_id));
   }
 
   const total = items.length;
