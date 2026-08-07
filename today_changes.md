@@ -10,7 +10,7 @@
 
 ## 2. Machine Learning Microservices
 - Added `/ml/predict/weather` endpoint for rain/temp demand multipliers
-- Added `/ml/simulate/macro` endpoint for inflation shock margin analysis
+- Added `/ml/simulate/macro` endpoint for  shock margin analysis
 
 ## 3. UI/UX & Aesthetics Overhaul
 - **6-Color Master Palette System**: Silver, Radiant Gold, Rich Bronze, White Cream, Cyber Blue & Dazzling Black
@@ -19,11 +19,16 @@
 - **Animated Splash Loader & Slider**: Progress animation with shimmering slider bar & status text
 - **Italic Brand Typography**: Formatted ***OmniFranchise*** in Google Font Playfair Display Italic
 
-## 4. Security & Session Life-Cycle
+## 4. Luxury Executive PDF Export
+- **Custom Print & PDF Stylesheet**: `@media print` rule forcing exact background color rendering (`print-color-adjust: exact`)
+- **Branded PDF Header Banner**: 3D Logo Emblem, ***OmniFranchise*** title, document reference code, and date-time watermark
+- **Executive Certificate Seal**: Digital checksum hash signature (`0x8F92...`) and system architect seal
+
+## 5. Security & Session Life-Cycle
 - **Automatic Window-Close Logout**: Migrated to `sessionStorage` with `beforeunload` auto-logout listener
 
-## 5. Frontend Fixes
+## 6. Frontend Fixes
 - **Button Text Visibility**: Fixed invisible text with `textOnAccent: "#060709"` across all 11 modules
 
-## 6. GitHub Deployment
+## 7. GitHub Deployment
 - Pushed all commits & updates to `main` branch on GitHub repository
