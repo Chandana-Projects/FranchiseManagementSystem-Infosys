@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "FranchiseOps AI - Franchise Operations & Outlet Intelligence",
-  description: "AI-powered operations, inventory monitoring, staff management, and multi-outlet intelligence platform.",
+  title: "OmniFranchise — Enterprise Franchise Intelligence Network",
+  description: "Enterprise multi-outlet operations, dynamic yield pricing, CCTV vision audits, and automated stock telemetry platform.",
 };
 
 export default function RootLayout({

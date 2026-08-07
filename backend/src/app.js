@@ -37,6 +37,7 @@ app.use(express.json());
 
 const sseRoutes = require("./routes/sseRoutes");
 const complianceRoutes = require("./routes/complianceRoutes");
+const enterpriseRoutes = require("./routes/enterpriseRoutes");
 
 app.use("/api/outlets", outletRoutes);
 app.use("/api/auth", authRoutes);
@@ -48,6 +49,7 @@ app.use("/api/employees", employeeRoutes);
 app.use("/api/agent/franchise-intelligence", intelligenceRoutes);
 app.use("/api/campaigns", campaignRoutes);
 app.use("/api/reports", reportsRoutes);
+app.use("/api/enterprise", enterpriseRoutes);
 
 setupSwagger(app);
 

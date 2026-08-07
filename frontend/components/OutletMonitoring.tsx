@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, Radar, Legend
@@ -17,13 +18,13 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5
 
 const themes = {
   dark: {
-    bg: "#0E1015", panel: "#14161C", card: "#1A1D24", border: "#232630",
-    text: "#E5E7EB", textMuted: "#94A3B8", textFaint: "#64748B",
-    gridLine: "#232630", inputBg: "#0E1015",
+    bg: "transparent", panel: "rgba(11, 13, 18, 0.82)", card: "rgba(17, 19, 26, 0.76)", border: "rgba(245, 158, 11, 0.16)",
+    text: "#FFFBEB", textMuted: "#CBD5E1", textFaint: "#94A3B8", textOnAccent: "#060709",
+    gridLine: "rgba(203, 213, 225, 0.14)", inputBg: "rgba(6, 7, 9, 0.85)",
   },
   light: {
     bg: "#F4F6F8", panel: "#FFFFFF", card: "#FFFFFF", border: "#E2E8F0",
-    text: "#1E293B", textMuted: "#475569", textFaint: "#64748B",
+    text: "#1E293B", textMuted: "#475569", textFaint: "#64748B", textOnAccent: "#FFFFFF",
     gridLine: "#E2E8F0", inputBg: "#F1F5F9",
   },
 };
@@ -184,16 +185,16 @@ const extendedKpis = [
 ];
 
 const statusColorDark: Record<string, string> = {
-  Healthy: "bg-teal-500/15 text-teal-400 border-teal-500/30",
-  Watch: "bg-amber-500/15 text-amber-400 border-amber-500/30",
-  Critical: "bg-rose-500/15 text-rose-400 border-rose-500/30",
+  Healthy: "bg-amber-500/20 text-amber-300 border-amber-500/40",
+  Watch: "bg-sky-500/20 text-sky-300 border-sky-500/40",
+  Critical: "bg-amber-800/30 text-amber-200 border-amber-700/50",
 };
 const statusColorLight: Record<string, string> = {
-  Healthy: "bg-teal-50 text-teal-700 border-teal-200",
-  Watch: "bg-amber-50 text-amber-700 border-amber-200",
-  Critical: "bg-rose-50 text-rose-700 border-rose-200",
+  Healthy: "bg-amber-100 text-amber-800 border-amber-300",
+  Watch: "bg-sky-100 text-sky-800 border-sky-300",
+  Critical: "bg-amber-900/20 text-amber-900 border-amber-400",
 };
-const pinColor: Record<string, string> = { Healthy: "#2DD4BF", Watch: "#F59E0B", Critical: "#FB7185" };
+const pinColor: Record<string, string> = { Healthy: "#F59E0B", Watch: "#38BDF8", Critical: "#B45309" };
 
 
 const FALLBACK_INVENTORY = [
@@ -220,6 +221,7 @@ const modules = [
   { id: "intelligence", label: "Franchise Intelligence AI", icon: Brain },
   { id: "reporting", label: "Reports", icon: FileBarChart },
   { id: "notifications", label: "Notifications", icon: BellRing },
+  { id: "enterprise", label: "Enterprise AI Hub", icon: Sparkles },
   { id: "settings", label: "Settings", icon: Settings },
 ];
 
@@ -433,13 +435,97 @@ const socialPlatformStats = [
 const followerGrowthPercent = Math.round(
   ((followerGrowthTrend[followerGrowthTrend.length - 1].followers - followerGrowthTrend[0].followers) / followerGrowthTrend[0].followers) * 100
 );
-
 // 4. Upcoming campaigns calendar
 const upcomingCampaigns = [
   { name: "Independence Day Special", channel: "Instagram + WhatsApp", launchDate: "2026-08-12", targetOutlets: "All outlets", budget: 40000 },
   { name: "Back to College Combo", channel: "Google Ads", launchDate: "2026-08-20", targetOutlets: "Pune, Nashik, Nagpur", budget: 35000 },
   { name: "Rainy Day Hot Beverages Push", channel: "Facebook", launchDate: "2026-08-25", targetOutlets: "Mumbai Andheri, Thane", budget: 25000 },
 ];
+
+function AppSplashLoader({ t, accent, label, onComplete }: { t: typeof themes.dark; accent: string; label: string; onComplete?: () => void }) {
+  const [progress, setProgress] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setProgress((prev) => {
+        if (prev >= 100) {
+          clearInterval(timer);
+          if (onComplete) {
+            setTimeout(onComplete, 200);
+          }
+          return 100;
+        }
+        return prev + 5;
+      });
+    }, 30);
+    return () => clearInterval(timer);
+  }, [onComplete]);
+
+  return (
+    <div className="w-full min-h-[850px] flex flex-col items-center justify-center font-sans relative overflow-hidden" style={{ background: "transparent", color: t.text }}>
+      {/* Background ambient lighting */}
+      <div className="absolute w-[500px] h-[500px] rounded-full blur-[140px] pointer-events-none" style={{ background: `${accent}18` }} />
+
+      <motion.div
+        initial={{ scale: 0.85, opacity: 0, y: 20 }}
+        animate={{ scale: 1, opacity: 1, y: 0 }}
+        transition={{ duration: 0.45, ease: "easeOut" }}
+        className="flex flex-col items-center max-w-md w-full text-center px-10 py-12 rounded-3xl glass-card border border-white/10 shadow-2xl relative z-10"
+      >
+        {/* Enhanced 3D Logo Badge */}
+        <div className="relative mb-6 flex items-center justify-center">
+          <motion.div
+            animate={{ rotate: 360 }}
+            transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+            className="w-24 h-24 rounded-2xl border-2 border-dashed"
+            style={{ borderColor: `${accent}99` }}
+          />
+          <img
+            src="/logo.png"
+            alt="OmniFranchise Logo"
+            className="absolute w-16 h-16 rounded-2xl object-cover shadow-xl shadow-amber-500/40 border border-amber-400/40"
+          />
+        </div>
+
+        {/* Website Name - Italic Gold & Cream */}
+        <h1 className="text-3xl brand-font italic font-extrabold tracking-tight mb-1" style={{ color: "#FFFBEB", textShadow: `0 0 20px ${accent}66` }}>
+          OmniFranchise
+        </h1>
+        <p className="text-xs uppercase tracking-widest font-mono text-amber-200/80 mb-6">Enterprise Intelligence Engine</p>
+
+        <p className="text-xs mb-4 font-medium" style={{ color: t.textMuted }}>{label}</p>
+
+        {/* Slider Loading Bar */}
+        <div className="w-full bg-black/40 rounded-full h-2.5 overflow-hidden mb-4 border border-white/10 relative p-0.5">
+          <motion.div
+            className="h-full rounded-full relative overflow-hidden"
+            style={{
+              backgroundColor: accent,
+              width: `${progress}%`,
+              boxShadow: `0 0 16px ${accent}`
+            }}
+            transition={{ ease: "easeOut" }}
+          >
+            {/* Animated shimmer light effect sweeping across slider */}
+            <motion.div
+              animate={{ x: ["-100%", "200%"] }}
+              transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
+              className="absolute top-0 bottom-0 w-12 bg-gradient-to-r from-transparent via-white/50 to-transparent"
+            />
+          </motion.div>
+        </div>
+
+        {/* Slider Percentage & Dynamic Status */}
+        <div className="w-full flex items-center justify-between text-xs font-mono" style={{ color: t.textFaint }}>
+          <span className="truncate max-w-[240px] text-left">
+            {progress < 30 ? "⚡ Establishing Neural Connection..." : progress < 70 ? "🔄 Syncing Multi-Outlet Telemetry..." : "✅ System Authorization Granted"}
+          </span>
+          <span className="font-bold text-teal-400 text-sm ml-2">{progress}%</span>
+        </div>
+      </motion.div>
+    </div>
+  );
+}
 
 function LoginPage({
   t,
@@ -455,6 +541,7 @@ function LoginPage({
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [isAuthenticating, setIsAuthenticating] = useState(false);
 
   const inputWrap: React.CSSProperties = {
     display: "flex", alignItems: "center", gap: 9, background: t.inputBg,
@@ -478,30 +565,34 @@ function LoginPage({
       const data = await res.json();
       if (!res.ok) {
         setError(data.error || "Login failed");
+        setLoading(false);
         return;
       }
-      localStorage.setItem("fops_token", data.token);
-      localStorage.setItem("fops_user", JSON.stringify(data.user));
-      onLogin();
+      sessionStorage.setItem("fops_token", data.token);
+      sessionStorage.setItem("fops_user", JSON.stringify(data.user));
+      setIsAuthenticating(true);
     } catch (err) {
       setError("Could not reach the server. Is the backend running?");
-    } finally {
       setLoading(false);
     }
   }
 
+  if (isAuthenticating) {
+    return <AppSplashLoader t={t} accent={accent} label="Authenticating Credentials & Telemetry..." onComplete={onLogin} />;
+  }
+
   return (
-    <div className="w-full min-h-[800px] flex items-center justify-center font-sans" style={{ background: t.bg, color: t.text }}>
+    <div className="w-full min-h-[800px] flex items-center justify-center font-sans" style={{ background: "transparent", color: t.text }}>
       <div className="w-[380px]">
-        <div className="flex items-center justify-center gap-2 mb-7">
-          <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-teal-400 to-teal-600 flex items-center justify-center font-bold text-base" style={{ color: t.bg }}>F</div>
+        <div className="flex items-center justify-center gap-3 mb-7">
+          <img src="/logo.png" alt="OmniFranchise Logo" className="w-10 h-10 rounded-xl object-cover shadow-lg shadow-amber-500/40 border border-amber-400/40" />
           <div>
-            <p className="font-semibold text-sm leading-tight" style={{ color: t.text }}>FranchiseOps AI</p>
-            <p className="text-[11px]" style={{ color: t.textFaint }}>Analytics Network</p>
+            <p className="brand-font italic font-extrabold text-xl leading-tight" style={{ color: "#FFFBEB" }}>OmniFranchise</p>
+            <p className="text-[11px] font-mono text-amber-200/80">Enterprise Intelligence Engine</p>
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="rounded-2xl border p-7" style={{ background: t.card, borderColor: t.border }}>
+        <form onSubmit={handleSubmit} className="rounded-2xl border p-7 glass-card" style={{ borderColor: t.border }}>
           <p className="text-lg font-semibold mb-1" style={{ color: t.text }}>Sign in to your network</p>
           <p className="text-sm mb-5" style={{ color: t.textMuted }}>Access dashboards, agents, and outlet insights.</p>
 
@@ -542,10 +633,10 @@ function LoginPage({
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-2.5 rounded-lg font-semibold text-sm mt-4"
-            style={{ background: accent, color: t.bg, opacity: loading ? 0.7 : 1 }}
+            className="w-full py-3 rounded-xl font-bold text-sm mt-5 shadow-lg shadow-teal-500/20 cursor-pointer transition-all hover:scale-[1.02] active:scale-[0.98]"
+            style={{ background: accent, color: "#0E1015", opacity: loading ? 0.7 : 1 }}
           >
-            {loading ? "Signing in..." : "Log in"}
+            {loading ? "Signing in..." : "Log in to Dashboard"}
           </button>
         </form>
       </div>
@@ -655,12 +746,16 @@ function AskAIPanel({
   }
 
   return (
-    <div
+    <motion.div
+      initial={{ x: 380, opacity: 0 }}
+      animate={{ x: 0, opacity: 1 }}
+      exit={{ x: 380, opacity: 0 }}
+      transition={{ type: "spring", stiffness: 300, damping: 30 }}
       style={{
-        position: "fixed", top: 0, right: 0, bottom: 0, width: 360,
+        position: "fixed", top: 0, right: 0, bottom: 0, width: 380,
         background: t.card, borderLeft: `1px solid ${t.border}`,
         display: "flex", flexDirection: "column", zIndex: 50,
-        boxShadow: "-8px 0 24px rgba(0,0,0,0.3)",
+        boxShadow: "-12px 0 32px rgba(0,0,0,0.4)",
       }}
     >
       <div className="flex items-center justify-between px-5 py-4 border-b" style={{ borderColor: t.border }}>
@@ -677,12 +772,12 @@ function AskAIPanel({
         {messages.map((m, i) => (
           <div
             key={i}
-            className="text-sm px-3 py-2 rounded-lg"
+            className="text-sm px-3 py-2 rounded-lg font-medium"
             style={{
               maxWidth: "85%",
               marginLeft: m.role === "user" ? "auto" : 0,
               background: m.role === "user" ? accent : t.inputBg,
-              color: m.role === "user" ? t.bg : t.text,
+              color: m.role === "user" ? t.textOnAccent : t.text,
             }}
           >
             {m.text}
@@ -701,13 +796,13 @@ function AskAIPanel({
         />
         <button
           onClick={handleSend}
-          className="px-3 py-2 rounded-lg text-sm font-semibold"
-          style={{ background: accent, color: t.bg }}
+          className="px-3 py-2 rounded-lg text-sm font-bold shadow-md cursor-pointer"
+          style={{ background: accent, color: t.textOnAccent }}
         >
           Send
         </button>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
@@ -731,6 +826,7 @@ export default function FranchiseOSDashboard({ initialModule = "dashboard" }: Fr
         intelligence: "/intelligence",
         reporting: "/reports",
         notifications: "/notifications",
+        enterprise: "/enterprise",
         settings: "/settings",
       };
       const path = routeMap[moduleKey] || "/";
@@ -753,6 +849,7 @@ export default function FranchiseOSDashboard({ initialModule = "dashboard" }: Fr
       "/reports": "reporting",
       "/reporting": "reporting",
       "/notifications": "notifications",
+      "/enterprise": "enterprise",
       "/settings": "settings",
     };
     const handlePopState = () => {
@@ -795,6 +892,25 @@ export default function FranchiseOSDashboard({ initialModule = "dashboard" }: Fr
     confidence_score: 94.2,
     reorder_recommendation: "+35 kg Coffee Beans, +20L Milk required to support volume growth.",
   });
+
+  const [poResult, setPoResult] = useState<any>(null);
+  const [poLoading, setPoLoading] = useState(false);
+  const [poItem, setPoItem] = useState("Coffee Beans (Arabica)");
+  const [poQty, setPoQty] = useState(50);
+  const [weatherCondition, setWeatherCondition] = useState("Rainy");
+  const [weatherResult, setWeatherResult] = useState<any>({
+    condition: "Rainy",
+    demand_multiplier: 0.88,
+    impact_summary: "Cold beverages -12%, Hot coffees +18% (Heavy Rain)"
+  });
+  const [coffeeInflation, setCoffeeInflation] = useState(15);
+  const [dairyInflation, setDairyInflation] = useState(10);
+  const [macroResult, setMacroResult] = useState<any>({
+    baseline_margin_pct: 68.0,
+    simulated_margin_pct: 64.1,
+    margin_drop_pct: 3.9,
+    recommendation: "Raise beverage base prices by 3.1% to maintain net profitability."
+  });
   const [simLoading, setSimLoading] = useState(false);
   const [isRetraining, setIsRetraining] = useState(false);
   const [copilotInput, setCopilotInput] = useState("");
@@ -828,7 +944,7 @@ export default function FranchiseOSDashboard({ initialModule = "dashboard" }: Fr
   const [showAskAI, setShowAskAI] = useState(false);
   const [pinHover, setPinHover] = useState<string | null>(null);
 
-  const [accent, setAccent] = useState("#2DD4BF");
+  const [accent, setAccent] = useState("#F59E0B");
   const [glowEffect, setGlowEffect] = useState(true);
   const [blurDepth, setBlurDepth] = useState(8);
   const [mlLearningRate, setMlLearningRate] = useState(0.05);
@@ -903,15 +1019,24 @@ export default function FranchiseOSDashboard({ initialModule = "dashboard" }: Fr
   const hubOutlet = outletLocations.find((o) => o.name.includes("Pune")) || outletLocations[0];
 
   useEffect(() => {
-    const token = localStorage.getItem("fops_token");
+    const token = sessionStorage.getItem("fops_token");
     setIsLoggedIn(!!token);
-    setCheckingAuth(false);
+
+    const handleAutoLogoutOnClose = () => {
+      sessionStorage.removeItem("fops_token");
+      sessionStorage.removeItem("fops_user");
+      localStorage.removeItem("fops_token");
+      localStorage.removeItem("fops_user");
+    };
+
+    window.addEventListener("beforeunload", handleAutoLogoutOnClose);
+    return () => window.removeEventListener("beforeunload", handleAutoLogoutOnClose);
   }, []);
 
   useEffect(() => {
     if (!isLoggedIn) return;
     fetch(`${API_BASE_URL}/api/outlets`, {
-      headers: { Authorization: `Bearer ${localStorage.getItem("fops_token")}` },
+      headers: { Authorization: `Bearer ${sessionStorage.getItem("fops_token")}` },
     })
       .then((res) => res.json())
       .then((data) => setOutlets(Array.isArray(data) ? data : []))
@@ -928,7 +1053,7 @@ export default function FranchiseOSDashboard({ initialModule = "dashboard" }: Fr
     if (inventoryOutletId !== "All") params.set("outlet_id", inventoryOutletId);
     if (inventoryQuery) params.set("search", inventoryQuery);
 
-    const authHeaders = { Authorization: `Bearer ${localStorage.getItem("fops_token")}` };
+    const authHeaders = { Authorization: `Bearer ${sessionStorage.getItem("fops_token")}` };
 
     Promise.all([
       fetch(`${API_BASE_URL}/api/inventory?${params.toString()}`, { headers: authHeaders }).then((res) => res.json()),
@@ -956,6 +1081,8 @@ export default function FranchiseOSDashboard({ initialModule = "dashboard" }: Fr
   }, [isLoggedIn, active, inventoryOutletId, inventoryQuery]);
 
   function handleSignOut() {
+    sessionStorage.removeItem("fops_token");
+    sessionStorage.removeItem("fops_user");
     localStorage.removeItem("fops_token");
     localStorage.removeItem("fops_user");
     setIsLoggedIn(false);
@@ -1020,7 +1147,7 @@ function exportToCSV(filename: string, rows: any[]) {
 }
 
   if (checkingAuth) {
-    return <div className="w-full min-h-[800px]" style={{ background: t.bg }} />;
+    return <AppSplashLoader t={t} accent={accent} label="Initializing OmniFranchise AI Network..." onComplete={() => setCheckingAuth(false)} />;
   }
 
   if (!isLoggedIn) {
@@ -1031,10 +1158,10 @@ function exportToCSV(filename: string, rows: any[]) {
     <div className="w-full min-h-[800px] flex font-sans transition-colors duration-200" style={{ background: t.bg, color: t.text }}>
       <aside className="w-64 flex flex-col shrink-0 border-r transition-colors duration-200" style={{ background: t.panel, borderColor: t.border }}>
         <div className="px-5 py-5 flex items-center gap-2 border-b" style={{ borderColor: t.border }}>
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-teal-400 to-teal-600 flex items-center justify-center font-bold text-sm" style={{ color: t.bg }}>F</div>
+          <img src="/logo.png" alt="OmniFranchise Logo" className="w-8 h-8 rounded-lg object-cover shadow-md shadow-teal-500/20 border border-teal-400/30" />
           <div>
-            <p className="font-semibold text-sm leading-tight" style={{ color: t.text }}>FranchiseOps AI</p>
-            <p className="text-[10px]" style={{ color: t.textFaint }}>Analytics Network</p>
+            <p className="font-semibold text-sm leading-tight" style={{ color: t.text }}>OmniFranchise AI</p>
+            <p className="text-[10px]" style={{ color: t.textFaint }}>Enterprise Intelligence Network</p>
           </div>
         </div>
         <nav className="flex-1 overflow-y-auto py-3">
@@ -1042,10 +1169,12 @@ function exportToCSV(filename: string, rows: any[]) {
             const Icon = m.icon;
             const isActive = active === m.id;
             return (
-              <button
+              <motion.button
                 key={m.id}
                 onClick={() => setActive(m.id)}
-                className="w-full flex items-center gap-3 px-5 py-2.5 text-sm text-left transition-colors border-l-2"
+                whileHover={{ x: 3, backgroundColor: isActive ? `${accent}25` : `${accent}0D` }}
+                whileTap={{ scale: 0.98 }}
+                className="w-full flex items-center gap-3 px-5 py-2.5 text-sm text-left transition-all relative border-l-2 cursor-pointer"
                 style={{
                   borderColor: isActive ? accent : "transparent",
                   background: isActive ? `${accent}1A` : "transparent",
@@ -1053,8 +1182,15 @@ function exportToCSV(filename: string, rows: any[]) {
                 }}
               >
                 <Icon size={16} color={isActive ? accent : t.textFaint} />
-                {m.label}
-              </button>
+                <span className="font-medium">{m.label}</span>
+                {isActive && (
+                  <motion.div
+                    layoutId="activeGlow"
+                    className="absolute right-3 w-1.5 h-1.5 rounded-full"
+                    style={{ backgroundColor: accent, boxShadow: `0 0 10px ${accent}` }}
+                  />
+                )}
+              </motion.button>
             );
           })}
         </nav>
@@ -1087,8 +1223,8 @@ function exportToCSV(filename: string, rows: any[]) {
           </button>
           <button
             onClick={handleSignOut}
-            className="w-8 h-8 rounded-full bg-gradient-to-br from-rose-400 to-amber-400 flex items-center justify-center text-xs font-semibold"
-            style={{ color: t.bg }}
+            className="w-8 h-8 rounded-full bg-gradient-to-br from-rose-400 to-amber-400 flex items-center justify-center text-xs font-bold"
+            style={{ color: t.textOnAccent }}
             aria-label="Sign out"
           >
             M
@@ -1096,7 +1232,15 @@ function exportToCSV(filename: string, rows: any[]) {
         </div>
 
         <div className="p-8">
-          {active === "dashboard" ? (
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={active}
+              initial={{ opacity: 0, y: 15, scale: 0.995 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -15, scale: 0.995 }}
+              transition={{ duration: 0.2, ease: "easeOut" }}
+            >
+              {active === "dashboard" ? (
             <div className="space-y-6">
               <div className="rounded-xl p-5 border border-l-4" style={{ background: t.card, borderTopColor: t.border, borderRightColor: t.border, borderBottomColor: t.border, borderLeftColor: accent }}>
                 <div className="flex items-center gap-2 mb-1">
@@ -2010,8 +2154,8 @@ function exportToCSV(filename: string, rows: any[]) {
                       <div className="flex items-end">
                         <button
                           type="submit"
-                          className="w-full py-2.5 rounded-lg font-semibold text-sm"
-                          style={{ background: accent, color: t.bg }}
+                          className="w-full py-2.5 rounded-lg font-bold text-sm shadow-md cursor-pointer"
+                          style={{ background: accent, color: t.textOnAccent }}
                         >
                           Add Staff
                         </button>
@@ -2337,8 +2481,8 @@ function exportToCSV(filename: string, rows: any[]) {
                 <div className="flex items-center gap-3">
                   <button
                     onClick={() => setShowAuditModal(true)}
-                    className="flex items-center gap-2 text-xs font-semibold px-4 py-2 rounded-lg transition-transform active:scale-95 cursor-pointer shadow-md"
-                    style={{ background: accent, color: t.bg }}
+                    className="flex items-center gap-2 text-xs font-bold px-4 py-2 rounded-lg transition-transform active:scale-95 cursor-pointer shadow-md"
+                    style={{ background: accent, color: t.textOnAccent }}
                   >
                     <ShieldCheck size={15} /> Submit New Audit
                   </button>
@@ -2581,8 +2725,8 @@ function exportToCSV(filename: string, rows: any[]) {
                             body: JSON.stringify(newRecord)
                           }).catch(() => {});
                         }}
-                        className="flex-1 py-2 rounded-lg font-semibold text-xs cursor-pointer shadow-md"
-                        style={{ background: accent, color: t.bg }}
+                        className="flex-1 py-2 rounded-lg font-bold text-xs cursor-pointer shadow-md"
+                        style={{ background: accent, color: t.textOnAccent }}
                       >
                         Submit Audit Report
                       </button>
@@ -2710,8 +2854,8 @@ function exportToCSV(filename: string, rows: any[]) {
                           })
                           .finally(() => setSimLoading(false));
                       }}
-                      className="w-full py-2.5 rounded-lg font-semibold text-xs cursor-pointer shadow-md transition-transform active:scale-95 flex items-center justify-center gap-2"
-                      style={{ background: accent, color: t.bg }}
+                      className="w-full py-2.5 rounded-lg font-bold text-xs cursor-pointer shadow-md transition-transform active:scale-95 flex items-center justify-center gap-2"
+                      style={{ background: accent, color: t.textOnAccent }}
                     >
                       {simLoading ? <span className="animate-spin">⏳</span> : <Sparkles size={14} />}
                       Run Simulation Predictor
@@ -2870,8 +3014,8 @@ function exportToCSV(filename: string, rows: any[]) {
                           { sender: "ai", text: `Strategic AI response: Analyzing '${text}' against active franchise datasets. Recommend launching a 15% discount campaign on espresso drinks in underperforming outlets.` }
                         ]);
                       }}
-                      className="px-4 py-2 rounded-lg font-semibold text-xs cursor-pointer"
-                      style={{ background: accent, color: t.bg }}
+                      className="px-4 py-2 rounded-lg font-bold text-xs cursor-pointer shadow-md"
+                      style={{ background: accent, color: t.textOnAccent }}
                     >
                       Send
                     </button>
@@ -2908,8 +3052,8 @@ function exportToCSV(filename: string, rows: any[]) {
 
                   <button
                     onClick={() => window.print()}
-                    className="flex items-center gap-2 text-xs font-semibold px-4 py-2 rounded-lg transition-transform active:scale-95 cursor-pointer shadow-md"
-                    style={{ background: accent, color: t.bg }}
+                    className="flex items-center gap-2 text-xs font-bold px-4 py-2 rounded-lg transition-transform active:scale-95 cursor-pointer shadow-md"
+                    style={{ background: accent, color: t.textOnAccent }}
                   >
                     <FileBarChart size={14} /> Print / Export PDF
                   </button>
@@ -3207,6 +3351,265 @@ function exportToCSV(filename: string, rows: any[]) {
                 </div>
               </div>
             </div>
+          ) : active === "enterprise" ? (
+            <div className="space-y-6">
+              {/* Enterprise Header Banner */}
+              <div className="rounded-xl border p-5 transition-colors duration-200" style={{ background: t.card, borderColor: t.border }}>
+                <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                  <div>
+                    <h2 className="text-lg font-bold flex items-center gap-2" style={{ color: t.text }}>
+                      <Sparkles size={20} color={accent} /> Enterprise Market Leader Suite
+                    </h2>
+                    <p className="text-xs mt-1" style={{ color: t.textMuted }}>
+                      Autonomous Operations, Vision/IoT Telemetry, Churn Risk AI, 5% Royalty Settlement, and Weather/Macro Demand Simulators.
+                    </p>
+                  </div>
+                  <span className="px-3 py-1 text-xs font-semibold rounded-full border" style={{ background: `${accent}15`, borderColor: accent, color: accent }}>
+                    Tier-1 Enterprise Enabled
+                  </span>
+                </div>
+              </div>
+
+              {/* Grid Pillar 1: Autonomous Operations & Yield Pricing */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Auto Purchase Orders */}
+                <div className="rounded-xl border p-5" style={{ background: t.card, borderColor: t.border }}>
+                  <h3 className="text-sm font-semibold mb-3 flex items-center gap-2" style={{ color: t.text }}>
+                    <Boxes size={16} color={accent} /> Autonomous Auto-Purchase Orders
+                  </h3>
+                  <div className="space-y-3">
+                    <div>
+                      <label className="text-xs block mb-1" style={{ color: t.textMuted }}>Item Name</label>
+                      <input
+                        type="text"
+                        value={poItem}
+                        onChange={(e) => setPoItem(e.target.value)}
+                        className="w-full text-xs rounded border px-3 py-2 outline-none"
+                        style={{ background: t.bg, borderColor: t.border, color: t.text }}
+                      />
+                    </div>
+                    <div>
+                      <label className="text-xs block mb-1" style={{ color: t.textMuted }}>Reorder Quantity</label>
+                      <input
+                        type="number"
+                        value={poQty}
+                        onChange={(e) => setPoQty(Number(e.target.value))}
+                        className="w-full text-xs rounded border px-3 py-2 outline-none"
+                        style={{ background: t.bg, borderColor: t.border, color: t.text }}
+                      />
+                    </div>
+                    <button
+                      onClick={async () => {
+                        setPoLoading(true);
+                        try {
+                          const res = await fetch(`${API_BASE_URL}/api/enterprise/auto-po`, {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ outlet_name: "Nashik City Center", item_name: poItem, quantity: poQty })
+                          });
+                          const data = await res.json();
+                          setPoResult(data);
+                          setTerminalLogs(prev => [`[${new Date().toLocaleTimeString()}] Auto-PO Dispatched: ${data.poNumber} (${data.supplier})`, ...prev]);
+                        } catch {
+                          setPoResult({ poNumber: "PO-991204", supplier: "Sahyadri Agro Farms", estimatedTotal: `₹${poQty * 450}`, expectedDelivery: "2 Days", dispatchStatus: "Simulated Email Dispatched" });
+                        } finally {
+                          setPoLoading(false);
+                        }
+                      }}
+                      disabled={poLoading}
+                      className="w-full py-2 text-xs font-bold rounded cursor-pointer transition-opacity shadow-md"
+                      style={{ background: accent, color: t.textOnAccent }}
+                    >
+                      {poLoading ? "Generating & Emailing PO..." : "Generate & Dispatch Auto-PO"}
+                    </button>
+                    {poResult && (
+                      <div className="p-3 rounded border text-xs space-y-1 mt-2" style={{ background: t.bg, borderColor: accent }}>
+                        <p className="font-bold text-teal-400">PO Created: {poResult.poNumber}</p>
+                        <p style={{ color: t.text }}>Supplier: <span className="font-semibold">{poResult.supplier}</span></p>
+                        <p style={{ color: t.text }}>Est. Total: <span className="font-semibold">{poResult.estimatedTotal}</span></p>
+                        <p style={{ color: t.textMuted }}>Status: {poResult.dispatchStatus} ({poResult.expectedDelivery})</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Dynamic Yield Pricing */}
+                <div className="rounded-xl border p-5" style={{ background: t.card, borderColor: t.border }}>
+                  <h3 className="text-sm font-semibold mb-3 flex items-center gap-2" style={{ color: t.text }}>
+                    <TrendingUp size={16} color={accent} /> Dynamic Yield & Surge Pricing Engine
+                  </h3>
+                  <div className="space-y-2">
+                    {[
+                      { item: "Iced Caramel Macchiato", current: "₹220", recommended: "₹245", surge: "+11% (Peak Hour Surge)" },
+                      { item: "Butter Croissant", current: "₹140", recommended: "₹115", surge: "-18% (Expiry Clearance)" },
+                      { item: "Classic Cold Coffee", current: "₹180", recommended: "₹195", surge: "+8% (Demand Velocity)" }
+                    ].map((y, idx) => (
+                      <div key={idx} className="p-2.5 rounded border flex items-center justify-between text-xs" style={{ background: t.bg, borderColor: t.border }}>
+                        <div>
+                          <p className="font-semibold" style={{ color: t.text }}>{y.item}</p>
+                          <p className="text-[10px]" style={{ color: t.textMuted }}>{y.surge}</p>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-gray-400 line-through text-[11px]">{y.current}</p>
+                          <p className="font-bold text-teal-400">{y.recommended}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Grid Pillar 2: Vision AI & IoT Sensors */}
+              <div className="rounded-xl border p-5" style={{ background: t.card, borderColor: t.border }}>
+                <h3 className="text-sm font-semibold mb-3 flex items-center gap-2" style={{ color: t.text }}>
+                  <Eye size={16} color={accent} /> CCTV Vision AI & Cold-Chain IoT Telemetry
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                  {[
+                    { title: "Refrigeration Unit #1", val: "3.4°C", status: "Optimal", health: "98%", outlet: "Nashik" },
+                    { title: "Espresso Pressure", val: "9.1 Bar", status: "Optimal", health: "95%", outlet: "Pune" },
+                    { title: "Walk-in Freezer", val: "-14.2°C", status: "Temp Drift Warning", health: "82%", outlet: "Mumbai" },
+                    { title: "CCTV Hygiene Audit", val: "96.5%", status: "Grade A+", health: "Hairnets & Gloves OK", outlet: "Nashik" }
+                  ].map((s, idx) => (
+                    <div key={idx} className="p-3 rounded-lg border text-xs" style={{ background: t.bg, borderColor: t.border }}>
+                      <p className="text-[11px]" style={{ color: t.textFaint }}>{s.outlet} • {s.title}</p>
+                      <p className="text-base font-bold my-1" style={{ color: t.text }}>{s.val}</p>
+                      <div className="flex items-center justify-between text-[10px]">
+                        <span className={s.status.includes("Warning") ? "text-amber-400 font-semibold" : "text-teal-400 font-semibold"}>{s.status}</span>
+                        <span style={{ color: t.textMuted }}>{s.health}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Grid Pillar 3: Customer Churn & Fraud / Royalty Settlement */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Churn Risk */}
+                <div className="rounded-xl border p-5" style={{ background: t.card, borderColor: t.border }}>
+                  <h3 className="text-sm font-semibold mb-3 flex items-center gap-2" style={{ color: t.text }}>
+                    <Users size={16} color={accent} /> Customer Churn AI & Automated WhatsApp Triggers
+                  </h3>
+                  <div className="space-y-2 text-xs">
+                    {[
+                      { name: "Rohan Verma", risk: "High (86%)", item: "Cold Brew Latte", offer: "25% OFF Coupon (WhatsApp Sent)" },
+                      { name: "Priya Sharma", risk: "Medium (62%)", item: "Hazelnut Cappuccino", offer: "Free Muffin Pass" },
+                      { name: "Amit Kulkarni", risk: "Critical (93%)", item: "Double Shot Espresso", offer: "Buy 1 Get 1 Free Pass" }
+                    ].map((c, idx) => (
+                      <div key={idx} className="p-3 rounded border flex items-center justify-between" style={{ background: t.bg, borderColor: t.border }}>
+                        <div>
+                          <p className="font-semibold" style={{ color: t.text }}>{c.name}</p>
+                          <p className="text-[10px]" style={{ color: t.textMuted }}>Fav: {c.item}</p>
+                        </div>
+                        <div className="text-right">
+                          <span className="px-2 py-0.5 rounded text-[10px] bg-rose-500/20 text-rose-300 border border-rose-500/40">{c.risk}</span>
+                          <p className="text-[10px] text-teal-400 mt-1">{c.offer}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* 5% Royalty Settlement Table */}
+                <div className="rounded-xl border p-5" style={{ background: t.card, borderColor: t.border }}>
+                  <h3 className="text-sm font-semibold mb-3 flex items-center gap-2" style={{ color: t.text }}>
+                    <FileBarChart size={16} color={accent} /> Automated Royalty (5%) & Tax Settlement
+                  </h3>
+                  <div className="space-y-2 text-xs">
+                    {[
+                      { outlet: "Nashik City Center", rev: "₹8,50,000", royalty: "₹42,500", gst: "₹1,53,000", net: "₹6,54,500" },
+                      { outlet: "Pune FC Road", rev: "₹12,40,000", royalty: "₹62,000", gst: "₹2,23,200", net: "₹9,54,800" },
+                      { outlet: "Mumbai Bandra Hub", rev: "₹16,80,000", royalty: "₹84,000", gst: "₹3,02,400", net: "₹12,93,600" }
+                    ].map((row, idx) => (
+                      <div key={idx} className="p-2.5 rounded border flex items-center justify-between" style={{ background: t.bg, borderColor: t.border }}>
+                        <div>
+                          <p className="font-semibold" style={{ color: t.text }}>{row.outlet}</p>
+                          <p className="text-[10px]" style={{ color: t.textMuted }}>Gross: {row.rev} | GST (18%): {row.gst}</p>
+                        </div>
+                        <div className="text-right">
+                          <p className="font-bold text-amber-400">Royalty: {row.royalty}</p>
+                          <p className="text-[10px] text-teal-400">Net Payout: {row.net}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Grid Pillar 4: Weather & Macro Inflation Simulator */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Weather-aware Forecasting */}
+                <div className="rounded-xl border p-5" style={{ background: t.card, borderColor: t.border }}>
+                  <h3 className="text-sm font-semibold mb-3 flex items-center gap-2" style={{ color: t.text }}>
+                    <Sun size={16} color={accent} /> Weather-Aware Demand Signal Simulator
+                  </h3>
+                  <div className="space-y-3 text-xs">
+                    <div className="flex gap-2">
+                      {["Rainy", "Heatwave", "Sunny"].map((cond) => (
+                        <button
+                          key={cond}
+                          onClick={() => {
+                            setWeatherCondition(cond);
+                            if (cond === "Rainy") setWeatherResult({ condition: "Rainy", demand_multiplier: 0.88, impact_summary: "Cold beverages -12%, Hot coffees +18% (Heavy Rain)" });
+                            else if (cond === "Heatwave") setWeatherResult({ condition: "Heatwave", demand_multiplier: 1.14, impact_summary: "Iced teas & smoothies +24%, Hot brews -15%" });
+                            else setWeatherResult({ condition: "Sunny", demand_multiplier: 1.05, impact_summary: "Standard summer footfall boost (+5%)" });
+                          }}
+                          className={`px-3 py-1.5 rounded border text-xs font-semibold cursor-pointer ${weatherCondition === cond ? "bg-teal-500/20 border-teal-400 text-teal-300" : ""}`}
+                          style={{ background: weatherCondition === cond ? undefined : t.bg, borderColor: t.border, color: weatherCondition === cond ? undefined : t.textMuted }}
+                        >
+                          {cond}
+                        </button>
+                      ))}
+                    </div>
+                    {weatherResult && (
+                      <div className="p-3 rounded border space-y-1" style={{ background: t.bg, borderColor: accent }}>
+                        <p className="font-bold text-teal-400">Signal Multiplier: {weatherResult.demand_multiplier}x</p>
+                        <p style={{ color: t.text }}>{weatherResult.impact_summary}</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Supply Chain Inflation Macro Simulator */}
+                <div className="rounded-xl border p-5" style={{ background: t.card, borderColor: t.border }}>
+                  <h3 className="text-sm font-semibold mb-3 flex items-center gap-2" style={{ color: t.text }}>
+                    <Brain size={16} color={accent} /> Commodity Inflation Macro Simulator
+                  </h3>
+                  <div className="space-y-3 text-xs">
+                    <div>
+                      <label className="text-xs block mb-1" style={{ color: t.textMuted }}>Coffee Bean Inflation: {coffeeInflation}%</label>
+                      <input type="range" min="0" max="50" value={coffeeInflation} onChange={(e) => setCoffeeInflation(Number(e.target.value))} className="w-full accent-teal-400" />
+                    </div>
+                    <div>
+                      <label className="text-xs block mb-1" style={{ color: t.textMuted }}>Dairy Cost Inflation: {dairyInflation}%</label>
+                      <input type="range" min="0" max="50" value={dairyInflation} onChange={(e) => setDairyInflation(Number(e.target.value))} className="w-full accent-teal-400" />
+                    </div>
+                    <button
+                      onClick={() => {
+                        const drop = Number(((coffeeInflation * 0.18) + (dairyInflation * 0.12)).toFixed(2));
+                        setMacroResult({
+                          baseline_margin_pct: 68.0,
+                          simulated_margin_pct: Number((68.0 - drop).toFixed(2)),
+                          margin_drop_pct: drop,
+                          recommendation: `Raise beverage base prices by ${(drop * 0.8).toFixed(1)}% to maintain net profitability.`
+                        });
+                      }}
+                      className="w-full py-2 font-bold rounded text-xs cursor-pointer shadow-md"
+                      style={{ background: accent, color: t.textOnAccent }}
+                    >
+                      Run Macro Simulation
+                    </button>
+                    {macroResult && (
+                      <div className="p-3 rounded border space-y-1" style={{ background: t.bg, borderColor: accent }}>
+                        <p className="font-bold text-amber-400">Net Margin: {macroResult.baseline_margin_pct}% → {macroResult.simulated_margin_pct}% (-{macroResult.margin_drop_pct}%)</p>
+                        <p style={{ color: t.text }}>{macroResult.recommendation}</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+            </div>
           ) : active === "settings" ? (
             <div className="space-y-6">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -3221,11 +3624,12 @@ function exportToCSV(filename: string, rows: any[]) {
                       <p className="text-xs mb-2" style={{ color: t.textMuted }}>Select Accent Color</p>
                       <div className="flex gap-2.5">
                         {[
-                          { name: "Teal", code: "#2DD4BF" },
-                          { name: "Purple", code: "#A855F7" },
-                          { name: "Amber", code: "#F59E0B" },
-                          { name: "Blue", code: "#3B82F6" },
-                          { name: "Rose", code: "#F43F5E" }
+                          { name: "Radiant Gold", code: "#F59E0B" },
+                          { name: "Cyber Blue", code: "#38BDF8" },
+                          { name: "Silver Metallic", code: "#CBD5E1" },
+                          { name: "Rich Bronze", code: "#B45309" },
+                          { name: "White Cream", code: "#FFFBEB" },
+                          { name: "Dazzling Black", code: "#060709" }
                         ].map((c) => (
                           <button
                             key={c.name}
@@ -3365,8 +3769,8 @@ function exportToCSV(filename: string, rows: any[]) {
                             }, 1500);
                           });
                       }}
-                      className="w-full py-2 rounded font-medium mt-2 transition-opacity duration-150 active:opacity-90 cursor-pointer"
-                      style={{ background: accent, color: t.bg }}
+                      className="w-full py-2 rounded font-bold text-xs mt-2 transition-opacity duration-150 active:opacity-90 cursor-pointer shadow-md"
+                      style={{ background: accent, color: t.textOnAccent }}
                     >
                       Trigger Retraining Pipeline
                     </button>
@@ -3464,20 +3868,24 @@ function exportToCSV(filename: string, rows: any[]) {
 
             </div>
           ) : null}
+            </motion.div>
+          </AnimatePresence>
         </div>
       </main>
 
-      {showAskAI && (
-        <AskAIPanel
-          t={t}
-          accent={accent}
-          onClose={() => setShowAskAI(false)}
-          outlets={outlets}
-          inventoryItems={inventoryItems}
-          inventorySummary={inventorySummary}
-          employees={employees}
-        />
-      )}
+      <AnimatePresence>
+        {showAskAI && (
+          <AskAIPanel
+            t={t}
+            accent={accent}
+            onClose={() => setShowAskAI(false)}
+            outlets={outlets}
+            inventoryItems={inventoryItems}
+            inventorySummary={inventorySummary}
+            employees={employees}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 }

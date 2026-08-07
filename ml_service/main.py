@@ -95,6 +95,16 @@ class AnomalyCheckRequest(BaseModel):
     recent_transactions: List[TransactionRecord]
 
 
+class WeatherForecastRequest(BaseModel):
+    condition: str = "Rainy"
+    temp_c: float = 24.0
+
+
+class MacroShockRequest(BaseModel):
+    coffee_price_increase_pct: float = 15.0
+    dairy_price_increase_pct: float = 10.0
+
+
 # ── Internal Anomaly Detector ──────────────────────────────────────────────────
 
 def detect_anomaly_isolation_forest(transactions: List[TransactionRecord]) -> Dict[str, Any]:
@@ -250,6 +260,45 @@ def simulate_forecast(req: SimulationRequest):
 def detect_anomalies(req: AnomalyCheckRequest):
     """Detects if recent transactions show operational or revenue anomalies (Isolation Forest)."""
     return detect_anomaly_isolation_forest(req.recent_transactions)
+
+
+@app.post("/ml/predict/weather")
+def weather_demand_forecast(req: WeatherForecastRequest):
+    """Adjusts demand forecast based on weather signals (exogenous factors)."""
+    factor = 1.0
+    impact = "Neutral"
+    if "rain" in req.condition.lower():
+        factor = 0.88
+        impact = "Cold beverages -12%, Hot coffees +18% (Heavy Rain)"
+    elif "heat" in req.condition.lower() or req.temp_c > 35:
+        factor = 1.14
+        impact = "Iced teas & smoothies +24%, Hot brews -15%"
+    elif "sun" in req.condition.lower():
+        factor = 1.05
+        impact = "Standard summer footfall boost (+5%)"
+    
+    return {
+        "condition": req.condition,
+        "demand_multiplier": factor,
+        "impact_summary": impact
+    }
+
+
+@app.post("/ml/simulate/macro")
+def macro_inflation_simulation(req: MacroShockRequest):
+    """Simulates supply chain cost shocks on overall franchise net profit margin."""
+    avg_gross_margin = 68.0
+    cost_impact = (req.coffee_price_increase_pct * 0.18) + (req.dairy_price_increase_pct * 0.12)
+    simulated_margin = max(10.0, avg_gross_margin - cost_impact)
+    
+    return {
+        "coffee_inflation_pct": req.coffee_price_increase_pct,
+        "dairy_inflation_pct": req.dairy_price_increase_pct,
+        "baseline_margin_pct": avg_gross_margin,
+        "simulated_margin_pct": round(simulated_margin, 2),
+        "margin_drop_pct": round(cost_impact, 2),
+        "recommendation": f"Raise beverage base prices by {round(cost_impact * 0.8, 1)}% to maintain net profitability."
+    }
 
 
 @app.get("/ml/metrics")
