@@ -944,6 +944,32 @@ export default function FranchiseOSDashboard({ initialModule = "dashboard" }: Fr
   const [showAskAI, setShowAskAI] = useState(false);
   const [pinHover, setPinHover] = useState<string | null>(null);
 
+  const [headerSearchQuery, setHeaderSearchQuery] = useState("");
+  const [headerSearchFocused, setHeaderSearchFocused] = useState(false);
+
+  const SEARCH_DESTINATIONS = [
+    { name: "Executive Dashboard Overview", category: "Module", key: "dashboard", icon: "📊" },
+    { name: "Outlet Performance & Analytics", category: "Module", key: "outlet", icon: "🏬" },
+    { name: "Inventory Telemetry & Reorders", category: "Module", key: "inventory", icon: "📦" },
+    { name: "Staff Roster & Shift Schedule", category: "Module", key: "staff", icon: "👥" },
+    { name: "Marketing Campaign AI & ROI", category: "Module", key: "marketing", icon: "📢" },
+    { name: "CCTV & Quality Compliance Audit", category: "Module", key: "audit", icon: "📹" },
+    { name: "Franchise Intelligence AI", category: "Module", key: "intelligence", icon: "🧠" },
+    { name: "Financial Reports & PDF Exports", category: "Module", key: "reporting", icon: "📄" },
+    { name: "Live Notifications & Alerts", category: "Module", key: "notifications", icon: "🔔" },
+    { name: "Enterprise AI Hub & Auto-PO", category: "Module", key: "enterprise", icon: "⚡" },
+    { name: "Settings & System Customizer", category: "Module", key: "settings", icon: "⚙️" },
+    { name: "Nashik City Center Outlet", category: "Outlet", key: "outlet", icon: "📍" },
+    { name: "Pune FC Road Outlet", category: "Outlet", key: "outlet", icon: "📍" },
+    { name: "Mumbai Andheri East Outlet", category: "Outlet", key: "outlet", icon: "📍" },
+    { name: "Aurangabad CIDCO Outlet", category: "Outlet", key: "outlet", icon: "📍" },
+    { name: "Thane Estate Outlet", category: "Outlet", key: "outlet", icon: "📍" },
+  ];
+
+  const filteredDestinations = SEARCH_DESTINATIONS.filter(d => 
+    !headerSearchQuery.trim() || d.name.toLowerCase().includes(headerSearchQuery.toLowerCase()) || d.category.toLowerCase().includes(headerSearchQuery.toLowerCase())
+  );
+
   const [accent, setAccent] = useState("#F59E0B");
   const [glowEffect, setGlowEffect] = useState(true);
   const [blurDepth, setBlurDepth] = useState(8);
@@ -1201,9 +1227,63 @@ function exportToCSV(filename: string, rows: any[]) {
 
       <main className="flex-1 overflow-y-auto">
         <div className="border-b px-8 py-4 flex items-center justify-between gap-4 transition-colors duration-200" style={{ background: t.panel, borderColor: t.border }}>
-          <div className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm flex-1 max-w-md border" style={{ background: t.inputBg, borderColor: t.border, color: t.textFaint }}>
-            <Search size={14} />
-            <span>Search outlets, reports, insights...</span>
+          <div className="relative flex-1 max-w-md">
+            <div className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm border focus-within:border-amber-400 transition-colors" style={{ background: t.inputBg, borderColor: t.border }}>
+              <Search size={14} color={t.textFaint} />
+              <input
+                type="text"
+                placeholder="Search modules, outlets, pages..."
+                value={headerSearchQuery}
+                onChange={(e) => setHeaderSearchQuery(e.target.value)}
+                onFocus={() => setHeaderSearchFocused(true)}
+                onBlur={() => setTimeout(() => setHeaderSearchFocused(false), 200)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && filteredDestinations.length > 0) {
+                    setActive(filteredDestinations[0].key);
+                    setHeaderSearchQuery("");
+                    setHeaderSearchFocused(false);
+                  }
+                }}
+                className="w-full bg-transparent outline-none text-xs"
+                style={{ color: t.text }}
+              />
+            </div>
+
+            {/* Smart Navigation Options Dropdown */}
+            {headerSearchFocused && (
+              <div className="absolute top-full left-0 right-0 mt-2 rounded-xl border glass-panel shadow-2xl z-50 overflow-hidden max-h-72 overflow-y-auto">
+                <div className="p-2.5 border-b text-[10px] uppercase font-mono tracking-wider flex items-center justify-between" style={{ borderColor: t.border, color: t.textFaint }}>
+                  <span>Navigation Options ({filteredDestinations.length})</span>
+                  <span>Click to Jump</span>
+                </div>
+                {filteredDestinations.length > 0 ? (
+                  filteredDestinations.map((dest, idx) => (
+                    <div
+                      key={idx}
+                      onMouseDown={() => {
+                        setActive(dest.key);
+                        setHeaderSearchQuery("");
+                        setHeaderSearchFocused(false);
+                      }}
+                      className="px-3 py-2.5 flex items-center justify-between hover:bg-amber-500/15 cursor-pointer transition-colors border-b text-xs"
+                      style={{ borderColor: `${t.border}30` }}
+                    >
+                      <div className="flex items-center gap-2.5">
+                        <span className="text-base">{dest.icon}</span>
+                        <span className="font-medium" style={{ color: t.text }}>{dest.name}</span>
+                      </div>
+                      <span className="text-[10px] px-2 py-0.5 rounded-full border badge-silver font-mono">
+                        {dest.category}
+                      </span>
+                    </div>
+                  ))
+                ) : (
+                  <div className="p-4 text-center text-xs" style={{ color: t.textMuted }}>
+                    No matching modules found.
+                  </div>
+                )}
+              </div>
+            )}
           </div>
           <button
             onClick={() => setShowAskAI(true)}
@@ -1259,13 +1339,48 @@ function exportToCSV(filename: string, rows: any[]) {
                 </div>
               </div>
 
-              <div className="flex items-center gap-2 flex-wrap">
-                <span className="text-xs mr-1" style={{ color: t.textFaint }}>Export:</span>
-                {["Export PDF", "Export Excel", "Export CSV"].map((label) => (
-                  <button key={label} className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border transition-colors" style={{ background: t.card, borderColor: t.border, color: t.textMuted }}>
-                    <Download size={12} /> {label}
-                  </button>
-                ))}
+              <div className="flex items-center gap-2 flex-wrap no-print">
+                <span className="text-xs mr-1 font-semibold" style={{ color: t.textFaint }}>Export Dashboard Data:</span>
+
+                <button
+                  onClick={() => window.print()}
+                  className="flex items-center gap-1.5 text-xs font-bold px-3.5 py-1.5 rounded-lg border transition-all active:scale-95 cursor-pointer shadow-sm"
+                  style={{ background: accent, color: t.textOnAccent, borderColor: accent }}
+                >
+                  <FileBarChart size={13} /> Export Executive PDF
+                </button>
+
+                <button
+                  onClick={() => {
+                    const dataToExport = outletPerformance.map(o => ({
+                      Outlet: o.name,
+                      SalesRevenue: `₹${o.sales.toLocaleString("en-IN")}`,
+                      TargetRevenue: `₹${o.target.toLocaleString("en-IN")}`,
+                      GrowthPct: `${o.growth}%`,
+                      Status: o.status
+                    }));
+                    exportToCSV("OmniFranchise_Dashboard_Executive_Export.csv", dataToExport);
+                  }}
+                  className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg border transition-all active:scale-95 cursor-pointer shadow-sm"
+                  style={{ background: `${accent}1A`, borderColor: `${accent}40`, color: accent }}
+                >
+                  <Download size={13} /> Export CSV
+                </button>
+
+                <button
+                  onClick={() => {
+                    const dataToExport = kpis.map(k => ({
+                      Metric: k.label,
+                      Value: k.value,
+                      Delta: k.delta
+                    }));
+                    exportToCSV("OmniFranchise_KPI_Executive_Summary.csv", dataToExport);
+                  }}
+                  className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg border transition-all active:scale-95 cursor-pointer shadow-sm"
+                  style={{ background: t.card, borderColor: t.border, color: t.textMuted }}
+                >
+                  <Download size={13} /> Export Excel KPI
+                </button>
               </div>
 
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
