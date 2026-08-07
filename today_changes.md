@@ -19,16 +19,25 @@
 - **Animated Splash Loader & Slider**: Progress animation with shimmering slider bar & status text
 - **Italic Brand Typography**: Formatted ***OmniFranchise*** in Google Font Playfair Display Italic
 
-## 4. Luxury Executive PDF Export
+## 4. Header Search Bar & Smart Navigation Options
+- **Interactive Navigation Search Bar**: Integrated real-time search input state (`headerSearchQuery`) with floating glassmorphic navigation options popup.
+- **Instant Page Movement**: Typing or clicking any module/outlet option in the search dropdown immediately moves (`setActive(moduleKey)`) to that specific page module.
+
+## 5. Dashboard Export Functionality
+- **Export Executive PDF**: Wrote `window.print()` click handler triggering the luxury branded PDF stylesheet on the main dashboard.
+- **Export Executive CSV**: Generates and downloads `OmniFranchise_Dashboard_Executive_Export.csv` containing network outlet metrics.
+- **Export Excel KPI**: Generates and downloads `OmniFranchise_KPI_Executive_Summary.csv` containing executive KPI analytics.
+
+## 6. Luxury Executive PDF Export
 - **Custom Print & PDF Stylesheet**: `@media print` rule forcing exact background color rendering (`print-color-adjust: exact`)
 - **Branded PDF Header Banner**: 3D Logo Emblem, ***OmniFranchise*** title, document reference code, and date-time watermark
 - **Executive Certificate Seal**: Digital checksum hash signature (`0x8F92...`) and system architect seal
 
-## 5. Security & Session Life-Cycle
+## 7. Security & Session Life-Cycle
 - **Automatic Window-Close Logout**: Migrated to `sessionStorage` with `beforeunload` auto-logout listener
 
-## 6. Frontend Fixes
+## 8. Frontend Fixes
 - **Button Text Visibility**: Fixed invisible text with `textOnAccent: "#060709"` across all 11 modules
 
-## 7. GitHub Deployment
+## 9. GitHub Deployment
 - Pushed all commits & updates to `main` branch on GitHub repository
