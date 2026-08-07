@@ -3025,13 +3025,29 @@ function exportToCSV(filename: string, rows: any[]) {
             </div>
           ) : active === "reporting" ? (
             <div className="space-y-6">
+              {/* Printable Executive Document Banner (Only Visible on Print / PDF Export) */}
+              <div className="hidden print:flex items-center justify-between pb-4 mb-4 border-b-2 border-amber-500">
+                <div className="flex items-center gap-3">
+                  <img src="/logo.png" alt="OmniFranchise Logo" className="w-12 h-12 rounded-xl object-cover border border-amber-400/50 shadow-lg" />
+                  <div>
+                    <h1 className="brand-font italic font-extrabold text-2xl text-amber-100">OmniFranchise</h1>
+                    <p className="text-[10px] font-mono uppercase tracking-widest text-amber-400">Enterprise Intelligence Network // Executive Report</p>
+                  </div>
+                </div>
+                <div className="text-right font-mono text-[10px] text-slate-300">
+                  <p className="font-bold text-amber-400">CONFIDENTIAL REPORT</p>
+                  <p>Ref: DOC-{Date.now().toString().slice(-6)}</p>
+                  <p>Date: {new Date().toLocaleDateString()} {new Date().toLocaleTimeString()}</p>
+                </div>
+              </div>
+
               <div className="flex flex-wrap items-center justify-between gap-4">
                 <div>
                   <h2 className="text-xl font-bold" style={{ color: t.text }}>Reports & Data Export Center</h2>
-                  <p className="text-xs" style={{ color: t.textMuted }}>Comprehensive financial summaries, inventory audits, staff metrics, and CSV/PDF export.</p>
+                  <p className="text-xs" style={{ color: t.textMuted }}>Comprehensive financial summaries, inventory audits, staff metrics, and luxury PDF export.</p>
                 </div>
 
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 no-print">
                   <button
                     onClick={() => {
                       const dataToExport =
@@ -3055,7 +3071,7 @@ function exportToCSV(filename: string, rows: any[]) {
                     className="flex items-center gap-2 text-xs font-bold px-4 py-2 rounded-lg transition-transform active:scale-95 cursor-pointer shadow-md"
                     style={{ background: accent, color: t.textOnAccent }}
                   >
-                    <FileBarChart size={14} /> Print / Export PDF
+                    <FileBarChart size={14} /> Print / Export Executive PDF
                   </button>
                 </div>
               </div>
@@ -3245,6 +3261,20 @@ function exportToCSV(filename: string, rows: any[]) {
                     </tbody>
                   </table>
                 )}
+              </div>
+
+              {/* Printable Executive Certification Footer (Only Visible on Print / PDF Export) */}
+              <div className="hidden print:flex items-center justify-between pt-6 mt-8 border-t-2 border-amber-500 font-mono text-[10px] text-slate-300">
+                <div>
+                  <p className="font-bold text-amber-400">CERTIFIED EXECUTIVE AUDIT</p>
+                  <p>OmniFranchise Intelligence Engine (v2.4-Enterprise)</p>
+                  <p>Checksum: 0x8F92E412A5C780B310F</p>
+                </div>
+                <div className="text-center">
+                  <div className="w-32 border-b border-amber-400 mb-1" />
+                  <p className="font-bold text-amber-100">Authorized System Auditor</p>
+                  <p className="text-[9px] text-slate-400">Abhishek Pattnaik (System Architect)</p>
+                </div>
               </div>
             </div>
           ) : active === "notifications" ? (

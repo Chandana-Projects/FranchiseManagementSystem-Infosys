@@ -122,3 +122,85 @@ body {
 .animate-ambient {
   animation: ambientGlow 12s ease-in-out infinite alternate;
 }
+
+/* 👑 LUXURY EXECUTIVE PRINT & PDF STYLESHEET */
+@media print {
+  @page {
+    size: A4 landscape;
+    margin: 12mm;
+  }
+
+  html, body {
+    background-color: #060709 !important;
+    background-image: none !important;
+    color: #FFFBEB !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    font-family: 'Plus Jakarta Sans', sans-serif !important;
+  }
+
+  /* Hide navigation sidebar, top buttons, and chat widgets when printing */
+  aside, 
+  header, 
+  .no-print,
+  button,
+  .print-hide {
+    display: none !important;
+  }
+
+  main, .p-8 {
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+  }
+
+  /* Executive Card Formatting */
+  .glass-panel, .glass-card, div.rounded-xl, div.rounded-2xl {
+    background: #0B0D12 !important;
+    border: 1px solid #F59E0B !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    color: #FFFBEB !important;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  /* Printable Table Formatting */
+  table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+  }
+
+  th {
+    background-color: #11131A !important;
+    color: #F59E0B !important;
+    border-bottom: 2px solid #F59E0B !important;
+    font-size: 11px !important;
+    text-transform: uppercase !important;
+    padding: 10px !important;
+  }
+
+  td {
+    border-bottom: 1px solid rgba(203, 213, 225, 0.2) !important;
+    color: #FFFBEB !important;
+    padding: 10px !important;
+    font-size: 12px !important;
+  }
+
+  tr:nth-child(even) td {
+    background-color: rgba(245, 158, 11, 0.04) !important;
+  }
+
+  /* Official Printable Header Watermark */
+  .print-header-show {
+    display: flex !important;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 15px;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #F59E0B;
+  }
+}
