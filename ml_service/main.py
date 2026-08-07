@@ -121,13 +121,14 @@ def detect_anomaly_isolation_forest(transactions: List[TransactionRecord]) -> Di
     latest_score = float(scores[-1])
     
     # An anomaly is flagged if predicted as -1
-    is_anomaly = latest_pred == -1
+    is_anomaly = bool(latest_pred == -1)
+    
+    latest_rev = df["revenue"].iloc[-1]
     
     # Determine reason
     reason = "Normal operations"
     if is_anomaly:
         mean_rev = df["revenue"].mean()
-        latest_rev = df["revenue"].iloc[-1]
         if latest_rev < mean_rev * 0.4:
             reason = f"Critical drop in revenue ({latest_rev:.1f} vs avg {mean_rev:.1f})"
         elif latest_rev > mean_rev * 2.5:

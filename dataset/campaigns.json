@@ -208,5 +208,47 @@
     "start_date": "2026-08-06",
     "end_date": "2026-08-06",
     "outlet_id": "All"
+  },
+  {
+    "campaign_id": 16,
+    "name": "Winter Latte Warmers",
+    "status": "Planned",
+    "budget": 10000,
+    "spend": 0,
+    "revenue": 0,
+    "coupon_code": "WINTER10",
+    "redemptions": 0,
+    "clicks": 0,
+    "start_date": "2026-08-06",
+    "end_date": "2026-08-06",
+    "outlet_id": "All"
+  },
+  {
+    "campaign_id": 17,
+    "name": "Winter Latte Warmers",
+    "status": "Planned",
+    "budget": 10000,
+    "spend": 0,
+    "revenue": 0,
+    "coupon_code": "WINTER10",
+    "redemptions": 0,
+    "clicks": 0,
+    "start_date": "2026-08-07",
+    "end_date": "2026-08-07",
+    "outlet_id": "All"
+  },
+  {
+    "campaign_id": 18,
+    "name": "Winter Latte Warmers",
+    "status": "Planned",
+    "budget": 10000,
+    "spend": 0,
+    "revenue": 0,
+    "coupon_code": "WINTER10",
+    "redemptions": 0,
+    "clicks": 0,
+    "start_date": "2026-08-07",
+    "end_date": "2026-08-07",
+    "outlet_id": "All"
   }
 ]

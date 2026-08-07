@@ -1,5 +1,36 @@
+# Dependencies
 node_modules/
+.pnpm-store/
+
+# Next.js build output
+.next/
+out/
+build/
+dist/
+
+# Python Virtual Environments & Caches
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.venv/
+ml_service/venv/
+*.egg-info/
+.pytest_cache/
+
+# Environment files
 .env
 .env.local
-*.md
-!README.md
+.env.*.local
+*.env
+
+# System & IDE files
+.DS_Store
+Thumbs.db
+*.bak
+*.swp
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*

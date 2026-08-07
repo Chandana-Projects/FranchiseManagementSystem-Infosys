@@ -7,5 +7,5 @@ const FranchiseOSDashboard = dynamic(() => import("../components/OutletMonitorin
 });
 
 export default function Home() {
-  return <FranchiseOSDashboard />;
+  return <FranchiseOSDashboard initialModule="dashboard" />;
 }
