@@ -123,6 +123,63 @@ body {
   animation: ambientGlow 12s ease-in-out infinite alternate;
 }
 
+/* 🌟 LUXURY VISUAL EFFECTS & SHIMMER SYSTEM */
+@keyframes shimmerSweep {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.shimmer-text {
+  background: linear-gradient(90deg, #F8FAFC 0%, #FDE68A 25%, #38BDF8 50%, #FDE68A 75%, #F8FAFC 100%);
+  background-size: 200% auto;
+  color: transparent;
+  -webkit-background-clip: text;
+  background-clip: text;
+  animation: shimmerSweep 6s linear infinite;
+}
+
+.gradient-text-gold {
+  background: linear-gradient(135deg, #FFFBEB 0%, #FDE68A 40%, #F59E0B 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.gradient-text-cyber {
+  background: linear-gradient(135deg, #F0F9FF 0%, #7DD3FC 50%, #38BDF8 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.grid-overlay {
+  background-image: radial-gradient(rgba(245, 158, 11, 0.08) 1px, transparent 0);
+  background-size: 24px 24px;
+}
+
+.stat-card-glow {
+  position: relative;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.stat-card-glow:hover {
+  transform: translateY(-3px) scale(1.01);
+  box-shadow: 0 16px 36px -10px rgba(0, 0, 0, 0.8), 0 0 28px -4px rgba(245, 158, 11, 0.25);
+  border-color: rgba(245, 158, 11, 0.45) !important;
+}
+
+.status-dot-emerald {
+  box-shadow: 0 0 10px #10B981;
+}
+
+.status-dot-amber {
+  box-shadow: 0 0 10px #F59E0B;
+}
+
+.status-dot-rose {
+  box-shadow: 0 0 10px #FB7185;
+}
+
 /* 👑 LUXURY EXECUTIVE PRINT & PDF STYLESHEET */
 @media print {
   @page {
