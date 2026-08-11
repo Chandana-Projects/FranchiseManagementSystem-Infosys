@@ -5,6 +5,8 @@ const { authenticateToken } = require("../middlewares/authMiddleware");
 
 router.get("/", authenticateToken, complianceController.getAllAudits);
 router.post("/", authenticateToken, complianceController.submitAudit);
+router.get("/operational-metrics", authenticateToken, complianceController.getOperationalMetrics);
+router.post("/analyze-photo", authenticateToken, complianceController.analyzeStorePhoto);
 
 router.get(
   "/:outletId/operational",
@@ -32,3 +34,4 @@ router.post(
   complianceController.checkPolicies
 );
 module.exports = router;
+
