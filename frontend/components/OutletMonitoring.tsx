@@ -13,6 +13,7 @@ import {
   Sun, Moon, AlertTriangle, Eye, EyeOff, Mail, Lock, Calendar, Trash2, UserPlus, Star,
   Target, Percent, Lightbulb, Tag, PieChart, Share2, CalendarClock
 } from "lucide-react";
+import AuditComplianceSummary from "./AuditComplianceSummary";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
 
