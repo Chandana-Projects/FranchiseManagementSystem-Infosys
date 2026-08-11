@@ -11,7 +11,8 @@ import {
   BellRing, FileBarChart, Settings, Search, Sparkles, Download,
   TrendingUp, TrendingDown, MapPin, LineChart as LineChartIcon, BarChart3,
   Sun, Moon, AlertTriangle, Eye, EyeOff, Mail, Lock, Calendar, Trash2, UserPlus, Star,
-  Target, Percent, Lightbulb, Tag, PieChart, Share2, CalendarClock
+  Target, Percent, Lightbulb, Tag, PieChart, Share2, CalendarClock,
+  Image, FileSearch, MessageSquare
 } from "lucide-react";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
@@ -892,6 +893,27 @@ export default function FranchiseOSDashboard({ initialModule = "dashboard" }: Fr
     confidence_score: 94.2,
     reorder_recommendation: "+35 kg Coffee Beans, +20L Milk required to support volume growth.",
   });
+
+  const aiImageAnalysis = [
+    { outlet: "Aurangabad CIDCO", label: "Storefront signage photo", finding: "Faded branding decal, below standard contrast", confidence: 92, status: "Fail" },
+    { outlet: "Pune FC Road", label: "Counter cleanliness photo", finding: "Surfaces clean, no visible clutter", confidence: 97, status: "Pass" },
+    { outlet: "Mumbai Andheri East", label: "Uniform compliance photo", finding: "2 of 4 staff missing name badges", confidence: 89, status: "Fail" },
+    { outlet: "Nashik City Center", label: "Kitchen hygiene photo", finding: "Sanitation standards met", confidence: 95, status: "Pass" },
+  ];
+
+  const documentAnalysis = [
+    { document: "Fire Safety Certificate", outlet: "Aurangabad CIDCO", type: "Compliance", status: "Expired", date: "2026-05-10" },
+    { document: "FSSAI License", outlet: "Pune FC Road", type: "Legal", status: "Valid", date: "2027-02-18" },
+    { document: "Trade License", outlet: "Mumbai Andheri East", type: "Legal", status: "Expiring Soon", date: "2026-09-05" },
+    { document: "Health Inspection Report", outlet: "Solapur Saat Rasta", type: "Compliance", status: "Expiring Soon", date: "2026-08-28" },
+  ];
+
+  const customerFeedbackByOutlet = [
+    { outlet: "Pune FC Road", rating: 4.7, complaints: 2, sentiment: "Positive" },
+    { outlet: "Nashik City Center", rating: 4.5, complaints: 3, sentiment: "Positive" },
+    { outlet: "Mumbai Andheri East", rating: 3.6, complaints: 11, sentiment: "Mixed" },
+    { outlet: "Aurangabad CIDCO", rating: 2.9, complaints: 18, sentiment: "Negative" },
+  ];
 
   const [poResult, setPoResult] = useState<any>(null);
   const [poLoading, setPoLoading] = useState(false);
@@ -2178,18 +2200,19 @@ function exportToCSV(filename: string, rows: any[]) {
                               </td>
                               <td className="px-5 py-3" style={{ color: t.textMuted }}>
                                 <span className="flex items-center gap-1">
-                                  <Star size={12} color="#F59E0B" fill="#F59E0B" /> {c.rating}
+                                  <Star size={12} color="#c1c54c" fill="#160a37" /> {c.rating}
                                 </span>
                               </td>
                               <td className="px-5 py-3">
                                 <button
                                   onClick={() => handleQuickHire(c)}
                                   disabled={alreadyHired}
-                                  className="text-xs px-3 py-1.5 rounded-lg font-semibold"
+                                  className="text-xs px-3 py-1.5 rounded-lg font-semibold transition-colors"
                                   style={{
-                                    background: alreadyHired ? t.inputBg : accent,
-                                    color: alreadyHired ? t.textFaint : t.bg,
+                                    background: alreadyHired ? t.inputBg : "#F59E0B", // hardcode orange to test
+                                    color: alreadyHired ? t.textFaint : "#000000",
                                     cursor: alreadyHired ? "default" : "pointer",
+                                    border: "none",
                                   }}
                                 >
                                   {alreadyHired ? "Hired" : "Hire"}
@@ -2740,6 +2763,138 @@ function exportToCSV(filename: string, rows: any[]) {
                   </table>
                 </div>
               </div>
+
+              {/* AI Audit Analysis banner */}
+<div className="rounded-xl p-5 border border-l-4" style={{ background: t.card, borderTopColor: t.border, borderRightColor: t.border, borderBottomColor: t.border, borderLeftColor: accent }}>
+  <div className="flex items-center gap-2 mb-1">
+    <Sparkles size={15} color={accent} />
+    <p className="text-sm font-semibold" style={{ color: t.text }}>AI Audit Analysis</p>
+  </div>
+  <p className="text-sm leading-relaxed" style={{ color: t.textMuted }}>
+    Aurangabad CIDCO is the weakest outlet this quarter, with an expired fire safety certificate and a failed signage compliance check — recommend a priority re-audit this week.
+  </p>
+</div>
+
+{/* AI Image Analysis */}
+<div className="rounded-xl border overflow-hidden transition-colors duration-200" style={{ background: t.card, borderColor: t.border }}>
+  <p className="text-sm font-semibold px-5 pt-5 pb-1 flex items-center gap-2" style={{ color: t.text }}>
+    <Image size={15} color={accent} /> AI Image Analysis
+  </p>
+  <div className="px-5 pb-5 pt-2 space-y-3">
+    {aiImageAnalysis.map((img, i) => (
+      <div key={i} className="flex items-center justify-between text-sm border-b last:border-0 pb-3 last:pb-0" style={{ borderColor: t.border }}>
+        <div>
+          <p style={{ color: t.text }} className="font-medium">{img.label} — {img.outlet}</p>
+          <p style={{ color: t.textFaint }} className="text-xs mt-0.5">{img.finding}</p>
+        </div>
+        <div className="flex items-center gap-2 shrink-0 ml-4">
+          <span style={{ color: t.textMuted }} className="text-xs">{img.confidence}% confidence</span>
+          <span
+            className="text-xs px-2 py-0.5 rounded-full border"
+            style={{
+              background: img.status === "Pass" ? `${accent}1A` : "#FB71851A",
+              color: img.status === "Pass" ? accent : "#FB7185",
+              borderColor: "transparent",
+            }}
+          >
+            {img.status}
+          </span>
+        </div>
+      </div>
+    ))}
+  </div>
+</div>
+
+{/* Document Analysis */}
+<div className="rounded-xl border overflow-hidden transition-colors duration-200" style={{ background: t.card, borderColor: t.border }}>
+  <p className="text-sm font-semibold px-5 pt-5 pb-1 flex items-center gap-2" style={{ color: t.text }}>
+    <FileSearch size={15} color={accent} /> Document Analysis
+  </p>
+  <table className="w-full text-sm mt-3">
+    <thead>
+      <tr className="text-left text-xs border-y" style={{ color: t.textFaint, borderColor: t.border }}>
+        <th className="px-5 py-2 font-medium">Document</th>
+        <th className="px-5 py-2 font-medium">Outlet</th>
+        <th className="px-5 py-2 font-medium">Type</th>
+        <th className="px-5 py-2 font-medium">Expiry Date</th>
+        <th className="px-5 py-2 font-medium">Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      {documentAnalysis.map((d, i) => (
+        <tr key={i} className="border-b last:border-0" style={{ borderColor: t.border }}>
+          <td className="px-5 py-3 font-medium" style={{ color: t.text }}>{d.document}</td>
+          <td className="px-5 py-3" style={{ color: t.textMuted }}>{d.outlet}</td>
+          <td className="px-5 py-3" style={{ color: t.textMuted }}>{d.type}</td>
+          <td className="px-5 py-3" style={{ color: t.textFaint }}>{d.date}</td>
+          <td className="px-5 py-3">
+            <span
+              className="text-xs px-2 py-0.5 rounded-full border"
+              style={{
+                background: d.status === "Valid" ? `${accent}1A` : d.status === "Expired" ? "#FB71851A" : "#F59E0B1A",
+                color: d.status === "Valid" ? accent : d.status === "Expired" ? "#FB7185" : "#F59E0B",
+                borderColor: "transparent",
+              }}
+              >
+                {d.status}
+            </span>
+          </td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
+
+{/* Customer Feedback Integration */}
+<div className="rounded-xl border overflow-hidden transition-colors duration-200" style={{ background: t.card, borderColor: t.border }}>
+  <p className="text-sm font-semibold px-5 pt-5 pb-1 flex items-center gap-2" style={{ color: t.text }}>
+    <MessageSquare size={15} color={accent} /> Customer Feedback Integration
+  </p>
+  <table className="w-full text-sm mt-3">
+    <thead>
+      <tr className="text-left text-xs border-y" style={{ color: t.textFaint, borderColor: t.border }}>
+        <th className="px-5 py-2 font-medium">Outlet</th>
+        <th className="px-5 py-2 font-medium text-right">Rating</th>
+        <th className="px-5 py-2 font-medium text-right">Complaints</th>
+        <th className="px-5 py-2 font-medium">Sentiment</th>
+      </tr>
+    </thead>
+    <tbody>
+      {customerFeedbackByOutlet.map((f, i) => (
+        <tr key={i} className="border-b last:border-0" style={{ borderColor: t.border }}>
+          <td className="px-5 py-3 font-medium" style={{ color: t.text }}>{f.outlet}</td>
+          <td className="px-5 py-3 text-right" style={{ color: t.text }}>{f.rating} / 5</td>
+          <td className="px-5 py-3 text-right" style={{ color: t.textMuted }}>{f.complaints}</td>
+          <td className="px-5 py-3">
+            <span
+              className="text-xs px-2 py-0.5 rounded-full border"
+              style={{
+                background: f.sentiment === "Positive" ? `${accent}1A` : f.sentiment === "Negative" ? "#FB71851A" : "#F59E0B1A",
+                color: f.sentiment === "Positive" ? accent : f.sentiment === "Negative" ? "#FB7185" : "#F59E0B",
+                borderColor: "transparent",
+              }}
+            >
+              {f.sentiment}
+            </span>
+          </td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
+
+{/* Report Generation */}
+<div className="rounded-xl border p-5 transition-colors duration-200" style={{ background: t.card, borderColor: t.border }}>
+  <p className="text-sm font-semibold mb-1" style={{ color: t.text }}>Report Generation</p>
+  <p className="text-xs mb-4" style={{ color: t.textFaint }}>Generate a full audit report for the network or a specific outlet.</p>
+  <div className="flex flex-wrap gap-2">
+    {["Export PDF", "Export Excel", "Export CSV"].map((label) => (
+      <button key={label} className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border transition-colors" style={{ background: t.inputBg, borderColor: t.border, color: t.textMuted }}>
+        <Download size={12} /> {label}
+      </button>
+    ))}
+  </div>
+</div>
 
               {showAuditModal && (
                 <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
