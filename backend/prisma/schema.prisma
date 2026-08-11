@@ -42,7 +42,7 @@ model notifications {
   title             String?   @db.VarChar(150)
   message           String?
   notification_type String?   @db.VarChar(30)
-  is_read           Boolean   @default(false)
+  is_read           Boolean?  @default(false)
   created_at        DateTime? @default(now()) @db.Timestamp(6)
   outlets           outlets?  @relation(fields: [outlet_id], references: [outlet_id], onDelete: Cascade, onUpdate: NoAction, map: "fk_notification_outlet")
 }
@@ -70,28 +70,25 @@ model outlet_ratings {
 }
 
 model outlets {
-  outlet_id      Int       @id @default(autoincrement())
-  outlet_name    String    @db.VarChar(100)
-  franchise_name String?   @db.VarChar(100)
-  manager_id     Int?
-  city           String?   @db.VarChar(50)
-  state          String?   @db.VarChar(50)
-  address        String?
-  latitude       Decimal?  @db.Decimal(10, 7)
-  longitude      Decimal?  @db.Decimal(10, 7)
-  opening_date   DateTime? @db.Date
-  status         String?   @default("Active") @db.VarChar(20)
-
-  expenses         expenses[]
-  monthly_targets  monthly_targets[]
-  notifications    notifications[]
-  outlet_health    outlet_health[]
-  outlet_ratings   outlet_ratings[]
-  managers         managers?         @relation(fields: [manager_id], references: [manager_id], onUpdate: NoAction, map: "fk_manager")
-  performance      performance[]
-  sales            sales[]
-  users            users[]
-  inventory_items  inventory_items[]
+  outlet_id       Int               @id @default(autoincrement())
+  outlet_name     String            @db.VarChar(100)
+  franchise_name  String?           @db.VarChar(100)
+  manager_id      Int?
+  city            String?           @db.VarChar(50)
+  state           String?           @db.VarChar(50)
+  address         String?
+  latitude        Decimal?          @db.Decimal(10, 7)
+  longitude       Decimal?          @db.Decimal(10, 7)
+  opening_date    DateTime?         @db.Date
+  status          String?           @default("Active") @db.VarChar(20)
+  expenses        expenses[]
+  monthly_targets monthly_targets[]
+  notifications   notifications[]
+  outlet_health   outlet_health[]
+  outlet_ratings  outlet_ratings[]
+  managers        managers?         @relation(fields: [manager_id], references: [manager_id], onUpdate: NoAction, map: "fk_manager")
+  performance     performance[]
+  sales           sales[]
 }
 
 model performance {
@@ -113,35 +110,4 @@ model sales {
   orders    Int?     @default(0)
   customers Int?     @default(0)
   outlets   outlets  @relation(fields: [outlet_id], references: [outlet_id], onDelete: Cascade, onUpdate: NoAction, map: "fk_sales_outlet")
-}
-
-// ---------------------------------------------------------------------------
-// ADDED: authentication
-// ---------------------------------------------------------------------------
-model users {
-  user_id       Int       @id @default(autoincrement())
-  full_name     String    @db.VarChar(100)
-  email         String    @unique @db.VarChar(100)
-  password_hash String    @db.VarChar(255)
-  role          String?   @default("manager") @db.VarChar(20)
-  outlet_id     Int?
-  outlets       outlets?  @relation(fields: [outlet_id], references: [outlet_id], onDelete: SetNull, onUpdate: NoAction, map: "fk_user_outlet")
-  created_at    DateTime? @default(now()) @db.Timestamp(6)
-}
-
-// ---------------------------------------------------------------------------
-// ADDED: inventory
-// ---------------------------------------------------------------------------
-model inventory_items {
-  item_id    Int       @id @default(autoincrement())
-  outlet_id  Int
-  sku        String    @db.VarChar(30)
-  name       String    @db.VarChar(150)
-  category   String?   @db.VarChar(50)
-  unit       String?   @db.VarChar(20)
-  quantity   Decimal   @default(0) @db.Decimal(12, 2)
-  reorder_at Decimal   @default(0) @db.Decimal(12, 2)
-  supplier   String?   @db.VarChar(100)
-  updated_at DateTime? @default(now()) @db.Timestamp(6)
-  outlets    outlets   @relation(fields: [outlet_id], references: [outlet_id], onDelete: Cascade, onUpdate: NoAction, map: "fk_inventory_outlet")
 }
