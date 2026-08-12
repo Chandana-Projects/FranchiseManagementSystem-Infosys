@@ -81,7 +81,6 @@ exports.submitAudit = (req, res) => {
     res.status(500).json({ error: "Failed to submit compliance audit." });
   }
 };
-<<<<<<< HEAD
 exports.getOperationalCompliance = async (req, res) => {
   try {
     const { outletId } = req.params;
@@ -278,7 +277,7 @@ exports.checkPolicies = async (req, res) => {
     });
   }
 };
-=======
+
 
 // Slide 4: Operational Compliance Data Engine (Opening/Closing, Attendance, Cash Closing, Maintenance & Complaints)
 exports.getOperationalMetrics = (req, res) => {
@@ -420,4 +419,4 @@ exports.analyzeStorePhoto = (req, res) => {
   }
 };
 
->>>>>>> 525e3f6c2d99e276c13cc721e0a510705503aae5
+
