@@ -13,6 +13,8 @@ import {
   Sun, Moon, AlertTriangle, Eye, EyeOff, Mail, Lock, Calendar, Trash2, UserPlus, Star,
   Target, Percent, Lightbulb, Tag, PieChart, Share2, CalendarClock,
   Image, FileSearch, MessageSquare , Truck,
+  ClipboardList, Wrench, FileCheck2, Repeat,
+  Activity, AlertOctagon, Grid3x3, Timer, PenTool,
 } from "lucide-react";
 
 import AuditComplianceSummary from "./AuditComplianceSummary";
@@ -373,6 +375,8 @@ const attendanceDotColor: Record<string, string> = {
   "-": "#232630",
 };
 
+
+
 const RECOMMENDED_CANDIDATES = [
   { id: "c1", name: "Ritika Joshi", currentEmployer: "Café Coffee Day", role: "Barista", experience_years: 2.5, suggestedOutlet: "Mumbai Andheri", rating: 4.6 },
   { id: "c2", name: "Devendra Naik", currentEmployer: "Chaayos", role: "Shift Supervisor", experience_years: 4.2, suggestedOutlet: "Aurangabad", rating: 4.4 },
@@ -381,6 +385,50 @@ const RECOMMENDED_CANDIDATES = [
   { id: "c5", name: "Yash Thakur", currentEmployer: "Blue Tokai", role: "Inventory Clerk", experience_years: 2.1, suggestedOutlet: "Aurangabad", rating: 4.2 },
   { id: "c6", name: "Simran Kaur", currentEmployer: "Barista Lavazza", role: "Cashier", experience_years: 1.4, suggestedOutlet: "Solapur", rating: 4.1 },
 ];
+
+const operationalChecks = [
+  { area: "Attendance", outlet: "Aurangabad CIDCO", status: "Fail", detail: "3 no-shows this week, no leave requests filed" },
+  { area: "Staffing Levels", outlet: "Mumbai Andheri East", status: "Fail", detail: "2/3 minimum staff — understaffed" },
+  { area: "Inventory Updates", outlet: "Solapur Saat Rasta", status: "Watch", detail: "Stock counts not updated in 4 days" },
+  { area: "Cash Closing", outlet: "Pune FC Road", status: "Pass", detail: "Daily closing reconciled, no discrepancies" },
+  { area: "Attendance", outlet: "Nashik City Center", status: "Pass", detail: "Full attendance, all shifts covered" },
+  { area: "Cash Closing", outlet: "Aurangabad CIDCO", status: "Fail", detail: "₹1,240 shortfall unexplained, 2 days running" },
+];
+
+const complianceTrend = [
+  { month: "Feb", score: 79 }, { month: "Mar", score: 81 },
+  { month: "Apr", score: 78 }, { month: "May", score: 84 },
+  { month: "Jun", score: 86 }, { month: "Jul", score: 88 },
+];
+
+const complianceCategories = [
+  { category: "Hygiene", passRate: 82 },
+  { category: "Safety", passRate: 61 },
+  { category: "Branding", passRate: 74 },
+  { category: "Cash Handling", passRate: 88 },
+  { category: "Staffing Compliance", passRate: 69 },
+];
+
+const reAuditDeadlines = [
+  { outlet: "Aurangabad CIDCO", reason: "Critical score (44/100)", dueDate: "2026-08-19", daysLeft: 7 },
+  { outlet: "Mumbai Andheri East", reason: "Watch status (62/100)", dueDate: "2026-08-26", daysLeft: 14 },
+];
+
+const signOffTrail = [
+  { outlet: "Nashik City Center", reviewedBy: "Priya Sharma, Regional Manager", status: "Approved", date: "2026-08-04" },
+  { outlet: "Pune FC Road", reviewedBy: "Priya Sharma, Regional Manager", status: "Approved", date: "2026-08-05" },
+  { outlet: "Mumbai Andheri East", reviewedBy: "—", status: "Pending Review", date: "—" },
+  { outlet: "Aurangabad CIDCO", reviewedBy: "—", status: "Pending Review", date: "—" },
+];
+
+const correctiveActions = [
+  { outlet: "Aurangabad CIDCO", issue: "Expired fire safety certificate", action: "Schedule renewal inspection within 7 days; escalate to franchise legal team.", priority: "High" },
+  { outlet: "Aurangabad CIDCO", issue: "Cash shortfall, 2 days running", action: "Audit register logs manually; interview shift cashier; consider POS recalibration.", priority: "High" },
+  { outlet: "Mumbai Andheri East", issue: "Understaffed (2/3 minimum)", action: "Approve pending hire requisition; review Recommended Candidates in Staff Agent.", priority: "Medium" },
+  { outlet: "Solapur Saat Rasta", issue: "Stock counts stale (4 days)", action: "Assign inventory clerk to reconcile counts before next delivery.", priority: "Medium" },
+  { outlet: "Mumbai Andheri East", issue: "Trade license expiring in 3 weeks", action: "Submit renewal application; confirm no lapse in coverage.", priority: "Low" },
+];
+
 
 const marketingCampaigns = [
   { name: "Monsoon Coffee Fest", channel: "Instagram", reach: 82000, engagement: 6.8, spend: 45000, roi: 3.2, status: "Active" },
@@ -1295,6 +1343,41 @@ function exportToCSV(filename: string, rows: any[]) {
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
+}
+
+// BONUS FEATURE: flags outlets that fail audits repeatedly (uses your
+// existing `audits` array — adjust the variable name if yours differs)
+function getRepeatOffenders(auditList: any[]) {
+  const counts: Record<string, number> = {};
+  auditList.forEach((a) => {
+    if (a.status === "Critical" || a.status === "Watch") {
+      counts[a.outlet_name] = (counts[a.outlet_name] || 0) + 1;
+    }
+  });
+  return Object.entries(counts)
+    .filter(([, count]) => count >= 2)
+    .map(([outlet, count]) => ({ outlet, count }));
+}
+
+function getPredictedRisks(auditList: any[]) {
+  const byOutlet: Record<string, any[]> = {};
+  auditList.forEach((a) => {
+    if (!byOutlet[a.outlet_name]) byOutlet[a.outlet_name] = [];
+    byOutlet[a.outlet_name].push(a);
+  });
+
+  const risks: { outlet: string; trend: string; latestScore: number }[] = [];
+  Object.entries(byOutlet).forEach(([outlet, records]) => {
+    const sorted = [...records].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+    if (sorted.length >= 2) {
+      const latest = sorted[sorted.length - 1];
+      const previous = sorted[sorted.length - 2];
+      if (latest.score < previous.score && latest.score < 75) {
+        risks.push({ outlet, trend: `${previous.score} → ${latest.score}`, latestScore: latest.score });
+      }
+    }
+  });
+  return risks;
 }
 
   if (checkingAuth) {
@@ -2776,6 +2859,50 @@ function exportToCSV(filename: string, rows: any[]) {
               </div>
 
               {/* Sub-Tab 1: Overview & History */}
+              {auditSubTab === "operational" && (
+  <div className="space-y-6">
+    <div className="rounded-xl border overflow-hidden" style={{ background: t.card, borderColor: t.border }}>
+      <p className="text-sm font-semibold px-5 pt-5 pb-1 flex items-center gap-2" style={{ color: t.text }}>
+        <ClipboardList size={15} color={accent} /> Operational Compliance
+      </p>
+      <p className="text-xs px-5 pb-3" style={{ color: t.textFaint }}>
+        Attendance, staffing, inventory updates, and cash closing — checked daily per outlet.
+      </p>
+      <table className="w-full text-sm mt-1">
+        <thead>
+          <tr className="text-left text-xs border-y" style={{ color: t.textFaint, borderColor: t.border }}>
+            <th className="px-5 py-2 font-medium">Area</th>
+            <th className="px-5 py-2 font-medium">Outlet</th>
+            <th className="px-5 py-2 font-medium">Detail</th>
+            <th className="px-5 py-2 font-medium">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {operationalChecks.map((c, i) => (
+            <tr key={i} className="border-b last:border-0" style={{ borderColor: t.border }}>
+              <td className="px-5 py-3 font-medium" style={{ color: t.text }}>{c.area}</td>
+              <td className="px-5 py-3" style={{ color: t.textMuted }}>{c.outlet}</td>
+              <td className="px-5 py-3" style={{ color: t.textFaint }}>{c.detail}</td>
+              <td className="px-5 py-3">
+                <span
+                  className="text-xs px-2 py-0.5 rounded-full border"
+                  style={{
+                    background: c.status === "Pass" ? `${accent}1A` : c.status === "Fail" ? "#FB71851A" : "#F59E0B1A",
+                    color: c.status === "Pass" ? accent : c.status === "Fail" ? "#FB7185" : "#F59E0B",
+                    borderColor: "transparent",
+                  }}
+                >
+                  {c.status}
+                </span>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </div>
+)}
+
               {auditSubTab === "overview" && (
                 <div className="space-y-6">
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -2787,6 +2914,8 @@ function exportToCSV(filename: string, rows: any[]) {
                       </div>
                       <p className="text-[11px] mt-2" style={{ color: t.textMuted }}>+4 pts vs last quarter</p>
                     </div>
+
+
 
                     <div className="rounded-xl border p-4" style={{ background: t.card, borderColor: t.border }}>
                       <p className="text-xs" style={{ color: t.textFaint }}>SOP Compliance Rate</p>
@@ -2842,6 +2971,68 @@ function exportToCSV(filename: string, rows: any[]) {
                       ))}
                     </div>
                   </div>
+
+
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+  <div className="rounded-xl border p-5" style={{ background: t.card, borderColor: t.border }}>
+    <p className="text-sm font-semibold mb-1 flex items-center gap-2" style={{ color: t.text }}>
+      <Activity size={15} color={accent} /> Network Compliance Trend
+    </p>
+    <p className="text-xs mb-4" style={{ color: t.textFaint }}>Average audit score, last 6 months</p>
+    <ResponsiveContainer width="100%" height={180}>
+      <LineChart data={complianceTrend}>
+        <CartesianGrid strokeDasharray="3 3" stroke={t.gridLine} />
+        <XAxis dataKey="month" tick={{ fontSize: 12, fill: t.textFaint }} stroke={t.gridLine} />
+        <YAxis tick={{ fontSize: 12, fill: t.textFaint }} stroke={t.gridLine} domain={[60, 100]} />
+        <Tooltip contentStyle={{ background: t.card, border: `1px solid ${t.border}`, borderRadius: 8, color: t.text }} formatter={(v: any) => `${v}/100`} />
+        <Line type="monotone" dataKey="score" stroke={accent} strokeWidth={2.5} dot={{ r: 3 }} />
+      </LineChart>
+    </ResponsiveContainer>
+  </div>
+
+  <div className="rounded-xl border overflow-hidden" style={{ background: t.card, borderColor: t.border }}>
+    <p className="text-sm font-semibold px-5 pt-5 pb-1 flex items-center gap-2" style={{ color: t.text }}>
+      <Grid3x3 size={15} color={accent} /> Weakest Compliance Categories
+    </p>
+    <p className="text-xs px-5 pb-3" style={{ color: t.textFaint }}>Pass rate by category, network-wide</p>
+    <div className="px-5 pb-5 space-y-3">
+      {complianceCategories.sort((a, b) => a.passRate - b.passRate).map((c) => (
+        <div key={c.category}>
+          <div className="flex items-center justify-between text-sm mb-1">
+            <span style={{ color: t.text }}>{c.category}</span>
+            <span style={{ color: c.passRate < 70 ? "#FB7185" : c.passRate < 85 ? "#F59E0B" : accent }}>{c.passRate}%</span>
+          </div>
+          <div className="w-full h-2 rounded-full" style={{ background: t.inputBg }}>
+            <div
+              className="h-2 rounded-full"
+              style={{ width: `${c.passRate}%`, background: c.passRate < 70 ? "#FB7185" : c.passRate < 85 ? "#F59E0B" : accent }}
+            />
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</div>
+
+{getPredictedRisks(audits).length > 0 && (
+  <div className="rounded-xl p-5 border border-l-4" style={{ background: t.card, borderTopColor: t.border, borderRightColor: t.border, borderBottomColor: t.border, borderLeftColor: "#F59E0B" }}>
+    <div className="flex items-center gap-2 mb-1">
+      <AlertOctagon size={15} color="#F59E0B" />
+      <p className="text-sm font-semibold" style={{ color: t.text }}>Predictive Risk Alert</p>
+    </div>
+    <p className="text-sm leading-relaxed mb-3" style={{ color: t.textMuted }}>
+      Score trending downward — likely to fail the next audit if the pattern continues.
+    </p>
+    <div className="flex flex-wrap gap-2">
+      {getPredictedRisks(audits).map((r) => (
+        <span key={r.outlet} className="text-xs px-2.5 py-1 rounded-full border" style={{ background: "#F59E0B1A", color: "#F59E0B", borderColor: "#F59E0B33" }}>
+          {r.outlet}: {r.trend}
+        </span>
+      ))}
+    </div>
+  </div>
+)} 
+
 
                   <div className="rounded-xl border overflow-hidden" style={{ background: t.card, borderColor: t.border }}>
                     <div className="p-4 border-b flex items-center justify-between" style={{ borderColor: t.border }}>
@@ -3026,6 +3217,144 @@ function exportToCSV(filename: string, rows: any[]) {
               }}
             >
               {f.sentiment}
+            </span>
+          </td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
+
+
+<div className="rounded-xl border overflow-hidden" style={{ background: t.card, borderColor: t.border }}>
+  <p className="text-sm font-semibold px-5 pt-5 pb-1 flex items-center gap-2" style={{ color: t.text }}>
+    <FileCheck2 size={15} color={accent} /> Document Compliance
+  </p>
+  <table className="w-full text-sm mt-3">
+    <thead>
+      <tr className="text-left text-xs border-y" style={{ color: t.textFaint, borderColor: t.border }}>
+        <th className="px-5 py-2 font-medium">Document</th>
+        <th className="px-5 py-2 font-medium">Outlet</th>
+        <th className="px-5 py-2 font-medium">Type</th>
+        <th className="px-5 py-2 font-medium">Expiry</th>
+        <th className="px-5 py-2 font-medium">Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      {documentAnalysis.map((d, i) => (
+        <tr key={i} className="border-b last:border-0" style={{ borderColor: t.border }}>
+          <td className="px-5 py-3 font-medium" style={{ color: t.text }}>{d.document}</td>
+          <td className="px-5 py-3" style={{ color: t.textMuted }}>{d.outlet}</td>
+          <td className="px-5 py-3" style={{ color: t.textMuted }}>{d.type}</td>
+          <td className="px-5 py-3" style={{ color: t.textFaint }}>{d.date}</td>
+          <td className="px-5 py-3">
+            <span
+              className="text-xs px-2 py-0.5 rounded-full border"
+              style={{
+                background: d.status === "Valid" ? `${accent}1A` : d.status === "Expired" ? "#FB71851A" : "#F59E0B1A",
+                color: d.status === "Valid" ? accent : d.status === "Expired" ? "#FB7185" : "#F59E0B",
+                borderColor: "transparent",
+              }}
+            >
+              {d.status}
+            </span>
+          </td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
+
+<div className="rounded-xl border overflow-hidden" style={{ background: t.card, borderColor: t.border }}>
+  <p className="text-sm font-semibold px-5 pt-5 pb-1 flex items-center gap-2" style={{ color: t.text }}>
+    <Wrench size={15} color={accent} /> Corrective Actions
+  </p>
+  <div className="px-5 pb-5 pt-2 space-y-3">
+    {correctiveActions.map((a, i) => (
+      <div key={i} className="flex items-start justify-between gap-3 text-sm border-b last:border-0 pb-3 last:pb-0" style={{ borderColor: t.border }}>
+        <div>
+          <p style={{ color: t.text }} className="font-medium">{a.outlet} — {a.issue}</p>
+          <p style={{ color: t.textFaint }} className="text-xs mt-0.5">{a.action}</p>
+        </div>
+        <span
+          className="text-xs px-2 py-0.5 rounded-full border shrink-0"
+          style={{
+            background: a.priority === "High" ? "#FB71851A" : a.priority === "Medium" ? "#F59E0B1A" : `${accent}1A`,
+            color: a.priority === "High" ? "#FB7185" : a.priority === "Medium" ? "#F59E0B" : accent,
+            borderColor: "transparent",
+          }}
+        >
+          {a.priority}
+        </span>
+      </div>
+    ))}
+  </div>
+</div>
+
+
+<div className="rounded-xl border overflow-hidden" style={{ background: t.card, borderColor: t.border }}>
+  <p className="text-sm font-semibold px-5 pt-5 pb-1 flex items-center gap-2" style={{ color: t.text }}>
+    <Timer size={15} color={accent} /> Re-Audit SLA Countdown
+  </p>
+  <p className="text-xs px-5 pb-3" style={{ color: t.textFaint }}>
+    Critical/Watch outlets must be re-inspected within their compliance window.
+  </p>
+  <table className="w-full text-sm mt-1">
+    <thead>
+      <tr className="text-left text-xs border-y" style={{ color: t.textFaint, borderColor: t.border }}>
+        <th className="px-5 py-2 font-medium">Outlet</th>
+        <th className="px-5 py-2 font-medium">Reason</th>
+        <th className="px-5 py-2 font-medium">Due Date</th>
+        <th className="px-5 py-2 font-medium text-right">Days Left</th>
+      </tr>
+    </thead>
+    <tbody>
+      {reAuditDeadlines.map((r, i) => (
+        <tr key={i} className="border-b last:border-0" style={{ borderColor: t.border }}>
+          <td className="px-5 py-3 font-medium" style={{ color: t.text }}>{r.outlet}</td>
+          <td className="px-5 py-3" style={{ color: t.textMuted }}>{r.reason}</td>
+          <td className="px-5 py-3" style={{ color: t.textFaint }}>{r.dueDate}</td>
+          <td className="px-5 py-3 text-right font-semibold" style={{ color: r.daysLeft <= 7 ? "#FB7185" : "#F59E0B" }}>
+            {r.daysLeft} days
+          </td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
+
+<div className="rounded-xl border overflow-hidden" style={{ background: t.card, borderColor: t.border }}>
+  <p className="text-sm font-semibold px-5 pt-5 pb-1 flex items-center gap-2" style={{ color: t.text }}>
+    <PenTool size={15} color={accent} /> Audit Sign-off Trail
+  </p>
+  <p className="text-xs px-5 pb-3" style={{ color: t.textFaint }}>
+    Who reviewed and approved each outlet's latest audit.
+  </p>
+  <table className="w-full text-sm mt-1">
+    <thead>
+      <tr className="text-left text-xs border-y" style={{ color: t.textFaint, borderColor: t.border }}>
+        <th className="px-5 py-2 font-medium">Outlet</th>
+        <th className="px-5 py-2 font-medium">Reviewed By</th>
+        <th className="px-5 py-2 font-medium">Date</th>
+        <th className="px-5 py-2 font-medium">Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      {signOffTrail.map((s, i) => (
+        <tr key={i} className="border-b last:border-0" style={{ borderColor: t.border }}>
+          <td className="px-5 py-3 font-medium" style={{ color: t.text }}>{s.outlet}</td>
+          <td className="px-5 py-3" style={{ color: t.textMuted }}>{s.reviewedBy}</td>
+          <td className="px-5 py-3" style={{ color: t.textFaint }}>{s.date}</td>
+          <td className="px-5 py-3">
+            <span
+              className="text-xs px-2 py-0.5 rounded-full border"
+              style={{
+                background: s.status === "Approved" ? `${accent}1A` : "#F59E0B1A",
+                color: s.status === "Approved" ? accent : "#F59E0B",
+                borderColor: "transparent",
+              }}
+            >
+              {s.status}
             </span>
           </td>
         </tr>
