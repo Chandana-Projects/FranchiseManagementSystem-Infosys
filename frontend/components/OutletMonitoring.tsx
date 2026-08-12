@@ -12,7 +12,7 @@ import {
   TrendingUp, TrendingDown, MapPin, LineChart as LineChartIcon, BarChart3,
   Sun, Moon, AlertTriangle, Eye, EyeOff, Mail, Lock, Calendar, Trash2, UserPlus, Star,
   Target, Percent, Lightbulb, Tag, PieChart, Share2, CalendarClock,
-  Image, FileSearch, MessageSquare
+  Image, FileSearch, MessageSquare , Truck,
 } from "lucide-react";
 import RealOutletMap from "./RealOutletMap";
 import VoiceAssistant from "./VoiceAssistant";
@@ -3254,6 +3254,8 @@ function exportToCSV(filename: string, rows: any[]) {
                   </div>
                 </div>
               )}
+            </div>
+            )}
             </div>
           ) : active === "intelligence" ? (
 
