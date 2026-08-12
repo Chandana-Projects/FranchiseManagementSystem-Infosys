@@ -14,6 +14,9 @@ import {
   Target, Percent, Lightbulb, Tag, PieChart, Share2, CalendarClock,
   Image, FileSearch, MessageSquare , Truck,
 } from "lucide-react";
+
+import AuditComplianceSummary from "./AuditComplianceSummary";
+
 import RealOutletMap from "./RealOutletMap";
 import VoiceAssistant from "./VoiceAssistant";
 import SupplierDispatchModal from "./SupplierDispatchModal";
@@ -28,6 +31,7 @@ import AnomalyAlertBanner from "./AnomalyAlertBanner";
 import { LANGUAGES, SupportedLanguage, translateKey } from "../lib/MultiLangEngine";
 import { playTechChime } from "../lib/WebAudioSFX";
 import { CURRENCY_CONFIGS, CurrencyCode, formatCurrencyValue } from "../lib/CurrencyEngine";
+
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
 
