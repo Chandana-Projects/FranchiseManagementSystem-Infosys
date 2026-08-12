@@ -13,9 +13,9 @@ import {
   Sun, Moon, AlertTriangle, Eye, EyeOff, Mail, Lock, Calendar, Trash2, UserPlus, Star,
   Target, Percent, Lightbulb, Tag, PieChart, Share2, CalendarClock, Globe, Truck, Trophy, Boxes as BoxesIcon, Languages
 } from "lucide-react";
-<<<<<<< HEAD
+
 import AuditComplianceSummary from "./AuditComplianceSummary";
-=======
+
 import RealOutletMap from "./RealOutletMap";
 import VoiceAssistant from "./VoiceAssistant";
 import SupplierDispatchModal from "./SupplierDispatchModal";
@@ -30,7 +30,7 @@ import AnomalyAlertBanner from "./AnomalyAlertBanner";
 import { LANGUAGES, SupportedLanguage, translateKey } from "../lib/MultiLangEngine";
 import { playTechChime } from "../lib/WebAudioSFX";
 import { CURRENCY_CONFIGS, CurrencyCode, formatCurrencyValue } from "../lib/CurrencyEngine";
->>>>>>> 525e3f6c2d99e276c13cc721e0a510705503aae5
+
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
 
