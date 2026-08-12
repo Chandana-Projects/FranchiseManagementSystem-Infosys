@@ -1,12 +1,12 @@
 const express = require("express");
 const router = express.Router();
 const complianceController = require("../controllers/complianceController");
-const { authenticateToken } = require("../middlewares/authMiddleware");
+const { optionalAuth } = require("../middlewares/authMiddleware");
 
-router.get("/", authenticateToken, complianceController.getAllAudits);
-router.post("/", authenticateToken, complianceController.submitAudit);
-router.get("/operational-metrics", authenticateToken, complianceController.getOperationalMetrics);
-router.post("/analyze-photo", authenticateToken, complianceController.analyzeStorePhoto);
+router.get("/", optionalAuth, complianceController.getAllAudits);
+router.post("/", optionalAuth, complianceController.submitAudit);
+router.get("/operational-metrics", optionalAuth, complianceController.getOperationalMetrics);
+router.post("/analyze-photo", optionalAuth, complianceController.analyzeStorePhoto);
 
 router.get(
   "/:outletId/operational",

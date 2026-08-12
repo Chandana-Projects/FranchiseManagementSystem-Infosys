@@ -9,9 +9,11 @@ const compliancePath = path.join(__dirname, "../../../dataset/compliance.json");
 
 if (!fs.existsSync(compliancePath)) {
   fs.writeFileSync(compliancePath, JSON.stringify([
-    { id: 1, outlet_id: 1, outlet_name: "Nashik City Center", date: "2026-08-03", score: 100, status: "Healthy", inspector: "Abhishek Pattnaik" },
-    { id: 2, outlet_id: 2, outlet_name: "Pune FC Road", date: "2026-08-04", score: 80, status: "Healthy", inspector: "Abhishek Pattnaik" },
-    { id: 3, outlet_id: 3, outlet_name: "Mumbai Andheri East", date: "2026-08-04", score: 60, status: "Watch", inspector: "Abhishek Pattnaik" }
+    { id: 1, outlet_id: 1, outlet_name: "Nashik City Center", date: "2026-08-03", score: 96, status: "Healthy", inspector: "Abhishek Pattnaik", category: "Food Safety & Temp", details: "All cold storage units <= 3.8°C. Kitchen disinfection verified." },
+    { id: 2, outlet_id: 2, outlet_name: "Pune FC Road", date: "2026-08-04", score: 88, status: "Healthy", inspector: "Abhishek Pattnaik", category: "Opening / Closing Protocol", details: "On-time opening and alarm verification completed." },
+    { id: 3, outlet_id: 3, outlet_name: "Mumbai Andheri East", date: "2026-08-04", score: 62, status: "Watch", inspector: "Abhishek Pattnaik", category: "Staff Hygiene & Attire", details: "2 staff members required uniform refresher training." },
+    { id: 4, outlet_id: 4, outlet_name: "Aurangabad CIDCO", date: "2026-08-05", score: 44, status: "Critical", inspector: "Abhishek Pattnaik", category: "Cash Register Audit", details: "Discrepancy identified in shift cash register reconciliation." },
+    { id: 5, outlet_id: 6, outlet_name: "Thane Estate", date: "2026-08-05", score: 92, status: "Healthy", inspector: "Priya Sharma", category: "Food Safety & Temp", details: "Standard SOP compliance verified across all stations." }
   ], null, 2));
 }
 exports.runAuditEngine = async (req, res) => {
@@ -51,24 +53,27 @@ exports.getAllAudits = (req, res) => {
 
 exports.submitAudit = (req, res) => {
   try {
-    const { outlet_id, outlet_name, score, inspector, category, details } = req.body;
+    const { outlet_id, outlet_name, score, inspector, category, details, checklist, notes } = req.body;
     if (!outlet_id || score === undefined) {
       return res.status(400).json({ error: "outlet_id and score are required" });
     }
     
-    const data = JSON.parse(fs.readFileSync(compliancePath, "utf8"));
-    const status = score >= 80 ? "Healthy" : score >= 50 ? "Watch" : "Critical";
+    const data = fs.existsSync(compliancePath) ? JSON.parse(fs.readFileSync(compliancePath, "utf8")) : [];
+    const numScore = Number(score);
+    const status = numScore >= 80 ? "Healthy" : numScore >= 50 ? "Watch" : "Critical";
     
     const newAudit = {
-      id: data.length + 1,
+      id: Date.now(),
       outlet_id: Number(outlet_id),
       outlet_name: outlet_name || `Outlet #${outlet_id}`,
       date: new Date().toISOString().split("T")[0],
-      score: Number(score),
+      score: numScore,
       status,
-      inspector: inspector || req.user?.full_name || "Manager",
-      category: category || "General Audit",
-      details: details || "Standard manual SOP audit checkpoint submitted."
+      inspector: inspector || req.user?.full_name || "Manager Inspector",
+      category: category || "Manual SOP Checklist",
+      details: details || notes || "Standard manual SOP audit checkpoint successfully submitted.",
+      checklist: checklist || null,
+      notes: notes || ""
     };
     
     data.unshift(newAudit);
@@ -279,7 +284,7 @@ exports.checkPolicies = async (req, res) => {
 };
 
 
-// Slide 4: Operational Compliance Data Engine (Opening/Closing, Attendance, Cash Closing, Maintenance & Complaints)
+// Operational Compliance Data Engine (Opening/Closing, Attendance, Cash Closing, Maintenance & Complaints)
 exports.getOperationalMetrics = (req, res) => {
   try {
     const operationalData = [
@@ -338,6 +343,20 @@ exports.getOperationalMetrics = (req, res) => {
         maintenance_tickets_open: 4,
         complaint_avg_response_min: 68.0,
         overall_compliance_score: 64
+      },
+      {
+        outlet_id: 5,
+        outlet_name: "Nagpur Wardha Rd",
+        opening_closing_punctuality: 94.6,
+        on_time_openings: "28/30 days",
+        attendance_rate: 92.4,
+        staff_coverage: "94%",
+        cash_closing_variance: -1.20,
+        pos_audit_status: "Verified",
+        cleaning_hygiene_score: 89.0,
+        maintenance_tickets_open: 1,
+        complaint_avg_response_min: 21.0,
+        overall_compliance_score: 88
       }
     ];
 
@@ -347,39 +366,48 @@ exports.getOperationalMetrics = (req, res) => {
   }
 };
 
-// Slide 5: AI Image Analysis for Uploaded Store Photos
+// AI Image Analysis for Uploaded Store Photos
 exports.analyzeStorePhoto = (req, res) => {
   try {
-    const { outlet_id, outlet_name, photo_category, inspector } = req.body;
+    const { outlet_id, outlet_name, photo_category, inspector, photo_url, photo_name } = req.body;
     
-    if (!outlet_id) {
-      return res.status(400).json({ error: "outlet_id is required for AI Photo Audit." });
-    }
-
+    const outletIdNum = Number(outlet_id) || 1;
     const category = photo_category || "Branding & Store Layout";
     
-    // Simulate AI Vision Analysis findings based on category
-    let brandingScore = Math.floor(Math.random() * 10) + 90; // 90-99%
-    let uniformScore = Math.floor(Math.random() * 12) + 88;
-    let cleanlinessScore = Math.floor(Math.random() * 15) + 85;
-    let placementScore = Math.floor(Math.random() * 10) + 89;
+    // Simulate AI Vision Analysis findings based on category and target outlet
+    let brandingScore = Math.floor(Math.random() * 8) + 92; // 92-99%
+    let uniformScore = Math.floor(Math.random() * 10) + 89;
+    let cleanlinessScore = Math.floor(Math.random() * 12) + 87;
+    let placementScore = Math.floor(Math.random() * 8) + 91;
 
-    let detectedObjects = ["Franchise Logo (High Conf)", "Standard Uniform Apron", "Clean Countertop", "Product Shelf A1"];
-    let findings = "AI Image Analysis verified official franchise branding, correct staff uniforms, clear checkout counter, and proper front-row product alignment.";
+    let detectedObjects = ["Franchise Signboard (High Conf 99.4%)", "Standard Uniform Apron & Cap", "Sanitized Prep Counter", "Front-Facing Display Stock"];
+    let findings = `AI Computer Vision v4.2 verified official franchise branding, correct staff attire, sanitary counter hygiene, and front-row product alignment for ${category}.`;
     let correctiveActions = [];
 
-    if (outlet_id === 4 || outlet_id === "4") {
-      brandingScore = 78;
-      uniformScore = 65;
-      cleanlinessScore = 58;
-      placementScore = 62;
-      detectedObjects = ["Logo Partially Obscured", "Non-Standard Staff Attire", "Cluttered Prep Table", "Unstocked Front Shelf"];
+    if (outletIdNum === 4 || (outlet_name && outlet_name.toLowerCase().includes("aurangabad"))) {
+      brandingScore = 74;
+      uniformScore = 62;
+      cleanlinessScore = 56;
+      placementScore = 60;
+      detectedObjects = ["Logo Partially Obscured", "Non-Standard Staff Attire", "Cluttered Prep Surface", "Unstocked Front Shelf"];
       findings = "AI Vision detected promotional poster blocking secondary logo, staff member without hairnet, and un-sanitized prep surface.";
       correctiveActions = [
-        "Re-position promotional banner away from main window logo",
-        "Enforce hairnet & apron SOP for shift B staff",
+        "Re-position promotional banner away from main storefront logo",
+        "Enforce hairnet & apron SOP for active shift staff",
         "Perform deep sanitization on front counter before peak hours"
       ];
+    } else if (category.includes("Uniform")) {
+      uniformScore = 98;
+      detectedObjects = ["Official Branded Apron [99%]", "Hairnet & Cap [97%]", "ID Badge [96%]", "Sanitary Food Gloves [98%]"];
+      findings = "Computer Vision verified 100% adherence to staff uniform policy, hairnets, and personal hygiene standards.";
+    } else if (category.includes("Cleanliness")) {
+      cleanlinessScore = 97;
+      detectedObjects = ["Sanitized Surface [99%]", "Trash Bin Concealed [95%]", "Floor Cleanliness [97%]"];
+      findings = "Counter surfaces, floor area, and food preparation spaces meet HACCP grade cleanliness protocols.";
+    } else if (category.includes("Product")) {
+      placementScore = 99;
+      detectedObjects = ["Product Shelf Matrix A-D [99%]", "Price Tags Aligned [97%]", "Stock Visibility [98%]"];
+      findings = "Merchandise displays follow golden triangle layout rules with 100% price tag accuracy.";
     }
 
     const overallScore = Math.round((brandingScore + uniformScore + cleanlinessScore + placementScore) / 4);
@@ -387,14 +415,16 @@ exports.analyzeStorePhoto = (req, res) => {
 
     const aiAuditRecord = {
       id: Date.now(),
-      outlet_id: Number(outlet_id),
-      outlet_name: outlet_name || `Outlet #${outlet_id}`,
+      outlet_id: outletIdNum,
+      outlet_name: outlet_name || `Outlet #${outletIdNum}`,
       date: new Date().toISOString().split("T")[0],
       score: overallScore,
       status,
-      inspector: `AI Vision Agent (${inspector || "Automated"})`,
-      category: `AI Photo Analysis: ${category}`,
+      inspector: inspector || "Computer Vision AI v4.2",
+      category: `AI Photo Vision: ${category}`,
       details: findings,
+      photo_url: photo_url || null,
+      photo_name: photo_name || "store_inspection_capture.jpg",
       ai_metrics: {
         branding_logo_score: brandingScore,
         uniform_attire_score: uniformScore,
@@ -402,12 +432,12 @@ exports.analyzeStorePhoto = (req, res) => {
         product_placement_score: placementScore,
         detected_objects: detectedObjects,
         corrective_actions: correctiveActions,
-        confidence: 0.97
+        confidence: 0.982
       }
     };
 
     // Save to compliance history
-    const data = JSON.parse(fs.readFileSync(compliancePath, "utf8"));
+    const data = fs.existsSync(compliancePath) ? JSON.parse(fs.readFileSync(compliancePath, "utf8")) : [];
     data.unshift(aiAuditRecord);
     fs.writeFileSync(compliancePath, JSON.stringify(data, null, 2));
 

@@ -47,6 +47,7 @@ app.use("/api/compliance", complianceRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/employees", employeeRoutes);
 app.use("/api/agent/franchise-intelligence", intelligenceRoutes);
+app.use("/api/intelligence", intelligenceRoutes);
 app.use("/api/campaigns", campaignRoutes);
 app.use("/api/reports", reportsRoutes);
 app.use("/api/enterprise", enterpriseRoutes);

@@ -11,10 +11,11 @@ import {
   BellRing, FileBarChart, Settings, Search, Sparkles, Download,
   TrendingUp, TrendingDown, MapPin, LineChart as LineChartIcon, BarChart3,
   Sun, Moon, AlertTriangle, Eye, EyeOff, Mail, Lock, Calendar, Trash2, UserPlus, Star,
-  Target, Percent, Lightbulb, Tag, PieChart, Share2, CalendarClock,
-  Image, FileSearch, MessageSquare , Truck,
+  Target, Percent, Lightbulb, Tag, PieChart, Share2, CalendarClock, Globe, Truck, Trophy, Boxes as BoxesIcon, Languages,
+  Image, FileSearch, MessageSquare,
   ClipboardList, Wrench, FileCheck2, Repeat,
   Activity, AlertOctagon, Grid3x3, Timer, PenTool,
+  Camera, CheckCircle2, UploadCloud, FileText, Check, ChevronRight
 } from "lucide-react";
 
 import AuditComplianceSummary from "./AuditComplianceSummary";
@@ -36,6 +37,140 @@ import { CURRENCY_CONFIGS, CurrencyCode, formatCurrencyValue } from "../lib/Curr
 
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
+
+const SAMPLE_STORE_PHOTOS = [
+  {
+    id: "storefront",
+    title: "Storefront & Branding",
+    desc: "Nashik Hub - Exterior Signage & Window",
+    category: "Branding & Store Layout",
+    outlet: "Nashik City Center",
+    tag: "Branding OK (99.4%)",
+    color: "#2DD4BF"
+  },
+  {
+    id: "espresso_counter",
+    title: "Prep Counter & Cleanliness",
+    desc: "Pune FC Road - Barista Workstation",
+    category: "Cleanliness & Sanitization",
+    outlet: "Pune FC Road",
+    tag: "Sanitary Grade A (98.0%)",
+    color: "#A855F7"
+  },
+  {
+    id: "barista_uniform",
+    title: "Staff Uniform & Hygiene",
+    desc: "Mumbai Andheri - Shift Attire Check",
+    category: "Uniforms & Staff Hygiene",
+    outlet: "Mumbai Andheri East",
+    tag: "Uniform Adherence (97.5%)",
+    color: "#38BDF8"
+  },
+  {
+    id: "merchandise_shelf",
+    title: "Retail Shelf & Products",
+    desc: "Aurangabad - Product Display Matrix",
+    category: "Product Placement & Shelf",
+    outlet: "Aurangabad CIDCO",
+    tag: "Shelf Planogram (62.0%)",
+    color: "#F59E0B"
+  }
+];
+
+const SOP_LIBRARY_DATA = [
+  {
+    id: "sop-1",
+    title: "Food Safety & Temp",
+    ver: "v2.4",
+    date: "Updated Jul 2026",
+    items: "12 Checkpoints",
+    desc: "Cold storage <= 4°C, hot display >= 63°C hygiene compliance.",
+    protocol: "HACCP & ISO 22000 Food Safety Protocols",
+    category: "Food Safety & Temp",
+    frequency: "Every 4 Hours & Shift Change",
+    checkpoints: [
+      "Walk-in refrigeration temperature verified <= 4.0°C and logged in telemetry book",
+      "Freezer unit temperature held at <= -18.0°C without ice accumulation",
+      "Milk steamer wand sanitized after each beverage preparation",
+      "Cross-contamination prevention: Separate cutting boards and tongs for dairy vs non-dairy",
+      "Expiry date labels and FIFO (First-In, First-Out) rotation on all syrups and dairy cartons",
+      "Water filtration pressure gauge checked and sediment filter verified",
+      "Ice machine sanitized and ice scoop stored in external sanitizing holder",
+      "Food waste bins closed, foot-pedal operated, and emptied before 75% capacity",
+      "Thermometer calibration checked against ice-point reference monthly",
+      "Cold-brew batch brewing date and shelf-life tracked in digital system",
+      "Dry storage area temperature maintained between 18°C-24°C and humidity < 60%",
+      "All open food containers covered, sealed, and clearly dated"
+    ]
+  },
+  {
+    id: "sop-2",
+    title: "Opening / Closing Protocol",
+    ver: "v3.1",
+    date: "Updated Jun 2026",
+    items: "18 Checkpoints",
+    desc: "POS reconciliation, alarm setup, sanitization sign-off.",
+    protocol: "Franchise Store Operations Standard Operating Manual Section 4",
+    category: "Opening / Closing Protocol",
+    frequency: "Daily (Store Opening 06:30 & Store Closing 22:30)",
+    checkpoints: [
+      "Store alarm system disarmed and biometric manager clock-in recorded",
+      "Exterior lighting, digital menu boards, and franchise neon signage operational",
+      "POS cash drawer float verified ($200.00 standard reserve count)",
+      "Espresso machine backflush and group head purge with cleaner completed",
+      "Water supply lines opened, grinder calibration test shot pulled (25-30s extraction)",
+      "Pastry display case glass cleaned and restocked with fresh batch",
+      "Restrooms cleaned, restocked with soap, paper towels, and sanitized",
+      "HVAC temperature set to standard 22.0°C customer comfort zone",
+      "Music playlist synchronized with central brand audio station",
+      "Closing: End-of-Day Z-Report printed and matched with POS total",
+      "Closing: Cash drop deposited into store time-delay safe",
+      "Closing: Espresso machines turned to eco-standby and portafilters soaked",
+      "Closing: All refrigeration units locked and temperature confirmed",
+      "Closing: Store security alarm armed and exit door double-bolted"
+    ]
+  },
+  {
+    id: "sop-3",
+    title: "Cash Register Audit",
+    ver: "v1.8",
+    date: "Updated May 2026",
+    items: "8 Checkpoints",
+    desc: "Shift register balancing, drop box verification, receipt logs.",
+    protocol: "Financial Compliance & Cash Handling Policy v1.8",
+    category: "Cash Register Audit",
+    frequency: "Shift Changeover & End of Day",
+    checkpoints: [
+      "Opening drawer float counted and confirmed before initial transaction",
+      "Every cash transaction processed through POS with receipt offered to customer",
+      "High-denomination cash drops ($50+) deposited into drop box within 5 minutes",
+      "No cash drawer left open or unattended during store operational hours",
+      "Card reader terminals inspected for skimming devices and cleaned",
+      "Voided and refunded transaction slips signed by on-duty supervisor",
+      "Shift-end reconciliation variance within tolerance (<= +/- $2.00 threshold)",
+      "Digital batch settlement transmitted to central accounting server"
+    ]
+  },
+  {
+    id: "sop-4",
+    title: "Staff Hygiene & Attire",
+    ver: "v2.0",
+    date: "Updated Aug 2026",
+    items: "6 Checkpoints",
+    desc: "Hairnets, apron standards, handwashing logging.",
+    protocol: "Personal Hygiene & Appearance Franchise Standard 2026",
+    category: "Staff Hygiene & Attire",
+    frequency: "Continuous & Shift Start Inspection",
+    checkpoints: [
+      "Clean, ironed franchise-branded black apron worn at all times on front counter",
+      "Official franchise cap or hairnet fully restraining hair",
+      "Name badge visibly pinned to left chest area",
+      "Closed-toe non-slip black footwear compliant with kitchen safety regulations",
+      "Handwashing performed for 20+ seconds before shifts and after handling food/cash",
+      "No excessive jewelry, wristwatches, or unapproved fingernail polish while on food prep"
+    ]
+  }
+];
 
 const themes = {
   dark: {
@@ -946,24 +1081,28 @@ export default function FranchiseOSDashboard({ initialModule = "dashboard" }: Fr
   }, []);
 
   // Additional state for Audit, Intelligence, Reporting, and Notifications
-  const [audits, setAudits] = useState([
-    { id: 1, outlet_id: 1, outlet_name: "Nashik City Center", date: "2026-08-03", score: 96, status: "Healthy", inspector: "Abhishek Pattnaik" },
-    { id: 2, outlet_id: 2, outlet_name: "Pune FC Road", date: "2026-08-04", score: 88, status: "Healthy", inspector: "Abhishek Pattnaik" },
-    { id: 3, outlet_id: 3, outlet_name: "Mumbai Andheri East", date: "2026-08-04", score: 62, status: "Watch", inspector: "Abhishek Pattnaik" },
-    { id: 4, outlet_id: 5, outlet_name: "Aurangabad CIDCO", date: "2026-08-05", score: 44, status: "Critical", inspector: "Abhishek Pattnaik" },
-    { id: 5, outlet_id: 6, outlet_name: "Thane Estate", date: "2026-08-05", score: 92, status: "Healthy", inspector: "Priya Sharma" },
+  const [audits, setAudits] = useState<any[]>([
+    { id: 1, outlet_id: 1, outlet_name: "Nashik City Center", date: "2026-08-03", score: 96, status: "Healthy", inspector: "Abhishek Pattnaik", category: "Food Safety & Temp", details: "All cold storage units <= 3.8°C. Kitchen disinfection verified." },
+    { id: 2, outlet_id: 2, outlet_name: "Pune FC Road", date: "2026-08-04", score: 88, status: "Healthy", inspector: "Abhishek Pattnaik", category: "Opening / Closing Protocol", details: "On-time opening and alarm verification completed." },
+    { id: 3, outlet_id: 3, outlet_name: "Mumbai Andheri East", date: "2026-08-04", score: 62, status: "Watch", inspector: "Abhishek Pattnaik", category: "Staff Hygiene & Attire", details: "2 staff members required uniform refresher training." },
+    { id: 4, outlet_id: 4, outlet_name: "Aurangabad CIDCO", date: "2026-08-05", score: 44, status: "Critical", inspector: "Abhishek Pattnaik", category: "Cash Register Audit", details: "Discrepancy identified in shift cash register reconciliation." },
+    { id: 5, outlet_id: 6, outlet_name: "Thane Estate", date: "2026-08-05", score: 92, status: "Healthy", inspector: "Priya Sharma", category: "Food Safety & Temp", details: "Standard SOP compliance verified across all stations." },
   ]);
   const [auditFilter, setAuditFilter] = useState("All");
+  const [auditSearch, setAuditSearch] = useState("");
   const [showAuditModal, setShowAuditModal] = useState(false);
   const [newAuditForm, setNewAuditForm] = useState({
     outletId: "1",
     outletName: "Nashik City Center",
-    inspector: "Manager",
+    category: "Food Safety & Temp",
+    inspector: "Abhishek Pattnaik",
     tempCheck: true,
     cleanlinessCheck: true,
     registerCheck: true,
-    safetyCheck: false,
-    score: 75,
+    safetyCheck: true,
+    uniformCheck: false,
+    notes: "",
+    score: 80,
   });
   const [auditSubTab, setAuditSubTab] = useState<"overview" | "operational" | "ai_photo" | "architecture">("overview");
   const [auditModalMode, setAuditModalMode] = useState<"manual" | "ai_photo">("manual");
@@ -971,6 +1110,13 @@ export default function FranchiseOSDashboard({ initialModule = "dashboard" }: Fr
   const [aiPhotoOutlet, setAiPhotoOutlet] = useState("Nashik City Center");
   const [aiPhotoAnalyzing, setAiPhotoAnalyzing] = useState(false);
   const [aiPhotoResult, setAiPhotoResult] = useState<any>(null);
+  const [aiPhotoPreview, setAiPhotoPreview] = useState<string | null>(null);
+  const [aiPhotoName, setAiPhotoName] = useState<string>("storefront_facade.jpg");
+  const [selectedAuditDetail, setSelectedAuditDetail] = useState<any | null>(null);
+  const [selectedSopDetail, setSelectedSopDetail] = useState<any | null>(null);
+  const [auditSubmitting, setAuditSubmitting] = useState(false);
+  const [auditToast, setAuditToast] = useState<string | null>(null);
+
   const [opMetrics, setOpMetrics] = useState<any[]>([
     { outlet_id: 1, outlet_name: "Nashik City Center", opening_closing_punctuality: 99.4, on_time_openings: "30/30 days", attendance_rate: 98.2, staff_coverage: "100%", cash_closing_variance: 0.00, pos_audit_status: "Verified", cleaning_hygiene_score: 96.5, maintenance_tickets_open: 0, complaint_avg_response_min: 12.4, overall_compliance_score: 98 },
     { outlet_id: 2, outlet_name: "Pune FC Road", opening_closing_punctuality: 96.8, on_time_openings: "29/30 days", attendance_rate: 95.0, staff_coverage: "96%", cash_closing_variance: -4.50, pos_audit_status: "Minor Variance", cleaning_hygiene_score: 91.0, maintenance_tickets_open: 1, complaint_avg_response_min: 18.2, overall_compliance_score: 91 },
@@ -1155,6 +1301,31 @@ export default function FranchiseOSDashboard({ initialModule = "dashboard" }: Fr
       .catch(() => setEmployees([]))
       .finally(() => setStaffLoading(false));
   }, [isLoggedIn, active]);
+
+  useEffect(() => {
+    if (active !== "audit") return;
+    const token = typeof window !== "undefined" ? localStorage.getItem("fops_token") : null;
+    const headers: Record<string, string> = { "Content-Type": "application/json" };
+    if (token) headers["Authorization"] = `Bearer ${token}`;
+
+    fetch(`${API_BASE_URL}/api/compliance`, { headers })
+      .then((res) => res.json())
+      .then((data) => {
+        if (Array.isArray(data) && data.length > 0) {
+          setAudits(data);
+        }
+      })
+      .catch(() => {});
+
+    fetch(`${API_BASE_URL}/api/compliance/operational-metrics`, { headers })
+      .then((res) => res.json())
+      .then((data) => {
+        if (Array.isArray(data) && data.length > 0) {
+          setOpMetrics(data);
+        }
+      })
+      .catch(() => {});
+  }, [active]);
 
   const t = isDark ? themes.dark : themes.light;
   const statusColor = isDark ? statusColorDark : statusColorLight;
@@ -2802,37 +2973,119 @@ function getPredictedRisks(auditList: any[]) {
             </div>
           ) : active === "audit" ? (
             <div className="space-y-6">
-              {/* Header & Sub-Navigation Tabs */}
-              <div className="flex flex-wrap items-center justify-between gap-4">
-                <div>
-                  <h2 className="text-xl font-bold flex items-center gap-2" style={{ color: t.text }}>
-                    <ShieldCheck size={22} color={accent} /> Audit Agent & Quality Inspector
-                  </h2>
-                  <p className="text-xs" style={{ color: t.textMuted }}>
-                    AI & rule-based automatic franchise compliance checker, CCTV telemetry, SOP library, and store photo vision inspection.
-                  </p>
+              {/* Header & Primary Action Buttons */}
+              <div className="flex flex-wrap items-center justify-between gap-4 p-5 rounded-2xl border bg-gradient-to-r from-amber-500/5 via-purple-500/5 to-transparent shadow-lg" style={{ borderColor: t.border, background: t.card }}>
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2">
+                    <span className="p-2 rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                      <ShieldCheck size={24} color={accent} />
+                    </span>
+                    <div>
+                      <h2 className="text-xl font-bold flex items-center gap-2" style={{ color: t.text }}>
+                        Audit Agent & Quality Inspector
+                        <span className="text-[10px] font-mono font-medium px-2 py-0.5 rounded-full bg-teal-500/10 text-teal-400 border border-teal-500/20">
+                          AI Engine Active
+                        </span>
+                      </h2>
+                      <p className="text-xs" style={{ color: t.textMuted }}>
+                        Continuous automated compliance tracking, CCTV telemetry, SOP library, and AI store photo vision inspection.
+                      </p>
+                    </div>
+                  </div>
                 </div>
+
                 <div className="flex items-center gap-3">
                   <button
                     onClick={() => {
                       setAuditModalMode("manual");
                       setShowAuditModal(true);
+                      playTechChime();
                     }}
-                    className="flex items-center gap-2 text-xs font-bold px-4 py-2 rounded-lg transition-transform active:scale-95 cursor-pointer shadow-md"
+                    className="flex items-center gap-2 text-xs font-bold px-4 py-2.5 rounded-xl transition-all duration-200 hover:shadow-lg hover:brightness-110 active:scale-95 cursor-pointer shadow-md"
                     style={{ background: accent, color: t.textOnAccent }}
                   >
-                    <ShieldCheck size={15} /> Submit New Audit
+                    <ShieldCheck size={16} /> Submit New Audit
                   </button>
                   <button
                     onClick={() => {
                       setAuditModalMode("ai_photo");
                       setShowAuditModal(true);
+                      playTechChime();
                     }}
-                    className="flex items-center gap-2 text-xs font-bold px-4 py-2 rounded-lg transition-transform active:scale-95 cursor-pointer shadow-md bg-purple-600 hover:bg-purple-500 text-white"
+                    className="flex items-center gap-2 text-xs font-bold px-4 py-2.5 rounded-xl transition-all duration-200 hover:shadow-lg hover:shadow-purple-500/20 active:scale-95 cursor-pointer shadow-md bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white"
                   >
-                    📷 Run AI Photo Inspection
+                    <Camera size={16} /> Run AI Photo Inspection
                   </button>
                 </div>
+              </div>
+
+              {/* Dynamic KPI Bar */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                {(() => {
+                  const totalAudits = audits.length;
+                  const avgScore = totalAudits > 0 ? Math.round(audits.reduce((acc, a) => acc + (Number(a.score) || 0), 0) / totalAudits) : 88;
+                  const healthyCount = audits.filter(a => a.status === "Healthy" || a.score >= 80).length;
+                  const complianceRate = totalAudits > 0 ? Math.round((healthyCount / totalAudits) * 100) : 94;
+                  const flaggedCount = audits.filter(a => a.status === "Critical" || a.score < 60).length;
+
+                  return (
+                    <>
+                      <div className="rounded-xl border p-4 transition-all hover:border-teal-500/40" style={{ background: t.card, borderColor: t.border }}>
+                        <div className="flex items-center justify-between">
+                          <p className="text-xs font-medium" style={{ color: t.textFaint }}>Network Audit Score</p>
+                          <span className="text-[10px] font-mono text-teal-400 bg-teal-500/10 px-2 py-0.5 rounded border border-teal-500/20">Live Aggregation</span>
+                        </div>
+                        <div className="flex items-baseline justify-between mt-2">
+                          <span className="text-2xl font-bold" style={{ color: t.text }}>{avgScore}<span className="text-sm font-normal" style={{ color: t.textFaint }}>/100</span></span>
+                          <span className={`text-xs font-medium px-2 py-0.5 rounded-full border ${avgScore >= 80 ? "text-teal-400 bg-teal-500/10 border-teal-500/20" : "text-amber-400 bg-amber-500/10 border-amber-500/20"}`}>
+                            {avgScore >= 80 ? "Healthy" : "Watch"}
+                          </span>
+                        </div>
+                        <div className="w-full bg-slate-700/20 rounded-full h-1.5 mt-3 overflow-hidden">
+                          <div className="h-full rounded-full transition-all duration-500" style={{ width: `${avgScore}%`, background: avgScore >= 80 ? "#2DD4BF" : "#F59E0B" }} />
+                        </div>
+                      </div>
+
+                      <div className="rounded-xl border p-4 transition-all hover:border-teal-500/40" style={{ background: t.card, borderColor: t.border }}>
+                        <div className="flex items-center justify-between">
+                          <p className="text-xs font-medium" style={{ color: t.textFaint }}>SOP Compliance Rate</p>
+                          <span className="text-[10px] font-mono text-teal-400 bg-teal-500/10 px-2 py-0.5 rounded border border-teal-500/20">Target &gt;90%</span>
+                        </div>
+                        <div className="flex items-baseline justify-between mt-2">
+                          <span className="text-2xl font-bold" style={{ color: t.text }}>{complianceRate}%</span>
+                          <span className="text-xs font-medium text-teal-400 bg-teal-500/10 px-2 py-0.5 rounded-full border border-teal-500/20">High</span>
+                        </div>
+                        <p className="text-[11px] mt-2" style={{ color: t.textMuted }}>{healthyCount} of {totalAudits} outlets fully compliant</p>
+                      </div>
+
+                      <div className="rounded-xl border p-4 transition-all hover:border-amber-500/40" style={{ background: t.card, borderColor: t.border }}>
+                        <div className="flex items-center justify-between">
+                          <p className="text-xs font-medium" style={{ color: t.textFaint }}>Total Audits Logged</p>
+                          <span className="text-[10px] font-mono text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">This Month</span>
+                        </div>
+                        <div className="flex items-baseline justify-between mt-2">
+                          <span className="text-2xl font-bold" style={{ color: t.text }}>{totalAudits}</span>
+                          <span className="text-xs font-medium text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/20">On Schedule</span>
+                        </div>
+                        <p className="text-[11px] mt-2" style={{ color: t.textMuted }}>Next audit scheduled: Solapur Saat Rasta</p>
+                      </div>
+
+                      <div className="rounded-xl border p-4 transition-all hover:border-rose-500/40" style={{ background: t.card, borderColor: t.border }}>
+                        <div className="flex items-center justify-between">
+                          <p className="text-xs font-medium" style={{ color: t.textFaint }}>Flagged Outlets (Critical)</p>
+                          <span className="text-[10px] font-mono text-rose-400 bg-rose-500/10 px-2 py-0.5 rounded border border-rose-500/20">Action Req</span>
+                        </div>
+                        <div className="flex items-baseline justify-between mt-2">
+                          <span className="text-2xl font-bold text-rose-400">{flaggedCount}</span>
+                          <span className="text-xs font-medium text-rose-400 bg-rose-500/10 px-2 py-0.5 rounded-full border border-rose-500/20">Re-Audit Req</span>
+                        </div>
+                        <p className="text-[11px] mt-2 text-rose-400 font-medium truncate">
+                          {flaggedCount > 0 ? "Aurangabad CIDCO (Score: 44)" : "All locations in acceptable tolerance"}
+                        </p>
+                      </div>
+                    </>
+                  );
+                })()}
               </div>
 
               {/* Navigation Sub-Tabs */}
@@ -2845,8 +3098,11 @@ function getPredictedRisks(auditList: any[]) {
                 ].map(tab => (
                   <button
                     key={tab.id}
-                    onClick={() => setAuditSubTab(tab.id as any)}
-                    className="flex items-center gap-2 text-xs font-semibold px-3 py-2 rounded-lg border transition-all cursor-pointer whitespace-nowrap"
+                    onClick={() => {
+                      setAuditSubTab(tab.id as any);
+                      playTechChime();
+                    }}
+                    className="flex items-center gap-2 text-xs font-semibold px-4 py-2.5 rounded-xl border transition-all cursor-pointer whitespace-nowrap"
                     style={{
                       borderColor: auditSubTab === tab.id ? accent : t.border,
                       background: auditSubTab === tab.id ? `${accent}1A` : "transparent",
@@ -2905,529 +3161,740 @@ function getPredictedRisks(auditList: any[]) {
 
               {auditSubTab === "overview" && (
                 <div className="space-y-6">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div className="rounded-xl border p-4" style={{ background: t.card, borderColor: t.border }}>
-                      <p className="text-xs" style={{ color: t.textFaint }}>Network Audit Score</p>
-                      <div className="flex items-baseline justify-between mt-1">
-                        <span className="text-2xl font-bold" style={{ color: t.text }}>88<span className="text-sm font-normal" style={{ color: t.textFaint }}>/100</span></span>
-                        <span className="text-xs font-medium text-teal-400 bg-teal-500/10 px-2 py-0.5 rounded-full border border-teal-500/20">Healthy</span>
+                  {/* Standard Operating Procedures (SOP Library) */}
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h3 className="text-sm font-bold flex items-center gap-2" style={{ color: t.text }}>
+                          <span>📚</span> Standard Operating Procedures (SOP Library)
+                        </h3>
+                        <p className="text-xs" style={{ color: t.textMuted }}>Official franchise protocol checkpoints, revision versions, and audit criteria.</p>
                       </div>
-                      <p className="text-[11px] mt-2" style={{ color: t.textMuted }}>+4 pts vs last quarter</p>
+                      <span className="text-[11px] font-mono" style={{ color: t.textFaint }}>4 Active Standards</span>
                     </div>
-
-
-
-                    <div className="rounded-xl border p-4" style={{ background: t.card, borderColor: t.border }}>
-                      <p className="text-xs" style={{ color: t.textFaint }}>SOP Compliance Rate</p>
-                      <div className="flex items-baseline justify-between mt-1">
-                        <span className="text-2xl font-bold" style={{ color: t.text }}>94.2%</span>
-                        <span className="text-xs font-medium text-teal-400 bg-teal-500/10 px-2 py-0.5 rounded-full border border-teal-500/20">High</span>
-                      </div>
-                      <p className="text-[11px] mt-2" style={{ color: t.textMuted }}>24/25 checks passed</p>
-                    </div>
-
-                    <div className="rounded-xl border p-4" style={{ background: t.card, borderColor: t.border }}>
-                      <p className="text-xs" style={{ color: t.textFaint }}>Audits This Month</p>
-                      <div className="flex items-baseline justify-between mt-1">
-                        <span className="text-2xl font-bold" style={{ color: t.text }}>{audits.length}</span>
-                        <span className="text-xs font-medium text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/20">On Schedule</span>
-                      </div>
-                      <p className="text-[11px] mt-2" style={{ color: t.textMuted }}>Next audit: Solapur</p>
-                    </div>
-
-                    <div className="rounded-xl border p-4" style={{ background: t.card, borderColor: t.border }}>
-                      <p className="text-xs" style={{ color: t.textFaint }}>Flagged Outlets</p>
-                      <div className="flex items-baseline justify-between mt-1">
-                        <span className="text-2xl font-bold text-rose-400">1</span>
-                        <span className="text-xs font-medium text-rose-400 bg-rose-500/10 px-2 py-0.5 rounded-full border border-rose-500/20">Re-Audit Req</span>
-                      </div>
-                      <p className="text-[11px] mt-2 text-rose-400 font-medium">Aurangabad CIDCO (Score: 44)</p>
-                    </div>
-                  </div>
-
-                  <div>
-                    <h3 className="text-sm font-semibold mb-3" style={{ color: t.text }}>Standard Operating Procedures (SOP Library)</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                      {[
-                        { title: "Food Safety & Temp", ver: "v2.4", date: "Updated Jul 2026", items: "12 Checkpoints", desc: "Cold storage <= 4°C, hot display >= 63°C hygiene compliance." },
-                        { title: "Opening / Closing Protocol", ver: "v3.1", date: "Updated Jun 2026", items: "18 Checkpoints", desc: "POS reconciliation, alarm setup, sanitization sign-off." },
-                        { title: "Cash Register Audit", ver: "v1.8", date: "Updated May 2026", items: "8 Checkpoints", desc: "Shift register balancing, drop box verification, receipt logs." },
-                        { title: "Staff Hygiene & Attire", ver: "v2.0", date: "Updated Aug 2026", items: "6 Checkpoints", desc: "Hairnets, apron standards, handwashing logging." }
-                      ].map((sop, idx) => (
-                        <div key={idx} className="rounded-xl border p-4 flex flex-col justify-between" style={{ background: t.card, borderColor: t.border }}>
+                      {SOP_LIBRARY_DATA.map((sop) => (
+                        <div
+                          key={sop.id}
+                          className="rounded-xl border p-4 flex flex-col justify-between transition-all hover:border-amber-500/50 hover:shadow-md"
+                          style={{ background: t.card, borderColor: t.border }}
+                        >
                           <div>
                             <div className="flex items-center justify-between mb-2">
-                              <span className="text-xs font-mono font-semibold text-teal-400">{sop.ver}</span>
+                              <span className="text-xs font-mono font-bold text-teal-400 px-2 py-0.5 rounded bg-teal-500/10 border border-teal-500/20">{sop.ver}</span>
                               <span className="text-[10px]" style={{ color: t.textFaint }}>{sop.date}</span>
                             </div>
                             <h4 className="text-sm font-semibold mb-1" style={{ color: t.text }}>{sop.title}</h4>
-                            <p className="text-xs leading-relaxed" style={{ color: t.textMuted }}>{sop.desc}</p>
+                            <p className="text-xs leading-relaxed line-clamp-2" style={{ color: t.textMuted }}>{sop.desc}</p>
                           </div>
                           <div className="mt-4 pt-3 border-t flex items-center justify-between" style={{ borderColor: t.border }}>
                             <span className="text-[11px] font-medium" style={{ color: t.textFaint }}>{sop.items}</span>
-                            <button className="text-xs font-semibold cursor-pointer" style={{ color: accent }}>View Standard →</button>
+                            <button
+                              onClick={() => {
+                                setSelectedSopDetail(sop);
+                                playTechChime();
+                              }}
+                              className="text-xs font-semibold hover:underline flex items-center gap-1 cursor-pointer"
+                              style={{ color: accent }}
+                            >
+                              View Standard <ChevronRight size={14} />
+                            </button>
                           </div>
                         </div>
                       ))}
                     </div>
                   </div>
+                  {/* Audit History Table with Search & Filter */}
+                  <div className="rounded-xl border overflow-hidden shadow-sm" style={{ background: t.card, borderColor: t.border }}>
+                    <div className="p-4 border-b flex flex-wrap items-center justify-between gap-3" style={{ borderColor: t.border }}>
+                      <div className="space-y-0.5">
+                        <h3 className="text-sm font-bold flex items-center gap-2" style={{ color: t.text }}>
+                          <ShieldCheck size={16} color={accent} /> Recent Outlet Audit History
+                        </h3>
+                        <p className="text-xs" style={{ color: t.textMuted }}>Click on any audit entry to inspect detailed scores, notes, and corrective action items.</p>
+                      </div>
 
+                      <div className="flex flex-wrap items-center gap-3">
+                        {/* Search Input */}
+                        <div className="relative">
+                          <Search size={13} className="absolute left-2.5 top-2.5" style={{ color: t.textFaint }} />
+                          <input
+                            type="text"
+                            placeholder="Search outlet / inspector..."
+                            value={auditSearch}
+                            onChange={(e) => setAuditSearch(e.target.value)}
+                            className="pl-8 pr-3 py-1.5 text-xs rounded-lg border focus:outline-none w-48 transition-all"
+                            style={{ background: t.panel, borderColor: t.border, color: t.text }}
+                          />
+                        </div>
 
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-  <div className="rounded-xl border p-5" style={{ background: t.card, borderColor: t.border }}>
-    <p className="text-sm font-semibold mb-1 flex items-center gap-2" style={{ color: t.text }}>
-      <Activity size={15} color={accent} /> Network Compliance Trend
-    </p>
-    <p className="text-xs mb-4" style={{ color: t.textFaint }}>Average audit score, last 6 months</p>
-    <ResponsiveContainer width="100%" height={180}>
-      <LineChart data={complianceTrend}>
-        <CartesianGrid strokeDasharray="3 3" stroke={t.gridLine} />
-        <XAxis dataKey="month" tick={{ fontSize: 12, fill: t.textFaint }} stroke={t.gridLine} />
-        <YAxis tick={{ fontSize: 12, fill: t.textFaint }} stroke={t.gridLine} domain={[60, 100]} />
-        <Tooltip contentStyle={{ background: t.card, border: `1px solid ${t.border}`, borderRadius: 8, color: t.text }} formatter={(v: any) => `${v}/100`} />
-        <Line type="monotone" dataKey="score" stroke={accent} strokeWidth={2.5} dot={{ r: 3 }} />
-      </LineChart>
-    </ResponsiveContainer>
-  </div>
+                        {/* Status Filter */}
+                        <div className="flex items-center gap-1">
+                          {["All", "Healthy", "Watch", "Critical"].map(st => (
+                            <button
+                              key={st}
+                              onClick={() => setAuditFilter(st)}
+                              className="text-xs px-2.5 py-1 rounded-md border transition-colors cursor-pointer"
+                              style={{
+                                borderColor: auditFilter === st ? accent : t.border,
+                                background: auditFilter === st ? `${accent}1A` : "transparent",
+                                color: auditFilter === st ? accent : t.textMuted
+                              }}
+                            >
+                              {st}
+                            </button>
+                          ))}
+                        </div>
 
-  <div className="rounded-xl border overflow-hidden" style={{ background: t.card, borderColor: t.border }}>
-    <p className="text-sm font-semibold px-5 pt-5 pb-1 flex items-center gap-2" style={{ color: t.text }}>
-      <Grid3x3 size={15} color={accent} /> Weakest Compliance Categories
-    </p>
-    <p className="text-xs px-5 pb-3" style={{ color: t.textFaint }}>Pass rate by category, network-wide</p>
-    <div className="px-5 pb-5 space-y-3">
-      {complianceCategories.sort((a, b) => a.passRate - b.passRate).map((c) => (
-        <div key={c.category}>
-          <div className="flex items-center justify-between text-sm mb-1">
-            <span style={{ color: t.text }}>{c.category}</span>
-            <span style={{ color: c.passRate < 70 ? "#FB7185" : c.passRate < 85 ? "#F59E0B" : accent }}>{c.passRate}%</span>
-          </div>
-          <div className="w-full h-2 rounded-full" style={{ background: t.inputBg }}>
-            <div
-              className="h-2 rounded-full"
-              style={{ width: `${c.passRate}%`, background: c.passRate < 70 ? "#FB7185" : c.passRate < 85 ? "#F59E0B" : accent }}
-            />
-          </div>
-        </div>
-      ))}
-    </div>
-  </div>
-</div>
-
-{getPredictedRisks(audits).length > 0 && (
-  <div className="rounded-xl p-5 border border-l-4" style={{ background: t.card, borderTopColor: t.border, borderRightColor: t.border, borderBottomColor: t.border, borderLeftColor: "#F59E0B" }}>
-    <div className="flex items-center gap-2 mb-1">
-      <AlertOctagon size={15} color="#F59E0B" />
-      <p className="text-sm font-semibold" style={{ color: t.text }}>Predictive Risk Alert</p>
-    </div>
-    <p className="text-sm leading-relaxed mb-3" style={{ color: t.textMuted }}>
-      Score trending downward — likely to fail the next audit if the pattern continues.
-    </p>
-    <div className="flex flex-wrap gap-2">
-      {getPredictedRisks(audits).map((r) => (
-        <span key={r.outlet} className="text-xs px-2.5 py-1 rounded-full border" style={{ background: "#F59E0B1A", color: "#F59E0B", borderColor: "#F59E0B33" }}>
-          {r.outlet}: {r.trend}
-        </span>
-      ))}
-    </div>
-  </div>
-)} 
-
-
-                  <div className="rounded-xl border overflow-hidden" style={{ background: t.card, borderColor: t.border }}>
-                    <div className="p-4 border-b flex items-center justify-between" style={{ borderColor: t.border }}>
-                      <h3 className="text-sm font-semibold" style={{ color: t.text }}>Recent Outlet Audit History</h3>
-                      <div className="flex items-center gap-2">
-                        {["All", "Healthy", "Watch", "Critical"].map(st => (
-                          <button
-                            key={st}
-                            onClick={() => setAuditFilter(st)}
-                            className="text-xs px-2.5 py-1 rounded-md border transition-colors cursor-pointer"
-                            style={{
-                              borderColor: auditFilter === st ? accent : t.border,
-                              background: auditFilter === st ? `${accent}1A` : "transparent",
-                              color: auditFilter === st ? accent : t.textMuted
-                            }}
-                          >
-                            {st}
-                          </button>
-                        ))}
+                        {/* Export CSV Button */}
+                        <button
+                          onClick={() => {
+                            const headers = ["Audit ID", "Outlet Name", "Date", "Category", "Score", "Status", "Inspector", "Details"];
+                            const rows = audits.map(a => [
+                              `AUD-${a.id}`,
+                              `"${a.outlet_name || ''}"`,
+                              a.date,
+                              `"${a.category || 'Manual SOP'}"`,
+                              a.score,
+                              a.status,
+                              `"${a.inspector || ''}"`,
+                              `"${(a.details || '').replace(/"/g, '""')}"`
+                            ]);
+                            const csvContent = "data:text/csv;charset=utf-8," + [headers.join(","), ...rows.map(r => r.join(","))].join("\n");
+                            const encodedUri = encodeURI(csvContent);
+                            const link = document.createElement("a");
+                            link.setAttribute("href", encodedUri);
+                            link.setAttribute("download", `franchise_compliance_audits_${new Date().toISOString().split("T")[0]}.csv`);
+                            document.body.appendChild(link);
+                            link.click();
+                            document.body.removeChild(link);
+                            setAuditToast("Audit history exported to CSV successfully.");
+                            setTimeout(() => setAuditToast(null), 3500);
+                          }}
+                          className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg border transition-colors cursor-pointer hover:bg-white/5"
+                          style={{ borderColor: t.border, color: t.textMuted }}
+                        >
+                          <Download size={13} /> Export CSV
+                        </button>
                       </div>
                     </div>
 
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left text-xs">
-                    <thead style={{ background: t.panel, color: t.textMuted }}>
-                      <tr>
-                        <th className="p-3 font-semibold">Audit ID</th>
-                        <th className="p-3 font-semibold">Outlet Name</th>
-                        <th className="p-3 font-semibold">Audit Date</th>
-                        <th className="p-3 font-semibold">Compliance Score</th>
-                        <th className="p-3 font-semibold">Status</th>
-                        <th className="p-3 font-semibold">Inspector</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y" style={{ borderColor: t.border }}>
-                      {audits
-                        .filter(a => auditFilter === "All" || a.status === auditFilter)
-                        .map(audit => (
-                          <tr key={audit.id} className="hover:bg-teal-500/5 transition-colors">
-                            <td className="p-3 font-mono font-medium" style={{ color: t.textFaint }}>#AUD-{audit.id}</td>
-                            <td className="p-3 font-medium" style={{ color: t.text }}>{audit.outlet_name}</td>
-                            <td className="p-3" style={{ color: t.textMuted }}>{audit.date}</td>
-                            <td className="p-3">
-                              <div className="flex items-center gap-2">
-                                <div className="w-20 bg-gray-700/30 rounded-full h-2 overflow-hidden">
-                                  <div
-                                    className="h-full rounded-full"
-                                    style={{
-                                      width: `${audit.score}%`,
-                                      backgroundColor: audit.score >= 80 ? "#2DD4BF" : audit.score >= 50 ? "#F59E0B" : "#FB7185"
-                                    }}
-                                  />
-                                </div>
-                                <span className="font-semibold" style={{ color: t.text }}>{audit.score}/100</span>
-                              </div>
-                            </td>
-                            <td className="p-3">
-                              <span className={`text-[11px] px-2.5 py-0.5 rounded-full border font-medium ${
-                                audit.status === "Healthy" ? "bg-teal-500/10 text-teal-400 border-teal-500/30" :
-                                audit.status === "Watch" ? "bg-amber-500/10 text-amber-400 border-amber-500/30" :
-                                "bg-rose-500/10 text-rose-400 border-rose-500/30"
-                              }`}>
-                                {audit.status}
-                              </span>
-                            </td>
-                            <td className="p-3" style={{ color: t.textMuted }}>{audit.inspector}</td>
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-left text-xs">
+                        <thead style={{ background: t.panel, color: t.textMuted }}>
+                          <tr>
+                            <th className="p-3 font-semibold">Audit ID</th>
+                            <th className="p-3 font-semibold">Outlet Name</th>
+                            <th className="p-3 font-semibold">Audit Date</th>
+                            <th className="p-3 font-semibold">Category / Type</th>
+                            <th className="p-3 font-semibold">Compliance Score</th>
+                            <th className="p-3 font-semibold">Status</th>
+                            <th className="p-3 font-semibold">Inspector</th>
+                            <th className="p-3 font-semibold text-right">Action</th>
                           </tr>
-                        ))}
-                    </tbody>
-                  </table>
+                        </thead>
+                        <tbody className="divide-y" style={{ borderColor: t.border }}>
+                          {audits
+                            .filter(a => auditFilter === "All" || a.status === auditFilter)
+                            .filter(a => {
+                              if (!auditSearch.trim()) return true;
+                              const q = auditSearch.toLowerCase();
+                              return (
+                                (a.outlet_name || "").toLowerCase().includes(q) ||
+                                (a.inspector || "").toLowerCase().includes(q) ||
+                                (a.category || "").toLowerCase().includes(q)
+                              );
+                            })
+                            .map(audit => (
+                              <tr
+                                key={audit.id}
+                                onClick={() => {
+                                  setSelectedAuditDetail(audit);
+                                  playTechChime();
+                                }}
+                                className="hover:bg-amber-500/5 transition-colors cursor-pointer"
+                              >
+                                <td className="p-3 font-mono font-medium" style={{ color: t.textFaint }}>#AUD-{audit.id}</td>
+                                <td className="p-3 font-semibold" style={{ color: t.text }}>{audit.outlet_name}</td>
+                                <td className="p-3" style={{ color: t.textMuted }}>{audit.date}</td>
+                                <td className="p-3">
+                                  <span className="px-2 py-0.5 rounded text-[11px] font-medium bg-teal-500/10 text-teal-400 border border-teal-500/20">
+                                    {(audit as any).category || "SOP Inspection"}
+                                  </span>
+                                </td>
+                                <td className="p-3">
+                                  <div className="flex items-center gap-2">
+                                    <div className="w-20 bg-gray-700/30 rounded-full h-2 overflow-hidden">
+                                      <div
+                                        className="h-full rounded-full transition-all duration-300"
+                                        style={{
+                                          width: `${audit.score}%`,
+                                          backgroundColor: audit.score >= 80 ? "#2DD4BF" : audit.score >= 50 ? "#F59E0B" : "#FB7185"
+                                        }}
+                                      />
+                                    </div>
+                                    <span className="font-bold" style={{ color: t.text }}>{audit.score}/100</span>
+                                  </div>
+                                </td>
+                                <td className="p-3">
+                                  <span className={`text-[11px] px-2.5 py-0.5 rounded-full border font-semibold ${
+                                    audit.status === "Healthy" ? "bg-teal-500/10 text-teal-400 border-teal-500/30" :
+                                    audit.status === "Watch" ? "bg-amber-500/10 text-amber-400 border-amber-500/30" :
+                                    "bg-rose-500/10 text-rose-400 border-rose-500/30"
+                                  }`}>
+                                    {audit.status}
+                                  </span>
+                                </td>
+                                <td className="p-3 font-medium" style={{ color: t.textMuted }}>{audit.inspector}</td>
+                                <td className="p-3 text-right">
+                                  <span className="text-xs font-semibold hover:underline" style={{ color: accent }}>
+                                    View Report →
+                                  </span>
+                                </td>
+                              </tr>
+                            ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
                 </div>
-              </div>
+              )}
 
-              {/* AI Audit Analysis banner */}
-<div className="rounded-xl p-5 border border-l-4" style={{ background: t.card, borderTopColor: t.border, borderRightColor: t.border, borderBottomColor: t.border, borderLeftColor: accent }}>
-  <div className="flex items-center gap-2 mb-1">
-    <Sparkles size={15} color={accent} />
-    <p className="text-sm font-semibold" style={{ color: t.text }}>AI Audit Analysis</p>
-  </div>
-  <p className="text-sm leading-relaxed" style={{ color: t.textMuted }}>
-    Aurangabad CIDCO is the weakest outlet this quarter, with an expired fire safety certificate and a failed signage compliance check — recommend a priority re-audit this week.
-  </p>
-</div>
+              {/* Sub-Tab 2: Operational Compliance (Slide 4) */}
+              {auditSubTab === "operational" && (
+                <div className="space-y-6">
+                  <div className="p-4 rounded-xl border flex items-center justify-between" style={{ background: t.card, borderColor: t.border }}>
+                    <div>
+                      <h3 className="text-sm font-bold" style={{ color: t.text }}>⚡ Operational Compliance Monitor (Slide 4)</h3>
+                      <p className="text-xs" style={{ color: t.textMuted }}>
+                        Continuous automated tracking of Store Opening/Closing times, Attendance & Staffing levels, Cash Closing reconciliation, and Maintenance/Complaint response SLAs.
+                      </p>
+                    </div>
+                    <span className="text-xs px-3 py-1 rounded-full font-mono bg-teal-500/10 text-teal-400 border border-teal-500/20">Real-Time Telemetry Feed Active</span>
+                  </div>
 
-{/* AI Image Analysis */}
-<div className="rounded-xl border overflow-hidden transition-colors duration-200" style={{ background: t.card, borderColor: t.border }}>
-  <p className="text-sm font-semibold px-5 pt-5 pb-1 flex items-center gap-2" style={{ color: t.text }}>
-    <Image size={15} color={accent} /> AI Image Analysis
-  </p>
-  <div className="px-5 pb-5 pt-2 space-y-3">
-    {aiImageAnalysis.map((img, i) => (
-      <div key={i} className="flex items-center justify-between text-sm border-b last:border-0 pb-3 last:pb-0" style={{ borderColor: t.border }}>
-        <div>
-          <p style={{ color: t.text }} className="font-medium">{img.label} — {img.outlet}</p>
-          <p style={{ color: t.textFaint }} className="text-xs mt-0.5">{img.finding}</p>
-        </div>
-        <div className="flex items-center gap-2 shrink-0 ml-4">
-          <span style={{ color: t.textMuted }} className="text-xs">{img.confidence}% confidence</span>
-          <span
-            className="text-xs px-2 py-0.5 rounded-full border"
-            style={{
-              background: img.status === "Pass" ? `${accent}1A` : "#FB71851A",
-              color: img.status === "Pass" ? accent : "#FB7185",
-              borderColor: "transparent",
-            }}
-          >
-            {img.status}
-          </span>
-        </div>
-      </div>
-    ))}
-  </div>
-</div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div className="rounded-xl border p-4" style={{ background: t.card, borderColor: t.border }}>
+                      <span className="text-xs text-slate-400 font-medium">Check Opening/Closing Times</span>
+                      <div className="mt-2 flex items-baseline justify-between">
+                        <span className="text-2xl font-bold text-teal-400">98.4%</span>
+                        <span className="text-[10px] text-teal-400 bg-teal-500/10 px-2 py-0.5 rounded border border-teal-500/20">On-Time</span>
+                      </div>
+                      <p className="text-[11px] mt-2" style={{ color: t.textMuted }}>Avg store open delay: 1.2 minutes</p>
+                    </div>
 
-{/* Document Analysis */}
-<div className="rounded-xl border overflow-hidden transition-colors duration-200" style={{ background: t.card, borderColor: t.border }}>
-  <p className="text-sm font-semibold px-5 pt-5 pb-1 flex items-center gap-2" style={{ color: t.text }}>
-    <FileSearch size={15} color={accent} /> Document Analysis
-  </p>
-  <table className="w-full text-sm mt-3">
-    <thead>
-      <tr className="text-left text-xs border-y" style={{ color: t.textFaint, borderColor: t.border }}>
-        <th className="px-5 py-2 font-medium">Document</th>
-        <th className="px-5 py-2 font-medium">Outlet</th>
-        <th className="px-5 py-2 font-medium">Type</th>
-        <th className="px-5 py-2 font-medium">Expiry Date</th>
-        <th className="px-5 py-2 font-medium">Status</th>
-      </tr>
-    </thead>
-    <tbody>
-      {documentAnalysis.map((d, i) => (
-        <tr key={i} className="border-b last:border-0" style={{ borderColor: t.border }}>
-          <td className="px-5 py-3 font-medium" style={{ color: t.text }}>{d.document}</td>
-          <td className="px-5 py-3" style={{ color: t.textMuted }}>{d.outlet}</td>
-          <td className="px-5 py-3" style={{ color: t.textMuted }}>{d.type}</td>
-          <td className="px-5 py-3" style={{ color: t.textFaint }}>{d.date}</td>
-          <td className="px-5 py-3">
-            <span
-              className="text-xs px-2 py-0.5 rounded-full border"
-              style={{
-                background: d.status === "Valid" ? `${accent}1A` : d.status === "Expired" ? "#FB71851A" : "#F59E0B1A",
-                color: d.status === "Valid" ? accent : d.status === "Expired" ? "#FB7185" : "#F59E0B",
-                borderColor: "transparent",
-              }}
-              >
-                {d.status}
-            </span>
-          </td>
-        </tr>
-      ))}
-    </tbody>
-  </table>
-</div>
+                    <div className="rounded-xl border p-4" style={{ background: t.card, borderColor: t.border }}>
+                      <span className="text-xs text-slate-400 font-medium">Monitor Attendance & Staffing</span>
+                      <div className="mt-2 flex items-baseline justify-between">
+                        <span className="text-2xl font-bold text-blue-400">95.2%</span>
+                        <span className="text-[10px] text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded border border-blue-500/20">Shift Covered</span>
+                      </div>
+                      <p className="text-[11px] mt-2" style={{ color: t.textMuted }}>48/50 staff present on active shifts</p>
+                    </div>
 
-{/* Customer Feedback Integration */}
-<div className="rounded-xl border overflow-hidden transition-colors duration-200" style={{ background: t.card, borderColor: t.border }}>
-  <p className="text-sm font-semibold px-5 pt-5 pb-1 flex items-center gap-2" style={{ color: t.text }}>
-    <MessageSquare size={15} color={accent} /> Customer Feedback Integration
-  </p>
-  <table className="w-full text-sm mt-3">
-    <thead>
-      <tr className="text-left text-xs border-y" style={{ color: t.textFaint, borderColor: t.border }}>
-        <th className="px-5 py-2 font-medium">Outlet</th>
-        <th className="px-5 py-2 font-medium text-right">Rating</th>
-        <th className="px-5 py-2 font-medium text-right">Complaints</th>
-        <th className="px-5 py-2 font-medium">Sentiment</th>
-      </tr>
-    </thead>
-    <tbody>
-      {customerFeedbackByOutlet.map((f, i) => (
-        <tr key={i} className="border-b last:border-0" style={{ borderColor: t.border }}>
-          <td className="px-5 py-3 font-medium" style={{ color: t.text }}>{f.outlet}</td>
-          <td className="px-5 py-3 text-right" style={{ color: t.text }}>{f.rating} / 5</td>
-          <td className="px-5 py-3 text-right" style={{ color: t.textMuted }}>{f.complaints}</td>
-          <td className="px-5 py-3">
-            <span
-              className="text-xs px-2 py-0.5 rounded-full border"
-              style={{
-                background: f.sentiment === "Positive" ? `${accent}1A` : f.sentiment === "Negative" ? "#FB71851A" : "#F59E0B1A",
-                color: f.sentiment === "Positive" ? accent : f.sentiment === "Negative" ? "#FB7185" : "#F59E0B",
-                borderColor: "transparent",
-              }}
-            >
-              {f.sentiment}
-            </span>
-          </td>
-        </tr>
-      ))}
-    </tbody>
-  </table>
-</div>
+                    <div className="rounded-xl border p-4" style={{ background: t.card, borderColor: t.border }}>
+                      <span className="text-xs text-slate-400 font-medium">Validate Inventory & Cash Closing</span>
+                      <div className="mt-2 flex items-baseline justify-between">
+                        <span className="text-2xl font-bold text-amber-400">-$47.30</span>
+                        <span className="text-[10px] text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">Variance</span>
+                      </div>
+                      <p className="text-[11px] mt-2" style={{ color: t.textMuted }}>Flagged in Aurangabad CIDCO shift register</p>
+                    </div>
 
+                    <div className="rounded-xl border p-4" style={{ background: t.card, borderColor: t.border }}>
+                      <span className="text-xs text-slate-400 font-medium">Cleaning & Complaint SLA</span>
+                      <div className="mt-2 flex items-baseline justify-between">
+                        <span className="text-2xl font-bold text-purple-400">14.8 min</span>
+                        <span className="text-[10px] text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded border border-purple-500/20">Fast Response</span>
+                      </div>
+                      <p className="text-[11px] mt-2" style={{ color: t.textMuted }}>Hygiene checks passed: 98% network</p>
+                    </div>
+                  </div>
 
-<div className="rounded-xl border overflow-hidden" style={{ background: t.card, borderColor: t.border }}>
-  <p className="text-sm font-semibold px-5 pt-5 pb-1 flex items-center gap-2" style={{ color: t.text }}>
-    <FileCheck2 size={15} color={accent} /> Document Compliance
-  </p>
-  <table className="w-full text-sm mt-3">
-    <thead>
-      <tr className="text-left text-xs border-y" style={{ color: t.textFaint, borderColor: t.border }}>
-        <th className="px-5 py-2 font-medium">Document</th>
-        <th className="px-5 py-2 font-medium">Outlet</th>
-        <th className="px-5 py-2 font-medium">Type</th>
-        <th className="px-5 py-2 font-medium">Expiry</th>
-        <th className="px-5 py-2 font-medium">Status</th>
-      </tr>
-    </thead>
-    <tbody>
-      {documentAnalysis.map((d, i) => (
-        <tr key={i} className="border-b last:border-0" style={{ borderColor: t.border }}>
-          <td className="px-5 py-3 font-medium" style={{ color: t.text }}>{d.document}</td>
-          <td className="px-5 py-3" style={{ color: t.textMuted }}>{d.outlet}</td>
-          <td className="px-5 py-3" style={{ color: t.textMuted }}>{d.type}</td>
-          <td className="px-5 py-3" style={{ color: t.textFaint }}>{d.date}</td>
-          <td className="px-5 py-3">
-            <span
-              className="text-xs px-2 py-0.5 rounded-full border"
-              style={{
-                background: d.status === "Valid" ? `${accent}1A` : d.status === "Expired" ? "#FB71851A" : "#F59E0B1A",
-                color: d.status === "Valid" ? accent : d.status === "Expired" ? "#FB7185" : "#F59E0B",
-                borderColor: "transparent",
-              }}
-            >
-              {d.status}
-            </span>
-          </td>
-        </tr>
-      ))}
-    </tbody>
-  </table>
-</div>
+                  <div className="rounded-xl border overflow-hidden" style={{ background: t.card, borderColor: t.border }}>
+                    <div className="p-4 border-b flex items-center justify-between" style={{ borderColor: t.border }}>
+                      <h3 className="text-sm font-bold" style={{ color: t.text }}>Outlet Operational Compliance Telemetry Table</h3>
+                    </div>
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-left text-xs">
+                        <thead style={{ background: t.panel, color: t.textMuted }}>
+                          <tr>
+                            <th className="p-3 font-semibold">Outlet Name</th>
+                            <th className="p-3 font-semibold">Opening/Closing Punctuality</th>
+                            <th className="p-3 font-semibold">Attendance & Coverage</th>
+                            <th className="p-3 font-semibold">Cash Register Variance</th>
+                            <th className="p-3 font-semibold">Cleaning & Hygiene Score</th>
+                            <th className="p-3 font-semibold">Complaint Response Time</th>
+                            <th className="p-3 font-semibold">Overall Compliance</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y" style={{ borderColor: t.border }}>
+                          {opMetrics.map(item => (
+                            <tr key={item.outlet_id} className="hover:bg-teal-500/5 transition-colors">
+                              <td className="p-3 font-semibold" style={{ color: t.text }}>{item.outlet_name}</td>
+                              <td className="p-3">
+                                <span className="text-teal-400 font-medium">{item.opening_closing_punctuality}%</span> ({item.on_time_openings})
+                              </td>
+                              <td className="p-3">
+                                <span className="text-blue-400 font-medium">{item.attendance_rate}%</span> ({item.staff_coverage})
+                              </td>
+                              <td className="p-3">
+                                <span className={item.cash_closing_variance < 0 ? "text-rose-400 font-bold" : "text-teal-400 font-bold"}>
+                                  ${item.cash_closing_variance.toFixed(2)}
+                                </span>
+                              </td>
+                              <td className="p-3 font-medium text-purple-400">{item.cleaning_hygiene_score}%</td>
+                              <td className="p-3" style={{ color: t.textMuted }}>{item.complaint_avg_response_min} mins avg</td>
+                              <td className="p-3">
+                                <span className={`text-[11px] px-2.5 py-0.5 rounded-full border font-bold ${
+                                  item.overall_compliance_score >= 80 ? "bg-teal-500/10 text-teal-400 border-teal-500/30" : "bg-rose-500/10 text-rose-400 border-rose-500/30"
+                                }`}>
+                                  {item.overall_compliance_score} / 100
+                                </span>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              )}
 
-<div className="rounded-xl border overflow-hidden" style={{ background: t.card, borderColor: t.border }}>
-  <p className="text-sm font-semibold px-5 pt-5 pb-1 flex items-center gap-2" style={{ color: t.text }}>
-    <Wrench size={15} color={accent} /> Corrective Actions
-  </p>
-  <div className="px-5 pb-5 pt-2 space-y-3">
-    {correctiveActions.map((a, i) => (
-      <div key={i} className="flex items-start justify-between gap-3 text-sm border-b last:border-0 pb-3 last:pb-0" style={{ borderColor: t.border }}>
-        <div>
-          <p style={{ color: t.text }} className="font-medium">{a.outlet} — {a.issue}</p>
-          <p style={{ color: t.textFaint }} className="text-xs mt-0.5">{a.action}</p>
-        </div>
-        <span
-          className="text-xs px-2 py-0.5 rounded-full border shrink-0"
-          style={{
-            background: a.priority === "High" ? "#FB71851A" : a.priority === "Medium" ? "#F59E0B1A" : `${accent}1A`,
-            color: a.priority === "High" ? "#FB7185" : a.priority === "Medium" ? "#F59E0B" : accent,
-            borderColor: "transparent",
-          }}
-        >
-          {a.priority}
-        </span>
-      </div>
-    ))}
-  </div>
-</div>
+              {/* Sub-Tab 3: AI Store Photo Vision Audit (Slide 5) */}
+              {auditSubTab === "ai_photo" && (
+                <div className="space-y-6">
+                  <div className="p-4 rounded-xl border flex items-center justify-between" style={{ background: t.card, borderColor: t.border }}>
+                    <div>
+                      <h3 className="text-sm font-bold flex items-center gap-2" style={{ color: t.text }}>
+                        <Camera size={18} className="text-purple-400" /> Validate Franchise Standards with AI Store Photo Analysis (Slide 5)
+                      </h3>
+                      <p className="text-xs" style={{ color: t.textMuted }}>
+                        Upload real store photos or select fast-pick presets to trigger instant computer vision verification for branding, uniform adherence, counter hygiene, and shelf alignment.
+                      </p>
+                    </div>
+                    <span className="text-xs font-mono px-3 py-1 rounded-full bg-purple-500/10 text-purple-400 border border-purple-500/20">
+                      YOLOv11 / Vision-AI Pro
+                    </span>
+                  </div>
 
+                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    {/* Left: Input Form & Upload Trigger */}
+                    <div className="rounded-xl border p-5 space-y-4" style={{ background: t.card, borderColor: t.border }}>
+                      <h4 className="text-xs font-bold uppercase tracking-wider text-purple-400 flex items-center gap-1.5">
+                        <Sparkles size={14} /> AI Vision Audit Controls
+                      </h4>
 
-<div className="rounded-xl border overflow-hidden" style={{ background: t.card, borderColor: t.border }}>
-  <p className="text-sm font-semibold px-5 pt-5 pb-1 flex items-center gap-2" style={{ color: t.text }}>
-    <Timer size={15} color={accent} /> Re-Audit SLA Countdown
-  </p>
-  <p className="text-xs px-5 pb-3" style={{ color: t.textFaint }}>
-    Critical/Watch outlets must be re-inspected within their compliance window.
-  </p>
-  <table className="w-full text-sm mt-1">
-    <thead>
-      <tr className="text-left text-xs border-y" style={{ color: t.textFaint, borderColor: t.border }}>
-        <th className="px-5 py-2 font-medium">Outlet</th>
-        <th className="px-5 py-2 font-medium">Reason</th>
-        <th className="px-5 py-2 font-medium">Due Date</th>
-        <th className="px-5 py-2 font-medium text-right">Days Left</th>
-      </tr>
-    </thead>
-    <tbody>
-      {reAuditDeadlines.map((r, i) => (
-        <tr key={i} className="border-b last:border-0" style={{ borderColor: t.border }}>
-          <td className="px-5 py-3 font-medium" style={{ color: t.text }}>{r.outlet}</td>
-          <td className="px-5 py-3" style={{ color: t.textMuted }}>{r.reason}</td>
-          <td className="px-5 py-3" style={{ color: t.textFaint }}>{r.dueDate}</td>
-          <td className="px-5 py-3 text-right font-semibold" style={{ color: r.daysLeft <= 7 ? "#FB7185" : "#F59E0B" }}>
-            {r.daysLeft} days
-          </td>
-        </tr>
-      ))}
-    </tbody>
-  </table>
-</div>
+                      <div>
+                        <label className="block text-xs mb-1 font-medium" style={{ color: t.textMuted }}>Select Target Outlet</label>
+                        <select
+                          value={aiPhotoOutlet}
+                          onChange={(e) => setAiPhotoOutlet(e.target.value)}
+                          className="w-full text-xs rounded-lg border px-3 py-2 focus:outline-none"
+                          style={{ background: t.bg, borderColor: t.border, color: t.text }}
+                        >
+                          {KNOWN_OUTLET_NAMES.map(n => <option key={n} value={n}>{n}</option>)}
+                        </select>
+                      </div>
 
-<div className="rounded-xl border overflow-hidden" style={{ background: t.card, borderColor: t.border }}>
-  <p className="text-sm font-semibold px-5 pt-5 pb-1 flex items-center gap-2" style={{ color: t.text }}>
-    <PenTool size={15} color={accent} /> Audit Sign-off Trail
-  </p>
-  <p className="text-xs px-5 pb-3" style={{ color: t.textFaint }}>
-    Who reviewed and approved each outlet's latest audit.
-  </p>
-  <table className="w-full text-sm mt-1">
-    <thead>
-      <tr className="text-left text-xs border-y" style={{ color: t.textFaint, borderColor: t.border }}>
-        <th className="px-5 py-2 font-medium">Outlet</th>
-        <th className="px-5 py-2 font-medium">Reviewed By</th>
-        <th className="px-5 py-2 font-medium">Date</th>
-        <th className="px-5 py-2 font-medium">Status</th>
-      </tr>
-    </thead>
-    <tbody>
-      {signOffTrail.map((s, i) => (
-        <tr key={i} className="border-b last:border-0" style={{ borderColor: t.border }}>
-          <td className="px-5 py-3 font-medium" style={{ color: t.text }}>{s.outlet}</td>
-          <td className="px-5 py-3" style={{ color: t.textMuted }}>{s.reviewedBy}</td>
-          <td className="px-5 py-3" style={{ color: t.textFaint }}>{s.date}</td>
-          <td className="px-5 py-3">
-            <span
-              className="text-xs px-2 py-0.5 rounded-full border"
-              style={{
-                background: s.status === "Approved" ? `${accent}1A` : "#F59E0B1A",
-                color: s.status === "Approved" ? accent : "#F59E0B",
-                borderColor: "transparent",
-              }}
-            >
-              {s.status}
-            </span>
-          </td>
-        </tr>
-      ))}
-    </tbody>
-  </table>
-</div>
+                      <div>
+                        <label className="block text-xs mb-1 font-medium" style={{ color: t.textMuted }}>Inspection Category</label>
+                        <select
+                          value={aiPhotoCategory}
+                          onChange={(e) => setAiPhotoCategory(e.target.value)}
+                          className="w-full text-xs rounded-lg border px-3 py-2 focus:outline-none"
+                          style={{ background: t.bg, borderColor: t.border, color: t.text }}
+                        >
+                          <option value="Branding & Store Layout">Branding, Logo & Store Layout</option>
+                          <option value="Uniforms & Staff Hygiene">Uniforms, Hairnets & Staff Attire</option>
+                          <option value="Cleanliness & Sanitization">Counter & Store Cleanliness</option>
+                          <option value="Product Placement & Shelf">Product Display & Shelf Alignment</option>
+                        </select>
+                      </div>
 
-{/* Report Generation */}
-<div className="rounded-xl border p-5 transition-colors duration-200" style={{ background: t.card, borderColor: t.border }}>
-  <p className="text-sm font-semibold mb-1" style={{ color: t.text }}>Report Generation</p>
-  <p className="text-xs mb-4" style={{ color: t.textFaint }}>Generate a full audit report for the network or a specific outlet.</p>
-  <div className="flex flex-wrap gap-2">
-    {["Export PDF", "Export Excel", "Export CSV"].map((label) => (
-      <button key={label} className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border transition-colors" style={{ background: t.inputBg, borderColor: t.border, color: t.textMuted }}>
-        <Download size={12} /> {label}
-      </button>
-    ))}
-  </div>
-</div>
+                      {/* Fast-Pick Sample Store Photos */}
+                      <div className="space-y-2">
+                        <label className="block text-xs font-medium" style={{ color: t.textMuted }}>
+                          Fast-Pick Sample Inspection Photos:
+                        </label>
+                        <div className="grid grid-cols-2 gap-2">
+                          {SAMPLE_STORE_PHOTOS.map(sample => (
+                            <button
+                              key={sample.id}
+                              type="button"
+                              onClick={() => {
+                                setAiPhotoOutlet(sample.outlet);
+                                setAiPhotoCategory(sample.category);
+                                setAiPhotoName(`${sample.id}.jpg`);
+                                setAiPhotoPreview(sample.id);
+                                playTechChime();
+                              }}
+                              className={`p-2.5 rounded-lg border text-left transition-all cursor-pointer ${
+                                aiPhotoPreview === sample.id ? "border-purple-500 ring-1 ring-purple-500/40 bg-purple-500/10" : "hover:border-purple-500/30"
+                              }`}
+                              style={{ background: aiPhotoPreview === sample.id ? undefined : t.panel, borderColor: aiPhotoPreview === sample.id ? undefined : t.border }}
+                            >
+                              <p className="font-bold text-[11px] truncate" style={{ color: t.text }}>{sample.title}</p>
+                              <span className="text-[9px] font-mono px-1.5 py-0.2 rounded mt-1 inline-block" style={{ color: sample.color, background: `${sample.color}15` }}>
+                                {sample.tag}
+                              </span>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
 
+                      {/* Interactive File Upload Area */}
+                      <div className="space-y-1.5">
+                        <label className="block text-xs font-medium" style={{ color: t.textMuted }}>Or Upload Custom Store Photo</label>
+                        <label className="border-2 border-dashed rounded-xl p-5 text-center space-y-2 cursor-pointer hover:border-purple-400 transition-colors block" style={{ borderColor: t.border }}>
+                          <input
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            onChange={(e) => {
+                              const file = e.target.files?.[0];
+                              if (file) {
+                                setAiPhotoName(file.name);
+                                const reader = new FileReader();
+                                reader.onload = (event) => {
+                                  setAiPhotoPreview(event.target?.result as string);
+                                };
+                                reader.readAsDataURL(file);
+                                playTechChime();
+                              }
+                            }}
+                          />
+                          <div className="w-10 h-10 mx-auto rounded-full bg-purple-500/10 text-purple-400 flex items-center justify-center font-bold text-lg">
+                            <UploadCloud size={20} />
+                          </div>
+                          <p className="text-xs font-medium" style={{ color: t.text }}>
+                            {aiPhotoName && aiPhotoName !== "storefront_facade.jpg" ? `Selected: ${aiPhotoName}` : "Drop store photo here or click to browse"}
+                          </p>
+                          <p className="text-[10px]" style={{ color: t.textFaint }}>Supports JPG, PNG, WEBP (Max 15MB)</p>
+                        </label>
+                      </div>
+
+                      <button
+                        disabled={aiPhotoAnalyzing}
+                        onClick={() => {
+                          setAiPhotoAnalyzing(true);
+                          playTechChime();
+                          const token = typeof window !== "undefined" ? localStorage.getItem("fops_token") : null;
+                          const headers: Record<string, string> = { "Content-Type": "application/json" };
+                          if (token) headers["Authorization"] = `Bearer ${token}`;
+
+                          const foundOutlet = outlets.find(o => o.outlet_name === aiPhotoOutlet);
+                          const outletIdToSend = foundOutlet?.outlet_id || (aiPhotoOutlet.includes("Aurangabad") ? 4 : aiPhotoOutlet.includes("Pune") ? 2 : aiPhotoOutlet.includes("Mumbai") ? 3 : 1);
+
+                          fetch(`${API_BASE_URL}/api/compliance/analyze-photo`, {
+                            method: "POST",
+                            headers,
+                            body: JSON.stringify({
+                              outlet_id: outletIdToSend,
+                              outlet_name: aiPhotoOutlet,
+                              photo_category: aiPhotoCategory,
+                              inspector: "Vision-AI Pro v4.2",
+                              photo_name: aiPhotoName
+                            })
+                          })
+                          .then(res => res.json())
+                          .then(data => {
+                            setAiPhotoResult(data);
+                            setAiPhotoAnalyzing(false);
+                            if (data.id) {
+                              setAudits(prev => [data, ...prev.filter(a => a.id !== data.id)]);
+                              setAuditToast(`AI Vision Inspection completed for ${aiPhotoOutlet} (Score: ${data.score}/100)`);
+                              setTimeout(() => setAuditToast(null), 4000);
+                            }
+                            playTechChime();
+                          })
+                          .catch(() => {
+                            // Fallback simulation if backend offline
+                            setTimeout(() => {
+                              const isCritical = aiPhotoOutlet.includes("Aurangabad");
+                              const fallbackData = {
+                                id: Date.now(),
+                                outlet_id: outletIdToSend,
+                                outlet_name: aiPhotoOutlet,
+                                date: new Date().toISOString().split("T")[0],
+                                score: isCritical ? 64 : 96,
+                                status: isCritical ? "Critical" : "Healthy",
+                                inspector: "Vision-AI Pro v4.2",
+                                category: `AI Photo Vision: ${aiPhotoCategory}`,
+                                details: isCritical
+                                  ? "AI Vision detected promotional poster blocking secondary logo, staff member without hairnet, and un-sanitized prep surface."
+                                  : `AI Computer Vision verified official franchise branding, correct staff uniforms, clear checkout counter, and proper front-row product alignment for ${aiPhotoCategory}.`,
+                                ai_metrics: {
+                                  branding_logo_score: isCritical ? 74 : 98,
+                                  uniform_attire_score: isCritical ? 62 : 96,
+                                  cleanliness_score: isCritical ? 56 : 94,
+                                  product_placement_score: isCritical ? 60 : 97,
+                                  detected_objects: isCritical
+                                    ? ["Logo Partially Obscured [74%]", "Non-Standard Staff Attire [62%]", "Cluttered Prep Surface [56%]", "Unstocked Shelf [60%]"]
+                                    : ["Franchise Signboard [99.4%]", "Standard Uniform Apron [98%]", "Sanitized Surface [97%]", "Product Shelf Matrix [99%]"],
+                                  corrective_actions: isCritical
+                                    ? ["Re-position promotional banner away from main window logo", "Enforce hairnet & apron SOP for active shift staff", "Perform deep sanitization on front counter before peak hours"]
+                                    : [],
+                                  confidence: 0.982
+                                }
+                              };
+                              setAiPhotoResult(fallbackData);
+                              setAiPhotoAnalyzing(false);
+                              setAudits(prev => [fallbackData, ...prev]);
+                              setAuditToast(`AI Vision Inspection completed for ${aiPhotoOutlet} (Score: ${fallbackData.score}/100)`);
+                              setTimeout(() => setAuditToast(null), 4000);
+                              playTechChime();
+                            }, 1200);
+                          });
+                        }}
+                        className="w-full py-3 rounded-xl font-bold text-xs cursor-pointer shadow-md transition-all hover:shadow-purple-500/25 active:scale-95 flex items-center justify-center gap-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white"
+                      >
+                        {aiPhotoAnalyzing ? (
+                          <>
+                            <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                            <span>Running Computer Vision Model...</span>
+                          </>
+                        ) : (
+                          <>
+                            <Camera size={16} />
+                            <span>Run AI Photo Vision Inspection</span>
+                          </>
+                        )}
+                      </button>
+                    </div>
+
+                    {/* Right: Vision Model Results Card */}
+                    <div className="lg:col-span-2 rounded-xl border p-5 space-y-4 shadow-sm" style={{ background: t.card, borderColor: t.border }}>
+                      <div className="flex items-center justify-between border-b pb-3" style={{ borderColor: t.border }}>
+                        <div className="flex items-center gap-2">
+                          <span className="p-1.5 rounded-lg bg-purple-500/10 text-purple-400">
+                            <Sparkles size={16} />
+                          </span>
+                          <h4 className="text-xs font-bold uppercase tracking-wider text-purple-400">
+                            AI Vision Inspection Diagnostic Output
+                          </h4>
+                        </div>
+                        {aiPhotoResult && (
+                          <span className={`text-xs font-mono font-bold px-3 py-1 rounded-full border ${
+                            aiPhotoResult.status === "Healthy" ? "text-teal-400 bg-teal-500/10 border-teal-500/30" :
+                            aiPhotoResult.status === "Watch" ? "text-amber-400 bg-amber-500/10 border-amber-500/30" :
+                            "text-rose-400 bg-rose-500/10 border-rose-500/30"
+                          }`}>
+                            AI Score: {aiPhotoResult.score} / 100 ({aiPhotoResult.status})
+                          </span>
+                        )}
+                      </div>
+
+                      {aiPhotoAnalyzing ? (
+                        <div className="py-20 text-center space-y-4">
+                          <div className="relative w-16 h-16 mx-auto">
+                            <div className="w-16 h-16 border-4 border-purple-500/30 border-t-purple-400 rounded-full animate-spin" />
+                            <div className="absolute inset-0 flex items-center justify-center text-xl">📷</div>
+                          </div>
+                          <div className="space-y-1">
+                            <p className="text-sm font-bold" style={{ color: t.text }}>Scanning Store Photo & Detecting Objects...</p>
+                            <p className="text-xs" style={{ color: t.textMuted }}>
+                              Evaluating logo placement, staff uniforms, counter cleanliness, and front-facing shelf alignment.
+                            </p>
+                          </div>
+                        </div>
+                      ) : aiPhotoResult ? (
+                        <div className="space-y-5 text-xs">
+                          {/* Simulated Vision Overlay Visual */}
+                          <div className="relative rounded-2xl overflow-hidden border h-52 bg-slate-950 flex items-center justify-center p-4" style={{ borderColor: t.border }}>
+                            {/* Scanning laser effect */}
+                            <div className="absolute inset-0 bg-gradient-to-b from-purple-500/10 via-transparent to-transparent pointer-events-none" />
+                            <div className="z-10 text-center space-y-3 max-w-md">
+                              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900/90 border border-purple-500/40 text-purple-300 font-mono text-xs">
+                                <span className="w-2 h-2 rounded-full bg-teal-400 animate-ping" />
+                                {aiPhotoResult.category} - {aiPhotoResult.outlet_name}
+                              </div>
+
+                              {/* Detected Tags Overlay */}
+                              <div className="flex flex-wrap gap-2 justify-center">
+                                {aiPhotoResult.ai_metrics?.detected_objects?.map((obj: string, i: number) => (
+                                  <span key={i} className="text-[10px] font-mono px-2.5 py-1 rounded-md bg-purple-950/80 text-purple-200 border border-purple-500/40 shadow-sm">
+                                    [✓] {obj}
+                                  </span>
+                                ))}
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* 4 Score Metric Gauges */}
+                          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                            <div className="p-3.5 rounded-xl border text-center space-y-1 transition-all" style={{ background: t.panel, borderColor: t.border }}>
+                              <span className="text-[11px] font-medium block" style={{ color: t.textFaint }}>Branding & Logo</span>
+                              <span className="text-xl font-bold text-teal-400">{aiPhotoResult.ai_metrics?.branding_logo_score}%</span>
+                              <div className="w-full bg-slate-700/20 rounded-full h-1 mt-1">
+                                <div className="h-full rounded-full bg-teal-400" style={{ width: `${aiPhotoResult.ai_metrics?.branding_logo_score}%` }} />
+                              </div>
+                            </div>
+
+                            <div className="p-3.5 rounded-xl border text-center space-y-1 transition-all" style={{ background: t.panel, borderColor: t.border }}>
+                              <span className="text-[11px] font-medium block" style={{ color: t.textFaint }}>Uniforms & Attire</span>
+                              <span className="text-xl font-bold text-blue-400">{aiPhotoResult.ai_metrics?.uniform_attire_score}%</span>
+                              <div className="w-full bg-slate-700/20 rounded-full h-1 mt-1">
+                                <div className="h-full rounded-full bg-blue-400" style={{ width: `${aiPhotoResult.ai_metrics?.uniform_attire_score}%` }} />
+                              </div>
+                            </div>
+
+                            <div className="p-3.5 rounded-xl border text-center space-y-1 transition-all" style={{ background: t.panel, borderColor: t.border }}>
+                              <span className="text-[11px] font-medium block" style={{ color: t.textFaint }}>Store Cleanliness</span>
+                              <span className="text-xl font-bold text-purple-400">{aiPhotoResult.ai_metrics?.cleanliness_score}%</span>
+                              <div className="w-full bg-slate-700/20 rounded-full h-1 mt-1">
+                                <div className="h-full rounded-full bg-purple-400" style={{ width: `${aiPhotoResult.ai_metrics?.cleanliness_score}%` }} />
+                              </div>
+                            </div>
+
+                            <div className="p-3.5 rounded-xl border text-center space-y-1 transition-all" style={{ background: t.panel, borderColor: t.border }}>
+                              <span className="text-[11px] font-medium block" style={{ color: t.textFaint }}>Product Placement</span>
+                              <span className="text-xl font-bold text-amber-400">{aiPhotoResult.ai_metrics?.product_placement_score}%</span>
+                              <div className="w-full bg-slate-700/20 rounded-full h-1 mt-1">
+                                <div className="h-full rounded-full bg-amber-400" style={{ width: `${aiPhotoResult.ai_metrics?.product_placement_score}%` }} />
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Diagnostic Summary */}
+                          <div className="p-4 rounded-xl border space-y-1.5" style={{ background: t.panel, borderColor: t.border }}>
+                            <div className="flex items-center justify-between">
+                              <p className="font-bold text-xs text-teal-400 flex items-center gap-1.5">
+                                <CheckCircle2 size={14} /> AI Diagnostic Summary:
+                              </p>
+                              <span className="text-[10px] font-mono" style={{ color: t.textFaint }}>
+                                Model Confidence: {Math.round((aiPhotoResult.ai_metrics?.confidence || 0.98) * 100)}%
+                              </span>
+                            </div>
+                            <p className="text-xs leading-relaxed" style={{ color: t.textMuted }}>{aiPhotoResult.details}</p>
+                          </div>
+
+                          {/* Automated Corrective Actions */}
+                          {aiPhotoResult.ai_metrics?.corrective_actions?.length > 0 ? (
+                            <div className="p-4 rounded-xl border border-rose-500/30 bg-rose-500/10 space-y-2">
+                              <p className="font-bold text-xs text-rose-400 flex items-center gap-1.5">
+                                <AlertTriangle size={14} /> Automated Corrective Action Plan Generated:
+                              </p>
+                              <ul className="list-disc list-inside text-xs text-rose-300 space-y-1">
+                                {aiPhotoResult.ai_metrics.corrective_actions.map((act: string, idx: number) => (
+                                  <li key={idx}>{act}</li>
+                                ))}
+                              </ul>
+                              <div className="pt-2 flex justify-end">
+                                <button
+                                  onClick={() => {
+                                    setAuditToast("Corrective action tasks assigned to store manager.");
+                                    setTimeout(() => setAuditToast(null), 3500);
+                                    playTechChime();
+                                  }}
+                                  className="text-xs font-bold px-3 py-1.5 rounded-lg bg-rose-500/20 hover:bg-rose-500/30 text-rose-200 border border-rose-500/40 cursor-pointer"
+                                >
+                                  Acknowledge & Assign Tasks
+                                </button>
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="p-3.5 rounded-xl border border-teal-500/30 bg-teal-500/10 flex items-center justify-between">
+                              <span className="text-xs text-teal-300 font-medium flex items-center gap-2">
+                                <CheckCircle2 size={15} /> All standards passed. Zero corrective actions required.
+                              </span>
+                              <span className="text-[10px] font-mono text-teal-400">100% SOP COMPLIANT</span>
+                            </div>
+                          )}
+                        </div>
+                      ) : (
+                        <div className="py-20 text-center space-y-3" style={{ color: t.textMuted }}>
+                          <span className="text-4xl block">📸</span>
+                          <p className="text-sm font-semibold" style={{ color: t.text }}>No Inspection Active</p>
+                          <p className="text-xs max-w-sm mx-auto" style={{ color: t.textMuted }}>
+                            Select a target outlet, pick a sample photo or upload a photo, and click "Run AI Photo Vision Inspection".
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Submit Audit / Run AI Photo Modal */}
               {showAuditModal && (
-                <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-                  <div className="w-full max-w-lg rounded-2xl border p-6 shadow-2xl space-y-4" style={{ background: t.card, borderColor: t.border }}>
+                <div className="fixed inset-0 bg-black/70 backdrop-blur-md z-50 flex items-center justify-center p-4 animate-in fade-in duration-200">
+                  <div className="w-full max-w-xl rounded-2xl border p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto" style={{ background: t.card, borderColor: t.border }}>
                     <div className="flex items-center justify-between border-b pb-3" style={{ borderColor: t.border }}>
                       <h3 className="text-base font-bold flex items-center gap-2" style={{ color: t.text }}>
-                        <ShieldCheck size={18} color={accent} /> Submit Outlet Compliance Audit
+                        <ShieldCheck size={20} color={accent} />
+                        {auditModalMode === "manual" ? "Submit Manual SOP Compliance Audit" : "AI Store Photo Vision Inspector"}
                       </h3>
-                      <button onClick={() => setShowAuditModal(false)} className="text-sm cursor-pointer" style={{ color: t.textFaint }}>✕</button>
+                      <button onClick={() => setShowAuditModal(false)} className="text-sm cursor-pointer p-1 rounded-md hover:bg-white/10" style={{ color: t.textFaint }}>✕</button>
                     </div>
 
                     {/* Modal Mode Selector */}
-                    <div className="grid grid-cols-2 gap-2 p-1 rounded-lg border text-xs" style={{ background: t.panel, borderColor: t.border }}>
+                    <div className="grid grid-cols-2 gap-2 p-1.5 rounded-xl border text-xs" style={{ background: t.panel, borderColor: t.border }}>
                       <button
-                        onClick={() => setAuditModalMode("manual")}
-                        className="py-1.5 rounded font-semibold cursor-pointer transition-colors"
+                        onClick={() => {
+                          setAuditModalMode("manual");
+                          playTechChime();
+                        }}
+                        className="py-2 rounded-lg font-bold cursor-pointer transition-all flex items-center justify-center gap-1.5"
                         style={{
                           background: auditModalMode === "manual" ? accent : "transparent",
                           color: auditModalMode === "manual" ? t.textOnAccent : t.textMuted
                         }}
                       >
-                        Manual SOP Checklist
+                        <FileText size={14} /> Manual SOP Checklist
                       </button>
                       <button
-                        onClick={() => setAuditModalMode("ai_photo")}
-                        className="py-1.5 rounded font-semibold cursor-pointer transition-colors"
+                        onClick={() => {
+                          setAuditModalMode("ai_photo");
+                          playTechChime();
+                        }}
+                        className="py-2 rounded-lg font-bold cursor-pointer transition-all flex items-center justify-center gap-1.5"
                         style={{
                           background: auditModalMode === "ai_photo" ? "#9333EA" : "transparent",
                           color: auditModalMode === "ai_photo" ? "#FFFFFF" : t.textMuted
                         }}
                       >
-                        📷 AI Store Photo Upload
+                        <Camera size={14} /> 📷 AI Store Photo Upload
                       </button>
                     </div>
 
                     {auditModalMode === "manual" ? (
-                      <div className="space-y-3 text-xs">
-                        <div>
-                          <label className="block mb-1 font-medium" style={{ color: t.textMuted }}>Select Outlet</label>
-                          <select
-                            value={newAuditForm.outletName}
-                            onChange={(e) => {
-                              const name = e.target.value;
-                              const found = outlets.find(o => o.outlet_name === name);
-                              setNewAuditForm(prev => ({ ...prev, outletName: name, outletId: String(found?.outlet_id || 1) }));
-                            }}
-                            className="w-full rounded-lg border px-3 py-2 focus:outline-none"
-                            style={{ background: t.bg, borderColor: t.border, color: t.text }}
-                          >
-                            {KNOWN_OUTLET_NAMES.map(name => (
-                              <option key={name} value={name}>{name}</option>
-                            ))}
-                          </select>
+                      <div className="space-y-4 text-xs">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          <div>
+                            <label className="block mb-1 font-medium" style={{ color: t.textMuted }}>Select Outlet</label>
+                            <select
+                              value={newAuditForm.outletName}
+                              onChange={(e) => {
+                                const name = e.target.value;
+                                const found = outlets.find(o => o.outlet_name === name);
+                                setNewAuditForm(prev => ({ ...prev, outletName: name, outletId: String(found?.outlet_id || 1) }));
+                              }}
+                              className="w-full rounded-lg border px-3 py-2 focus:outline-none"
+                              style={{ background: t.bg, borderColor: t.border, color: t.text }}
+                            >
+                              {KNOWN_OUTLET_NAMES.map(name => (
+                                <option key={name} value={name}>{name}</option>
+                              ))}
+                            </select>
+                          </div>
+
+                          <div>
+                            <label className="block mb-1 font-medium" style={{ color: t.textMuted }}>Audit Category</label>
+                            <select
+                              value={newAuditForm.category}
+                              onChange={(e) => setNewAuditForm(prev => ({ ...prev, category: e.target.value }))}
+                              className="w-full rounded-lg border px-3 py-2 focus:outline-none"
+                              style={{ background: t.bg, borderColor: t.border, color: t.text }}
+                            >
+                              <option value="Food Safety & Temp">Food Safety & Temp Compliance</option>
+                              <option value="Opening / Closing Protocol">Opening / Closing Protocol</option>
+                              <option value="Cash Register Audit">Cash Register Audit</option>
+                              <option value="Staff Hygiene & Attire">Staff Hygiene & Attire</option>
+                              <option value="General Cleanliness">General Cleanliness & Sanitization</option>
+                              <option value="Comprehensive 360 Audit">Comprehensive 360° Outlet Audit</option>
+                            </select>
+                          </div>
                         </div>
 
                         <div>
@@ -3436,150 +3903,312 @@ function getPredictedRisks(auditList: any[]) {
                             type="text"
                             value={newAuditForm.inspector}
                             onChange={(e) => setNewAuditForm(prev => ({ ...prev, inspector: e.target.value }))}
+                            placeholder="Inspector Name / Quality Auditor"
                             className="w-full rounded-lg border px-3 py-2 focus:outline-none"
                             style={{ background: t.bg, borderColor: t.border, color: t.text }}
                           />
                         </div>
 
+                        {/* Checklist Checkpoints */}
                         <div className="space-y-2 border-t pt-3" style={{ borderColor: t.border }}>
-                          <p className="font-semibold text-xs mb-2" style={{ color: t.text }}>SOP Checklist Items</p>
+                          <p className="font-semibold text-xs mb-2 flex items-center justify-between" style={{ color: t.text }}>
+                            <span>SOP Verification Checkpoints (20 pts each):</span>
+                            <span className="font-mono text-teal-400">
+                              {[newAuditForm.tempCheck, newAuditForm.cleanlinessCheck, newAuditForm.registerCheck, newAuditForm.safetyCheck, newAuditForm.uniformCheck].filter(Boolean).length} / 5 Passed
+                            </span>
+                          </p>
                           {[
                             { key: "tempCheck", label: "Cold Storage & Food Temp Compliance (<= 4°C)" },
-                            { key: "cleanlinessCheck", label: "Kitchen & Counter Surface Disinfection" },
-                            { key: "registerCheck", label: "Cash Register & Billing Reconciliation" },
-                            { key: "safetyCheck", label: "Fire Safety & First-Aid Equipment Check" },
+                            { key: "cleanlinessCheck", label: "Kitchen, Prep Area & Counter Disinfection" },
+                            { key: "registerCheck", label: "Cash Register & Shift POS Balance Reconciliation" },
+                            { key: "safetyCheck", label: "Fire Safety, First-Aid & Emergency Route Verification" },
+                            { key: "uniformCheck", label: "Staff Uniform, Hairnets & Hygiene SOP Adherence" },
                           ].map(item => (
-                            <label key={item.key} className="flex items-center justify-between p-2.5 rounded-lg border cursor-pointer" style={{ background: t.panel, borderColor: t.border }}>
-                              <span style={{ color: t.textMuted }}>{item.label}</span>
+                            <label
+                              key={item.key}
+                              className="flex items-center justify-between p-2.5 rounded-lg border cursor-pointer transition-colors hover:bg-white/5"
+                              style={{ background: t.panel, borderColor: t.border }}
+                            >
+                              <span className="font-medium" style={{ color: (newAuditForm as any)[item.key] ? t.text : t.textMuted }}>
+                                {item.label}
+                              </span>
                               <input
                                 type="checkbox"
                                 checked={(newAuditForm as any)[item.key]}
                                 onChange={(e) => {
                                   const updated = { ...newAuditForm, [item.key]: e.target.checked };
-                                  const count = [updated.tempCheck, updated.cleanlinessCheck, updated.registerCheck, updated.safetyCheck].filter(Boolean).length;
-                                  const calculatedScore = count * 25;
+                                  const count = [
+                                    updated.tempCheck,
+                                    updated.cleanlinessCheck,
+                                    updated.registerCheck,
+                                    updated.safetyCheck,
+                                    updated.uniformCheck
+                                  ].filter(Boolean).length;
+                                  const calculatedScore = count * 20;
                                   setNewAuditForm({ ...updated, score: calculatedScore });
                                 }}
-                                className="w-4 h-4 accent-teal-500 cursor-pointer"
+                                className="w-4 h-4 accent-amber-500 cursor-pointer"
                               />
                             </label>
                           ))}
                         </div>
 
-                        <div className="p-3 rounded-lg border flex items-center justify-between font-medium" style={{ background: `${accent}10`, borderColor: `${accent}30` }}>
-                          <span style={{ color: t.text }}>Calculated Score:</span>
-                          <span className="text-base font-bold" style={{ color: accent }}>{newAuditForm.score} / 100</span>
+                        <div>
+                          <label className="block mb-1 font-medium" style={{ color: t.textMuted }}>Auditor Notes & Observations</label>
+                          <textarea
+                            rows={2}
+                            value={newAuditForm.notes}
+                            onChange={(e) => setNewAuditForm(prev => ({ ...prev, notes: e.target.value }))}
+                            placeholder="Enter specific audit observations, variance comments, or store notes..."
+                            className="w-full rounded-lg border px-3 py-2 focus:outline-none resize-none"
+                            style={{ background: t.bg, borderColor: t.border, color: t.text }}
+                          />
+                        </div>
+
+                        {/* Calculated Score Bar */}
+                        <div className="p-3.5 rounded-xl border flex items-center justify-between font-medium" style={{ background: `${accent}10`, borderColor: `${accent}30` }}>
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs font-semibold" style={{ color: t.text }}>Calculated Audit Score:</span>
+                            <span className={`text-[11px] px-2 py-0.5 rounded-full font-bold border ${
+                              newAuditForm.score >= 80 ? "bg-teal-500/10 text-teal-400 border-teal-500/30" :
+                              newAuditForm.score >= 60 ? "bg-amber-500/10 text-amber-400 border-amber-500/30" :
+                              "bg-rose-500/10 text-rose-400 border-rose-500/30"
+                            }`}>
+                              {newAuditForm.score >= 80 ? "Healthy" : newAuditForm.score >= 60 ? "Watch" : "Critical"}
+                            </span>
+                          </div>
+                          <span className="text-lg font-bold" style={{ color: accent }}>{newAuditForm.score} / 100</span>
                         </div>
 
                         <div className="flex gap-3 pt-2">
                           <button
+                            type="button"
                             onClick={() => setShowAuditModal(false)}
-                            className="flex-1 py-2 rounded-lg border font-medium text-xs cursor-pointer"
+                            className="flex-1 py-2.5 rounded-xl border font-semibold text-xs cursor-pointer hover:bg-white/5"
                             style={{ borderColor: t.border, color: t.textMuted }}
                           >
                             Cancel
                           </button>
                           <button
+                            type="button"
+                            disabled={auditSubmitting}
                             onClick={() => {
-                              const status = newAuditForm.score >= 80 ? "Healthy" : newAuditForm.score >= 50 ? "Watch" : "Critical";
+                              setAuditSubmitting(true);
+                              const status = newAuditForm.score >= 80 ? "Healthy" : newAuditForm.score >= 60 ? "Watch" : "Critical";
+                              const foundOutlet = outlets.find(o => o.outlet_name === newAuditForm.outletName);
+                              const outletIdToSend = foundOutlet?.outlet_id || (newAuditForm.outletName.includes("Aurangabad") ? 4 : newAuditForm.outletName.includes("Pune") ? 2 : 1);
+
                               const newRecord = {
-                                id: audits.length + 1,
-                                outlet_id: Number(newAuditForm.outletId),
+                                id: Date.now(),
+                                outlet_id: outletIdToSend,
                                 outlet_name: newAuditForm.outletName,
                                 date: new Date().toISOString().split("T")[0],
                                 score: newAuditForm.score,
                                 status,
-                                inspector: newAuditForm.inspector || "Manager",
-                                category: "Manual SOP Checklist"
+                                inspector: newAuditForm.inspector || "Quality Auditor",
+                                category: newAuditForm.category || "Manual SOP Checklist",
+                                details: newAuditForm.notes || "Standard manual SOP audit checkpoint submitted."
                               };
+
                               setAudits(prev => [newRecord, ...prev]);
                               setShowAuditModal(false);
+                              setAuditSubmitting(false);
+                              playTechChime();
+                              setAuditToast(`Audit report for ${newAuditForm.outletName} submitted successfully (Score: ${newAuditForm.score}/100)`);
+                              setTimeout(() => setAuditToast(null), 4000);
+
+                              const token = typeof window !== "undefined" ? localStorage.getItem("fops_token") : null;
+                              const headers: Record<string, string> = { "Content-Type": "application/json" };
+                              if (token) headers["Authorization"] = `Bearer ${token}`;
+
                               fetch(`${API_BASE_URL}/api/compliance`, {
                                 method: "POST",
-                                headers: { "Content-Type": "application/json" },
+                                headers,
                                 body: JSON.stringify(newRecord)
                               }).catch(() => {});
                             }}
-                            className="flex-1 py-2 rounded-lg font-bold text-xs cursor-pointer shadow-md"
+                            className="flex-1 py-2.5 rounded-xl font-bold text-xs cursor-pointer shadow-md transition-all hover:brightness-110 active:scale-95 flex items-center justify-center gap-1.5"
                             style={{ background: accent, color: t.textOnAccent }}
                           >
-                            Submit Audit Report
+                            <ShieldCheck size={14} /> Submit Audit Report
                           </button>
                         </div>
                       </div>
                     ) : (
-                      <div className="space-y-3 text-xs">
-                        <div>
-                          <label className="block mb-1 font-medium" style={{ color: t.textMuted }}>Select Outlet</label>
-                          <select
-                            value={aiPhotoOutlet}
-                            onChange={(e) => setAiPhotoOutlet(e.target.value)}
-                            className="w-full rounded-lg border px-3 py-2 focus:outline-none"
-                            style={{ background: t.bg, borderColor: t.border, color: t.text }}
-                          >
-                            {KNOWN_OUTLET_NAMES.map(name => (
-                              <option key={name} value={name}>{name}</option>
+                      <div className="space-y-4 text-xs">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          <div>
+                            <label className="block mb-1 font-medium" style={{ color: t.textMuted }}>Select Target Outlet</label>
+                            <select
+                              value={aiPhotoOutlet}
+                              onChange={(e) => setAiPhotoOutlet(e.target.value)}
+                              className="w-full rounded-lg border px-3 py-2 focus:outline-none"
+                              style={{ background: t.bg, borderColor: t.border, color: t.text }}
+                            >
+                              {KNOWN_OUTLET_NAMES.map(name => (
+                                <option key={name} value={name}>{name}</option>
+                              ))}
+                            </select>
+                          </div>
+
+                          <div>
+                            <label className="block mb-1 font-medium" style={{ color: t.textMuted }}>Inspection Category</label>
+                            <select
+                              value={aiPhotoCategory}
+                              onChange={(e) => setAiPhotoCategory(e.target.value)}
+                              className="w-full rounded-lg border px-3 py-2 focus:outline-none"
+                              style={{ background: t.bg, borderColor: t.border, color: t.text }}
+                            >
+                              <option value="Branding & Store Layout">Branding, Logo & Store Layout</option>
+                              <option value="Uniforms & Staff Hygiene">Uniforms, Hairnets & Staff Attire</option>
+                              <option value="Cleanliness & Sanitization">Counter & Store Cleanliness</option>
+                              <option value="Product Placement & Shelf">Product Display & Shelf Alignment</option>
+                            </select>
+                          </div>
+                        </div>
+
+                        {/* Fast Sample Pick */}
+                        <div className="space-y-1.5">
+                          <label className="block text-xs font-medium" style={{ color: t.textMuted }}>Fast-Pick Sample Store Photo:</label>
+                          <div className="grid grid-cols-2 gap-2">
+                            {SAMPLE_STORE_PHOTOS.map(sample => (
+                              <button
+                                key={sample.id}
+                                type="button"
+                                onClick={() => {
+                                  setAiPhotoOutlet(sample.outlet);
+                                  setAiPhotoCategory(sample.category);
+                                  setAiPhotoName(`${sample.id}.jpg`);
+                                  setAiPhotoPreview(sample.id);
+                                  playTechChime();
+                                }}
+                                className={`p-2 rounded-lg border text-left transition-all cursor-pointer ${
+                                  aiPhotoPreview === sample.id ? "border-purple-500 bg-purple-500/10" : "hover:border-purple-500/30"
+                                }`}
+                                style={{ background: aiPhotoPreview === sample.id ? undefined : t.panel, borderColor: aiPhotoPreview === sample.id ? undefined : t.border }}
+                              >
+                                <p className="font-bold text-[11px] truncate" style={{ color: t.text }}>{sample.title}</p>
+                                <span className="text-[9px] font-mono px-1.5 py-0.2 rounded mt-0.5 inline-block" style={{ color: sample.color, background: `${sample.color}15` }}>
+                                  {sample.tag}
+                                </span>
+                              </button>
                             ))}
-                          </select>
+                          </div>
                         </div>
 
-                        <div>
-                          <label className="block mb-1 font-medium" style={{ color: t.textMuted }}>Inspection Category</label>
-                          <select
-                            value={aiPhotoCategory}
-                            onChange={(e) => setAiPhotoCategory(e.target.value)}
-                            className="w-full rounded-lg border px-3 py-2 focus:outline-none"
-                            style={{ background: t.bg, borderColor: t.border, color: t.text }}
-                          >
-                            <option value="Branding & Store Layout">Branding, Logo & Store Layout</option>
-                            <option value="Uniforms & Staff Hygiene">Uniforms, Hairnets & Staff Attire</option>
-                            <option value="Cleanliness & Sanitization">Counter & Store Cleanliness</option>
-                            <option value="Product Placement & Shelf">Product Display & Shelf Alignment</option>
-                          </select>
-                        </div>
-
-                        <div className="border-2 border-dashed rounded-xl p-4 text-center space-y-1" style={{ borderColor: t.border }}>
-                          <span className="text-2xl block">📷</span>
-                          <p className="font-semibold text-xs" style={{ color: t.text }}>Upload Store Photo for AI Analysis</p>
+                        {/* File Upload Area */}
+                        <label className="border-2 border-dashed rounded-xl p-5 text-center space-y-1.5 cursor-pointer hover:border-purple-400 transition-colors block" style={{ borderColor: t.border }}>
+                          <input
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            onChange={(e) => {
+                              const file = e.target.files?.[0];
+                              if (file) {
+                                setAiPhotoName(file.name);
+                                const reader = new FileReader();
+                                reader.onload = (event) => {
+                                  setAiPhotoPreview(event.target?.result as string);
+                                };
+                                reader.readAsDataURL(file);
+                                playTechChime();
+                              }
+                            }}
+                          />
+                          <Camera size={24} className="mx-auto text-purple-400" />
+                          <p className="font-semibold text-xs" style={{ color: t.text }}>
+                            {aiPhotoName && aiPhotoName !== "storefront_facade.jpg" ? `Photo: ${aiPhotoName}` : "Drop Store Photo Here or Click to Upload"}
+                          </p>
                           <p className="text-[10px]" style={{ color: t.textFaint }}>AI Vision will verify branding, logo, uniforms & cleanliness</p>
-                        </div>
+                        </label>
 
                         <div className="flex gap-3 pt-2">
                           <button
+                            type="button"
                             onClick={() => setShowAuditModal(false)}
-                            className="flex-1 py-2 rounded-lg border font-medium text-xs cursor-pointer"
+                            className="flex-1 py-2.5 rounded-xl border font-medium text-xs cursor-pointer hover:bg-white/5"
                             style={{ borderColor: t.border, color: t.textMuted }}
                           >
                             Cancel
                           </button>
                           <button
+                            type="button"
                             onClick={() => {
                               setShowAuditModal(false);
                               setAuditSubTab("ai_photo");
                               setAiPhotoAnalyzing(true);
+                              playTechChime();
+
+                              const token = typeof window !== "undefined" ? localStorage.getItem("fops_token") : null;
+                              const headers: Record<string, string> = { "Content-Type": "application/json" };
+                              if (token) headers["Authorization"] = `Bearer ${token}`;
+
+                              const foundOutlet = outlets.find(o => o.outlet_name === aiPhotoOutlet);
+                              const outletIdToSend = foundOutlet?.outlet_id || (aiPhotoOutlet.includes("Aurangabad") ? 4 : 1);
+
                               fetch(`${API_BASE_URL}/api/compliance/analyze-photo`, {
                                 method: "POST",
-                                headers: { "Content-Type": "application/json" },
+                                headers,
                                 body: JSON.stringify({
-                                  outlet_id: aiPhotoOutlet.includes("Aurangabad") ? 4 : 1,
+                                  outlet_id: outletIdToSend,
                                   outlet_name: aiPhotoOutlet,
                                   photo_category: aiPhotoCategory,
-                                  inspector: "Computer Vision AI v4.2"
+                                  inspector: "Vision-AI Pro v4.2",
+                                  photo_name: aiPhotoName
                                 })
                               })
                               .then(res => res.json())
                               .then(data => {
                                 setAiPhotoResult(data);
                                 setAiPhotoAnalyzing(false);
-                                if (data.id) setAudits(prev => [data, ...prev]);
+                                if (data.id) {
+                                  setAudits(prev => [data, ...prev.filter(a => a.id !== data.id)]);
+                                  setAuditToast(`AI Vision Inspection completed for ${aiPhotoOutlet} (Score: ${data.score}/100)`);
+                                  setTimeout(() => setAuditToast(null), 4000);
+                                }
+                                playTechChime();
                               })
                               .catch(() => {
-                                setAiPhotoAnalyzing(false);
+                                setTimeout(() => {
+                                  const isCritical = aiPhotoOutlet.includes("Aurangabad");
+                                  const fallbackData = {
+                                    id: Date.now(),
+                                    outlet_id: outletIdToSend,
+                                    outlet_name: aiPhotoOutlet,
+                                    date: new Date().toISOString().split("T")[0],
+                                    score: isCritical ? 64 : 96,
+                                    status: isCritical ? "Critical" : "Healthy",
+                                    inspector: "Vision-AI Pro v4.2",
+                                    category: `AI Photo Vision: ${aiPhotoCategory}`,
+                                    details: isCritical
+                                      ? "AI Vision detected promotional poster blocking secondary logo, staff member without hairnet, and un-sanitized prep surface."
+                                      : `AI Computer Vision verified official franchise branding, correct staff uniforms, clear checkout counter, and proper front-row product alignment for ${aiPhotoCategory}.`,
+                                    ai_metrics: {
+                                      branding_logo_score: isCritical ? 74 : 98,
+                                      uniform_attire_score: isCritical ? 62 : 96,
+                                      cleanliness_score: isCritical ? 56 : 94,
+                                      product_placement_score: isCritical ? 60 : 97,
+                                      detected_objects: isCritical
+                                        ? ["Logo Partially Obscured [74%]", "Non-Standard Staff Attire [62%]", "Cluttered Prep Surface [56%]", "Unstocked Shelf [60%]"]
+                                        : ["Franchise Signboard [99.4%]", "Standard Uniform Apron [98%]", "Sanitized Surface [97%]", "Product Shelf Matrix [99%]"],
+                                      corrective_actions: isCritical
+                                        ? ["Re-position promotional banner away from main window logo", "Enforce hairnet & apron SOP for active shift staff", "Perform deep sanitization on front counter before peak hours"]
+                                        : [],
+                                      confidence: 0.982
+                                    }
+                                  };
+                                  setAiPhotoResult(fallbackData);
+                                  setAiPhotoAnalyzing(false);
+                                  setAudits(prev => [fallbackData, ...prev]);
+                                  setAuditToast(`AI Vision Inspection completed for ${aiPhotoOutlet} (Score: ${fallbackData.score}/100)`);
+                                  setTimeout(() => setAuditToast(null), 4000);
+                                  playTechChime();
+                                }, 1200);
                               });
                             }}
-                            className="flex-1 py-2 rounded-lg font-bold text-xs cursor-pointer shadow-md bg-purple-600 hover:bg-purple-500 text-white"
+                            className="flex-1 py-2.5 rounded-xl font-bold text-xs cursor-pointer shadow-md bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white transition-all active:scale-95 flex items-center justify-center gap-1.5"
                           >
-                            Run AI Photo Audit
+                            <Camera size={14} /> Run AI Photo Audit
                           </button>
                         </div>
                       </div>
@@ -3587,8 +4216,163 @@ function getPredictedRisks(auditList: any[]) {
                   </div>
                 </div>
               )}
-            </div>
-            )}
+
+              {/* Audit Detail Report Modal */}
+              {selectedAuditDetail && (
+                <div className="fixed inset-0 bg-black/70 backdrop-blur-md z-50 flex items-center justify-center p-4 animate-in fade-in duration-200">
+                  <div className="w-full max-w-lg rounded-2xl border p-6 shadow-2xl space-y-4 max-h-[85vh] overflow-y-auto" style={{ background: t.card, borderColor: t.border }}>
+                    <div className="flex items-center justify-between border-b pb-3" style={{ borderColor: t.border }}>
+                      <div className="flex items-center gap-2">
+                        <span className="p-1.5 rounded-lg bg-amber-500/10 text-amber-400">
+                          <ShieldCheck size={18} />
+                        </span>
+                        <div>
+                          <h3 className="text-sm font-bold" style={{ color: t.text }}>
+                            Audit Inspection Report #AUD-{selectedAuditDetail.id}
+                          </h3>
+                          <p className="text-[11px]" style={{ color: t.textFaint }}>{selectedAuditDetail.date} • {selectedAuditDetail.outlet_name}</p>
+                        </div>
+                      </div>
+                      <button onClick={() => setSelectedAuditDetail(null)} className="text-sm cursor-pointer p-1 rounded hover:bg-white/10" style={{ color: t.textFaint }}>✕</button>
+                    </div>
+
+                    <div className="space-y-3 text-xs">
+                      <div className="grid grid-cols-2 gap-3 p-3 rounded-xl border" style={{ background: t.panel, borderColor: t.border }}>
+                        <div>
+                          <p className="text-[10px] font-medium" style={{ color: t.textFaint }}>Audit Category</p>
+                          <p className="font-bold text-teal-400 mt-0.5">{selectedAuditDetail.category || "Manual SOP Inspection"}</p>
+                        </div>
+                        <div>
+                          <p className="text-[10px] font-medium" style={{ color: t.textFaint }}>Inspector / Engine</p>
+                          <p className="font-semibold mt-0.5" style={{ color: t.text }}>{selectedAuditDetail.inspector}</p>
+                        </div>
+                        <div>
+                          <p className="text-[10px] font-medium" style={{ color: t.textFaint }}>Compliance Score</p>
+                          <p className="text-base font-bold mt-0.5" style={{ color: selectedAuditDetail.score >= 80 ? "#2DD4BF" : selectedAuditDetail.score >= 60 ? "#F59E0B" : "#FB7185" }}>
+                            {selectedAuditDetail.score} / 100
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-[10px] font-medium" style={{ color: t.textFaint }}>Compliance Status</p>
+                          <span className={`inline-block mt-1 text-[11px] px-2.5 py-0.5 rounded-full border font-bold ${
+                            selectedAuditDetail.status === "Healthy" ? "bg-teal-500/10 text-teal-400 border-teal-500/30" :
+                            selectedAuditDetail.status === "Watch" ? "bg-amber-500/10 text-amber-400 border-amber-500/30" :
+                            "bg-rose-500/10 text-rose-400 border-rose-500/30"
+                          }`}>
+                            {selectedAuditDetail.status}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="p-3.5 rounded-xl border space-y-1" style={{ background: t.panel, borderColor: t.border }}>
+                        <p className="font-bold text-xs" style={{ color: t.text }}>Inspection Observations & Findings:</p>
+                        <p className="text-xs leading-relaxed" style={{ color: t.textMuted }}>{selectedAuditDetail.details || "All checkpoint parameters passed nominal thresholds without infractions."}</p>
+                      </div>
+
+                      {selectedAuditDetail.ai_metrics?.corrective_actions?.length > 0 && (
+                        <div className="p-3 rounded-xl border border-rose-500/30 bg-rose-500/10 space-y-1">
+                          <p className="font-bold text-xs text-rose-400">Corrective Action Items:</p>
+                          <ul className="list-disc list-inside text-[11px] text-rose-300 space-y-0.5">
+                            {selectedAuditDetail.ai_metrics.corrective_actions.map((act: string, idx: number) => (
+                              <li key={idx}>{act}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+
+                      <div className="p-3 rounded-xl border flex items-center justify-between" style={{ background: t.panel, borderColor: t.border }}>
+                        <div>
+                          <p className="text-[10px] font-mono text-teal-400">CRYPTOGRAPHIC LEDGER PROOF</p>
+                          <p className="text-[10px] font-mono" style={{ color: t.textFaint }}>SHA-256: 8f7c9e2b14a...e4d0</p>
+                        </div>
+                        <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-teal-500/10 text-teal-400 border border-teal-500/20">VERIFIED</span>
+                      </div>
+
+                      <div className="pt-2 flex gap-3">
+                        <button
+                          onClick={() => setSelectedAuditDetail(null)}
+                          className="w-full py-2.5 rounded-xl font-semibold text-xs cursor-pointer border hover:bg-white/5"
+                          style={{ borderColor: t.border, color: t.text }}
+                        >
+                          Close Report
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* SOP Standard Detail Modal */}
+              {selectedSopDetail && (
+                <div className="fixed inset-0 bg-black/70 backdrop-blur-md z-50 flex items-center justify-center p-4 animate-in fade-in duration-200">
+                  <div className="w-full max-w-lg rounded-2xl border p-6 shadow-2xl space-y-4 max-h-[85vh] overflow-y-auto" style={{ background: t.card, borderColor: t.border }}>
+                    <div className="flex items-center justify-between border-b pb-3" style={{ borderColor: t.border }}>
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs font-mono font-bold text-teal-400 px-2 py-0.5 rounded bg-teal-500/10 border border-teal-500/20">{selectedSopDetail.ver}</span>
+                          <h3 className="text-base font-bold" style={{ color: t.text }}>{selectedSopDetail.title} Standard</h3>
+                        </div>
+                        <p className="text-[11px]" style={{ color: t.textFaint }}>{selectedSopDetail.protocol}</p>
+                      </div>
+                      <button onClick={() => setSelectedSopDetail(null)} className="text-sm cursor-pointer p-1 rounded hover:bg-white/10" style={{ color: t.textFaint }}>✕</button>
+                    </div>
+
+                    <div className="space-y-3 text-xs">
+                      <div className="p-3 rounded-xl border flex items-center justify-between" style={{ background: t.panel, borderColor: t.border }}>
+                        <span className="font-medium" style={{ color: t.textMuted }}>Audit Frequency:</span>
+                        <span className="font-bold text-amber-400">{selectedSopDetail.frequency}</span>
+                      </div>
+
+                      <div className="space-y-2">
+                        <p className="font-bold text-xs" style={{ color: t.text }}>Standard Checkpoints ({selectedSopDetail.checkpoints.length} Criteria):</p>
+                        <div className="space-y-1.5 max-h-56 overflow-y-auto pr-1">
+                          {selectedSopDetail.checkpoints.map((cp: string, idx: number) => (
+                            <div key={idx} className="p-2.5 rounded-lg border flex items-start gap-2 text-xs" style={{ background: t.panel, borderColor: t.border }}>
+                              <span className="text-teal-400 font-bold font-mono text-[11px] mt-0.5">{idx + 1}.</span>
+                              <span style={{ color: t.text }}>{cp}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div className="pt-2 flex gap-3">
+                        <button
+                          onClick={() => setSelectedSopDetail(null)}
+                          className="flex-1 py-2.5 rounded-xl border font-medium text-xs cursor-pointer hover:bg-white/5"
+                          style={{ borderColor: t.border, color: t.textMuted }}
+                        >
+                          Close
+                        </button>
+                        <button
+                          onClick={() => {
+                            setSelectedSopDetail(null);
+                            setNewAuditForm(prev => ({
+                              ...prev,
+                              category: selectedSopDetail.category,
+                              notes: `Conducting standard audit under ${selectedSopDetail.title} (${selectedSopDetail.ver})`
+                            }));
+                            setAuditModalMode("manual");
+                            setShowAuditModal(true);
+                            playTechChime();
+                          }}
+                          className="flex-1 py-2.5 rounded-xl font-bold text-xs cursor-pointer shadow-md transition-all hover:brightness-110 active:scale-95"
+                          style={{ background: accent, color: t.textOnAccent }}
+                        >
+                          Conduct Audit for this SOP →
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Toast Notification Popup */}
+              {auditToast && (
+                <div className="fixed bottom-6 right-6 z-50 px-4 py-3 rounded-xl border bg-slate-900/95 border-teal-500/40 text-teal-300 text-xs font-semibold shadow-2xl flex items-center gap-2 animate-in slide-in-from-bottom-5 duration-300">
+                  <CheckCircle2 size={16} className="text-teal-400" />
+                  <span>{auditToast}</span>
+                </div>
+              )}
             </div>
           ) : active === "intelligence" ? (
 

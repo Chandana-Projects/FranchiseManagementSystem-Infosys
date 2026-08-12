@@ -34,3 +34,19 @@ exports.requireRole = (allowedRoles) => {
         next();
     };
 };
+
+exports.optionalAuth = (req, res, next) => {
+    const authHeader = req.headers["authorization"];
+    const token = authHeader && authHeader.split(" ")[1];
+
+    if (token) {
+        try {
+            const decoded = jwt.verify(token, JWT_SECRET);
+            req.user = decoded;
+        } catch (err) {
+            // Ignore expired/invalid token in optional auth mode
+        }
+    }
+
+    next();
+};
