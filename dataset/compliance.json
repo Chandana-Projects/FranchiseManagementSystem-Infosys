@@ -1,5 +1,113 @@
 [
   {
+    "id": 1786600946627,
+    "outlet_id": 1,
+    "outlet_name": "Nashik City Center",
+    "date": "2026-08-13",
+    "score": 95,
+    "status": "Healthy",
+    "inspector": "Vision-AI Pro v4.2",
+    "category": "AI Photo Vision: Branding & Store Layout",
+    "details": "AI Computer Vision v4.2 verified official franchise branding, correct staff attire, sanitary counter hygiene, and front-row product alignment for Branding & Store Layout.",
+    "photo_url": null,
+    "photo_name": "burger-kong-fast-food-outlet-at-warwick-services-on-the-m40-in-england-uk-S40H36.jpg",
+    "ai_metrics": {
+      "branding_logo_score": 95,
+      "uniform_attire_score": 94,
+      "cleanliness_score": 95,
+      "product_placement_score": 94,
+      "detected_objects": [
+        "Franchise Signboard (High Conf 99.4%)",
+        "Standard Uniform Apron & Cap",
+        "Sanitized Prep Counter",
+        "Front-Facing Display Stock"
+      ],
+      "corrective_actions": [],
+      "confidence": 0.982
+    }
+  },
+  {
+    "id": 1786600905224,
+    "outlet_id": 1,
+    "outlet_name": "Nashik City Center",
+    "date": "2026-08-13",
+    "score": 94,
+    "status": "Healthy",
+    "inspector": "Vision-AI Pro v4.2",
+    "category": "AI Photo Vision: Branding & Store Layout",
+    "details": "AI Computer Vision v4.2 verified official franchise branding, correct staff attire, sanitary counter hygiene, and front-row product alignment for Branding & Store Layout.",
+    "photo_url": null,
+    "photo_name": "OIP.jpg",
+    "ai_metrics": {
+      "branding_logo_score": 97,
+      "uniform_attire_score": 97,
+      "cleanliness_score": 92,
+      "product_placement_score": 91,
+      "detected_objects": [
+        "Franchise Signboard (High Conf 99.4%)",
+        "Standard Uniform Apron & Cap",
+        "Sanitized Prep Counter",
+        "Front-Facing Display Stock"
+      ],
+      "corrective_actions": [],
+      "confidence": 0.982
+    }
+  },
+  {
+    "id": 1786600881264,
+    "outlet_id": 1,
+    "outlet_name": "Nashik City Center",
+    "date": "2026-08-13",
+    "score": 94,
+    "status": "Healthy",
+    "inspector": "Vision-AI Pro v4.2",
+    "category": "AI Photo Vision: Branding & Store Layout",
+    "details": "AI Computer Vision v4.2 verified official franchise branding, correct staff attire, sanitary counter hygiene, and front-row product alignment for Branding & Store Layout.",
+    "photo_url": null,
+    "photo_name": "1_Screenshot-2022-08-22-at-110842.avif",
+    "ai_metrics": {
+      "branding_logo_score": 97,
+      "uniform_attire_score": 95,
+      "cleanliness_score": 87,
+      "product_placement_score": 96,
+      "detected_objects": [
+        "Franchise Signboard (High Conf 99.4%)",
+        "Standard Uniform Apron & Cap",
+        "Sanitized Prep Counter",
+        "Front-Facing Display Stock"
+      ],
+      "corrective_actions": [],
+      "confidence": 0.982
+    }
+  },
+  {
+    "id": 1786600819240,
+    "outlet_id": 1,
+    "outlet_name": "Nashik City Center",
+    "date": "2026-08-13",
+    "score": 93,
+    "status": "Healthy",
+    "inspector": "Vision-AI Pro v4.2",
+    "category": "AI Photo Vision: Branding & Store Layout",
+    "details": "AI Computer Vision v4.2 verified official franchise branding, correct staff attire, sanitary counter hygiene, and front-row product alignment for Branding & Store Layout.",
+    "photo_url": null,
+    "photo_name": "burger-kong-fast-food-outlet-at-warwick-services-on-the-m40-in-england-uk-S40H36.jpg",
+    "ai_metrics": {
+      "branding_logo_score": 96,
+      "uniform_attire_score": 98,
+      "cleanliness_score": 87,
+      "product_placement_score": 92,
+      "detected_objects": [
+        "Franchise Signboard (High Conf 99.4%)",
+        "Standard Uniform Apron & Cap",
+        "Sanitized Prep Counter",
+        "Front-Facing Display Stock"
+      ],
+      "corrective_actions": [],
+      "confidence": 0.982
+    }
+  },
+  {
     "id": 1786598011355,
     "outlet_id": 2,
     "outlet_name": "Pune FC Road",

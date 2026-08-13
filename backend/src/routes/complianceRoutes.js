@@ -3,10 +3,6 @@ const router = express.Router();
 const complianceController = require("../controllers/complianceController")
 const { optionalAuth, authenticateToken } = require("../middlewares/authMiddleware");
 
-const { optionalAuth } = require("../middlewares/authMiddleware");
-const { authenticateToken } = require("../middlewares/authMiddleware");
-
-
 router.get("/", optionalAuth, complianceController.getAllAudits);
 router.post("/", optionalAuth, complianceController.submitAudit);
 router.get("/operational-metrics", optionalAuth, complianceController.getOperationalMetrics);
