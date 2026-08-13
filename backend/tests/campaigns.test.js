@@ -7,7 +7,11 @@ jest.mock("../src/middlewares/authMiddleware", () => ({
     req.user = { user_id: 1, role: "admin" };
     next();
   },
-  requireRole: () => (req, res, next) => next()
+  requireRole: () => (req, res, next) => next(),
+  optionalAuth: (req, res, next) => {
+    req.user = { user_id: 1, role: "admin" };
+    next();
+  }
 }));
 
 // Mock Prisma config file directly

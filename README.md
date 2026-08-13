@@ -6,7 +6,86 @@ FranchiseOpsAI is a full-stack, enterprise-grade franchise operations and manage
 
 ## 🏗️ System Architecture
 
-The project is structured as a decoupled, multi-service microservice repository:
+The project is structured as a decoupled, multi-service microservice repository designed for high availability, sub-second telemetry updates, and resilient offline fallbacks.
+
+### 🌐 System Topology
+
+```mermaid
+graph TD
+    %% Styling
+    classDef client fill:#0f172a,stroke:#38bdf8,stroke-width:2px,color:#f8fafc;
+    classDef api fill:#1e1b4b,stroke:#818cf8,stroke-width:2px,color:#f8fafc;
+    classDef ml fill:#3b0764,stroke:#c084fc,stroke-width:2px,color:#f8fafc;
+    classDef db fill:#064e3b,stroke:#34d399,stroke-width:2px,color:#f8fafc;
+
+    %% Nodes
+    Client["💻 Next.js Frontend Dashboard<br/>(Port 3000)"]:::client
+    Express["⚙️ Express.js REST API<br/>(Port 5000)"]:::api
+    FastAPI["🧠 FastAPI ML Microservice<br/>(Port 8000)"]:::ml
+    Postgres["🗄️ PostgreSQL Database<br/>(Prisma ORM)"]:::db
+    JSONFallback["💾 Local JSON Datasets<br/>(Resiliency Fallback)"]:::db
+    Ledger["⛓️ Cryptographic Blockchain Ledger<br/>(Audit Trails)"]:::db
+
+    %% Connections
+    Client -->|HTTP Mutations & Queries| Express
+    Express -->|Server-Sent Events SSE| Client
+    Express -->|Prisma Client Queries| Postgres
+    Express -->|1. POST /ml/detect/anomalies<br/>2. POST /ml/predict/revenue| FastAPI
+    
+    %% Fallbacks
+    Express -.->|If DB Offline| JSONFallback
+    Express -->|Anchors Verified Audits| Ledger
+```
+
+---
+
+### 🔄 Data Pipeline & Transaction Sequence
+
+The sequence diagram below maps how POS transactions, compliance audits, and ML predictions flow through the systems and broadcast to dashboards in real-time.
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Mgr as Store Manager
+    participant UI as Next.js Dashboard
+    participant API as Express Server
+    participant DB as PostgreSQL
+    participant ML as FastAPI ML Service
+    participant SSE as SSE Broadcast Hub
+
+    Mgr->>UI: Submit POS Sale / Audit Checklist
+    UI->>API: POST /api/sales or POST /api/compliance
+    
+    rect rgb(30, 41, 59)
+        note right of API: Validation & Processing
+        API->>API: Run Zod Schema Validation
+        API->>DB: Write Record (Sales / Compliance Logs)
+    end
+
+    alt Low Stock Triggered
+        API->>DB: Write Alert Notification
+        API->>SSE: Emit STOCK_LOW Warning
+    end
+
+    rect rgb(58, 20, 96)
+        note right of API: Async ML Inference
+        API->>ML: POST /ml/detect/anomalies (Volume Spikes/Drops)
+        ML-->>API: Return Anomaly Flag & Confidences
+    end
+
+    alt Anomaly Detected
+        API->>DB: Write Anomaly Log
+        API->>SSE: Emit TRANSACTION_ANOMALY Broadcast
+    end
+
+    API-->>UI: Return Success Response (200 OK)
+    SSE-->>UI: Push Real-Time SSE Update Message
+    UI->>UI: Dynamic Redraw / Refetch State
+```
+
+---
+
+### 📂 Directory & Component Structure
 
 ```
 FranchiseManagementSystem/

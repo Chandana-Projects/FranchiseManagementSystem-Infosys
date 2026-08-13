@@ -3092,9 +3092,9 @@ function getPredictedRisks(auditList: any[]) {
               <div className="flex items-center gap-2 border-b pb-2 overflow-x-auto" style={{ borderColor: t.border }}>
                 {[
                   { id: "overview", label: "Audit Overview & History", icon: "🛡️" },
-                  { id: "operational", label: "Operational Compliance (Slide 4)", icon: "⚡" },
-                  { id: "ai_photo", label: "AI Store Photo Vision Audit (Slide 5)", icon: "📷" },
-                  { id: "architecture", label: "Audit Agent Architecture (Slide 3)", icon: "🏗️" },
+                  { id: "operational", label: "Operational Compliance", icon: "⚡" },
+                  { id: "ai_photo", label: "AI Store Photo Vision Audit", icon: "📷" },
+                  { id: "architecture", label: "Audit Agent Architecture", icon: "🏗️" },
                 ].map(tab => (
                   <button
                     key={tab.id}
@@ -3811,6 +3811,109 @@ function getPredictedRisks(auditList: any[]) {
                           </p>
                         </div>
                       )}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {auditSubTab === "architecture" && (
+                <div className="space-y-6">
+                  {/* Summary Card */}
+                  <div className="p-5 rounded-2xl border space-y-2 animate-in fade-in slide-in-from-bottom duration-300" style={{ background: t.card, borderColor: t.border }}>
+                    <div className="flex items-center gap-2">
+                      <span className="p-2 rounded-xl bg-teal-500/10 text-teal-400 border border-teal-500/20">
+                        <Brain size={20} color={accent} />
+                      </span>
+                      <h3 className="text-sm font-bold" style={{ color: t.text }}>Audit Agent & Compliance Pipeline Specification</h3>
+                    </div>
+                    <p className="text-xs leading-relaxed" style={{ color: t.textMuted }}>
+                      The Audit Agent coordinates manual operational checkpoints, YOLOv11 computer vision analysis, offline resiliency fallbacks, and cryptographic blockchain logging to ensure 100% data immutability.
+                    </p>
+                  </div>
+
+                  {/* Architecture Flow Diagram */}
+                  <div className="rounded-2xl border p-6 space-y-4 animate-in fade-in slide-in-from-bottom duration-400" style={{ background: t.card, borderColor: t.border }}>
+                    <h4 className="text-xs font-bold uppercase tracking-wider text-teal-400 flex items-center gap-1.5">
+                      <Activity size={14} className="animate-pulse" /> System Topology & Data Flow Sequence
+                    </h4>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-5 gap-4 items-center text-center">
+                      <div className="p-4 rounded-xl border space-y-2 flex flex-col justify-center items-center hover:scale-105 transition-transform" style={{ background: t.panel, borderColor: t.border }}>
+                        <span className="text-2xl">📸</span>
+                        <h5 className="text-xs font-bold" style={{ color: t.text }}>Ingestion Layer</h5>
+                        <p className="text-[10px]" style={{ color: t.textFaint }}>Checklists & Photo Uploads</p>
+                      </div>
+                      
+                      <div className="text-teal-400 font-bold text-lg rotate-90 md:rotate-0">➔</div>
+                      
+                      <div className="p-4 rounded-xl border space-y-2 flex flex-col justify-center items-center hover:scale-105 transition-transform" style={{ background: t.panel, borderColor: t.border }}>
+                        <span className="text-2xl">⚙️</span>
+                        <h5 className="text-xs font-bold" style={{ color: t.text }}>Audit Core Engine</h5>
+                        <p className="text-[10px]" style={{ color: t.textFaint }}>Scoring & Rules Calculator</p>
+                      </div>
+                      
+                      <div className="text-teal-400 font-bold text-lg rotate-90 md:rotate-0">➔</div>
+                      
+                      <div className="p-4 rounded-xl border space-y-2 flex flex-col justify-center items-center hover:scale-105 transition-transform" style={{ background: t.panel, borderColor: t.border }}>
+                        <span className="text-2xl">⛓️</span>
+                        <h5 className="text-xs font-bold" style={{ color: t.text }}>Consensus & Logs</h5>
+                        <p className="text-[10px]" style={{ color: t.textFaint }}>PostgreSQL + Blockchain</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Core Subsystem Cards */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-in fade-in slide-in-from-bottom duration-500">
+                    <div className="rounded-2xl border p-5 space-y-3 hover:shadow-lg transition-shadow" style={{ background: t.card, borderColor: t.border }}>
+                      <h4 className="text-xs font-bold uppercase tracking-wider text-teal-400 flex items-center gap-1.5">
+                        <AlertOctagon size={14} /> Compliance Scoring Engine
+                      </h4>
+                      <p className="text-xs" style={{ color: t.textMuted }}>
+                        Computes real-time rules for staffing coverage, inventory thresholds, attendance, and cash closing. Scores under 50% trigger instant visual dashboard flags and push notifications.
+                      </p>
+                      <div className="p-3 rounded-lg border text-[11px] font-mono" style={{ background: t.panel, borderColor: t.border, color: t.textMuted }}>
+                        <div>Formula: <span className="text-teal-400">Score = Sum(Value) / Checks.length</span></div>
+                        <div className="mt-1">Thresholds: Healthy &gt;= 80% | Watch &gt;= 50% | Critical &lt; 50%</div>
+                      </div>
+                    </div>
+
+                    <div className="rounded-2xl border p-5 space-y-3 hover:shadow-lg transition-shadow" style={{ background: t.card, borderColor: t.border }}>
+                      <h4 className="text-xs font-bold uppercase tracking-wider text-teal-400 flex items-center gap-1.5">
+                        <Camera size={14} /> AI YOLOv11 Computer Vision
+                      </h4>
+                      <p className="text-xs" style={{ color: t.textMuted }}>
+                        Integrates YOLOv11 classification models to verify real-time storefront branding, staff uniform attire (aprons, caps), sanitation cleanliness, and product shelf alignment from uploads.
+                      </p>
+                      <div className="p-3 rounded-lg border text-[11px] font-mono" style={{ background: t.panel, borderColor: t.border, color: t.textMuted }}>
+                        <div>Confidence Score: <span className="text-purple-400">0.982 (Verified)</span></div>
+                        <div className="mt-1">Classifiers: Logo, Hairnet, Sanitized Counter, Shelf Alignment</div>
+                      </div>
+                    </div>
+
+                    <div className="rounded-2xl border p-5 space-y-3 hover:shadow-lg transition-shadow" style={{ background: t.card, borderColor: t.border }}>
+                      <h4 className="text-xs font-bold uppercase tracking-wider text-teal-400 flex items-center gap-1.5">
+                        <Repeat size={14} /> Offline Resiliency & Fallback
+                      </h4>
+                      <p className="text-xs" style={{ color: t.textMuted }}>
+                        In the event of a database connection failure, the Express backend automatically switches to local JSON files (<span className="text-amber-400">dataset/compliance.json</span>) to ensure zero service disruption.
+                      </p>
+                      <div className="p-3 rounded-lg border text-[11px] font-mono" style={{ background: t.panel, borderColor: t.border, color: t.textMuted }}>
+                        <div>Database Fallback: <span className="text-emerald-400">Active</span></div>
+                        <div className="mt-1">Data Source: dataset/outlets.json, dataset/inventory.json</div>
+                      </div>
+                    </div>
+
+                    <div className="rounded-2xl border p-5 space-y-3 hover:shadow-lg transition-shadow" style={{ background: t.card, borderColor: t.border }}>
+                      <h4 className="text-xs font-bold uppercase tracking-wider text-teal-400 flex items-center gap-1.5">
+                        <Boxes size={14} /> Cryptographic Blockchain Ledger
+                      </h4>
+                      <p className="text-xs" style={{ color: t.textMuted }}>
+                        Every completed audit is hashed and stored in an immutable blockchain block ledger explorer, preventing historical data modification and ensuring complete audit trail integrity.
+                      </p>
+                      <div className="p-3 rounded-lg border text-[11px] font-mono" style={{ background: t.panel, borderColor: t.border, color: t.textMuted }}>
+                        <div>Hash Algorithm: <span className="text-blue-400">SHA-256</span></div>
+                        <div className="mt-1">Verification: Merkle Root & digital validator signatures</div>
+                      </div>
                     </div>
                   </div>
                 </div>

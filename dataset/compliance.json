@@ -1,5 +1,84 @@
 [
   {
+    "id": 1786598011355,
+    "outlet_id": 2,
+    "outlet_name": "Pune FC Road",
+    "date": "2026-08-13",
+    "score": 96,
+    "status": "Healthy",
+    "inspector": "Vision-AI Pro v4.2",
+    "category": "AI Photo Vision: Cleanliness & Sanitization",
+    "details": "Counter surfaces, floor area, and food preparation spaces meet HACCP grade cleanliness protocols.",
+    "photo_url": null,
+    "photo_name": "espresso_counter.jpg",
+    "ai_metrics": {
+      "branding_logo_score": 97,
+      "uniform_attire_score": 97,
+      "cleanliness_score": 97,
+      "product_placement_score": 94,
+      "detected_objects": [
+        "Sanitized Surface [99%]",
+        "Trash Bin Concealed [95%]",
+        "Floor Cleanliness [97%]"
+      ],
+      "corrective_actions": [],
+      "confidence": 0.982
+    }
+  },
+  {
+    "id": 1786597998862,
+    "outlet_id": 1,
+    "outlet_name": "Nashik City Center",
+    "date": "2026-08-13",
+    "score": 80,
+    "status": "Healthy",
+    "inspector": "Abhishek Pattnaik",
+    "category": "Food Safety & Temp",
+    "details": "Standard manual SOP audit checkpoint submitted.",
+    "checklist": null,
+    "notes": ""
+  },
+  {
+    "id": 1786547851612,
+    "outlet_id": 1,
+    "outlet_name": "Nashik City Center",
+    "date": "2026-08-12",
+    "score": 95,
+    "status": "Healthy",
+    "inspector": "Vision-AI Pro v4.2",
+    "category": "AI Photo Vision: Branding & Store Layout",
+    "details": "AI Computer Vision v4.2 verified official franchise branding, correct staff attire, sanitary counter hygiene, and front-row product alignment for Branding & Store Layout.",
+    "photo_url": null,
+    "photo_name": "storefront_facade.jpg",
+    "ai_metrics": {
+      "branding_logo_score": 97,
+      "uniform_attire_score": 97,
+      "cleanliness_score": 91,
+      "product_placement_score": 93,
+      "detected_objects": [
+        "Franchise Signboard (High Conf 99.4%)",
+        "Standard Uniform Apron & Cap",
+        "Sanitized Prep Counter",
+        "Front-Facing Display Stock"
+      ],
+      "corrective_actions": [],
+      "confidence": 0.982
+    }
+  },
+  {
+    "id": 1786547841432,
+    "outlet_id": 1,
+    "outlet_name": "Nashik City Center",
+    "date": "2026-08-12",
+    "score": 80,
+    "status": "Healthy",
+    "inspector": "Abhishek Pattnaik",
+    "category": "Food Safety & Temp",
+    "details": "Standard manual SOP audit checkpoint submitted.",
+    "checklist": null,
+    "notes": ""
+  },
+  {
     "id": 1786547399558,
     "outlet_id": 2,
     "outlet_name": "Pune FC Road",

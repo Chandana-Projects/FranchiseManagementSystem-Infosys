@@ -7,6 +7,10 @@ jest.mock('../src/middlewares/authMiddleware', () => ({
     next();
   },
   requireRole: () => (req, res, next) => next(),
+  optionalAuth: (req, res, next) => {
+    req.user = { role: 'admin' };
+    next();
+  }
 }));
 
 

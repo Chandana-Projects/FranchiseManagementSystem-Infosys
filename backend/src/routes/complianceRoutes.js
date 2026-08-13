@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const complianceController = require("../controllers/complianceController");
-const { optionalAuth } = require("../middlewares/authMiddleware");
+const { optionalAuth, authenticateToken } = require("../middlewares/authMiddleware");
 
 router.get("/", optionalAuth, complianceController.getAllAudits);
 router.post("/", optionalAuth, complianceController.submitAudit);
