@@ -3114,6 +3114,216 @@ function getPredictedRisks(auditList: any[]) {
                 ))}
               </div>
 
+            {auditSubTab === "overview" && (
+              <>
+              {/* Document Compliance */}
+<div className="rounded-xl border overflow-hidden" style={{ background: t.card, borderColor: t.border }}>
+  <p className="text-sm font-semibold px-5 pt-5 pb-1 flex items-center gap-2" style={{ color: t.text }}>
+    <FileCheck2 size={15} color={accent} /> Document Compliance
+  </p>
+  <table className="w-full text-sm mt-3">
+    <thead>
+      <tr className="text-left text-xs border-y" style={{ color: t.textFaint, borderColor: t.border }}>
+        <th className="px-5 py-2 font-medium">Document</th>
+        <th className="px-5 py-2 font-medium">Outlet</th>
+        <th className="px-5 py-2 font-medium">Type</th>
+        <th className="px-5 py-2 font-medium">Expiry</th>
+        <th className="px-5 py-2 font-medium">Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      {documentAnalysis.map((d, i) => (
+        <tr key={i} className="border-b last:border-0" style={{ borderColor: t.border }}>
+          <td className="px-5 py-3 font-medium" style={{ color: t.text }}>{d.document}</td>
+          <td className="px-5 py-3" style={{ color: t.textMuted }}>{d.outlet}</td>
+          <td className="px-5 py-3" style={{ color: t.textMuted }}>{d.type}</td>
+          <td className="px-5 py-3" style={{ color: t.textFaint }}>{d.date}</td>
+          <td className="px-5 py-3">
+            <span
+              className="text-xs px-2 py-0.5 rounded-full border"
+              style={{
+                background: d.status === "Valid" ? `${accent}1A` : d.status === "Expired" ? "#FB71851A" : "#F59E0B1A",
+                color: d.status === "Valid" ? accent : d.status === "Expired" ? "#FB7185" : "#F59E0B",
+                borderColor: "transparent",
+              }}
+            >
+              {d.status}
+            </span>
+          </td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
+
+
+{/* Re-Audit SLA Countdown */}
+<div className="rounded-xl border overflow-hidden" style={{ background: t.card, borderColor: t.border }}>
+  <p className="text-sm font-semibold px-5 pt-5 pb-1 flex items-center gap-2" style={{ color: t.text }}>
+    <Timer size={15} color={accent} /> Re-Audit SLA Countdown
+  </p>
+  <p className="text-xs px-5 pb-3" style={{ color: t.textFaint }}>
+    Critical/Watch outlets must be re-inspected within their compliance window.
+  </p>
+  <table className="w-full text-sm mt-1">
+    <thead>
+      <tr className="text-left text-xs border-y" style={{ color: t.textFaint, borderColor: t.border }}>
+        <th className="px-5 py-2 font-medium">Outlet</th>
+        <th className="px-5 py-2 font-medium">Reason</th>
+        <th className="px-5 py-2 font-medium">Due Date</th>
+        <th className="px-5 py-2 font-medium text-right">Days Left</th>
+      </tr>
+    </thead>
+    <tbody>
+      {reAuditDeadlines.map((r, i) => (
+        <tr key={i} className="border-b last:border-0" style={{ borderColor: t.border }}>
+          <td className="px-5 py-3 font-medium" style={{ color: t.text }}>{r.outlet}</td>
+          <td className="px-5 py-3" style={{ color: t.textMuted }}>{r.reason}</td>
+          <td className="px-5 py-3" style={{ color: t.textFaint }}>{r.dueDate}</td>
+          <td className="px-5 py-3 text-right font-semibold" style={{ color: r.daysLeft <= 7 ? "#FB7185" : "#F59E0B" }}>
+            {r.daysLeft} days
+          </td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
+
+{/* Audit Sign-off Trail */}
+<div className="rounded-xl border overflow-hidden" style={{ background: t.card, borderColor: t.border }}>
+  <p className="text-sm font-semibold px-5 pt-5 pb-1 flex items-center gap-2" style={{ color: t.text }}>
+    <PenTool size={15} color={accent} /> Audit Sign-off Trail
+  </p>
+  <p className="text-xs px-5 pb-3" style={{ color: t.textFaint }}>
+    Who reviewed and approved each outlet's latest audit.
+  </p>
+  <table className="w-full text-sm mt-1">
+    <thead>
+      <tr className="text-left text-xs border-y" style={{ color: t.textFaint, borderColor: t.border }}>
+        <th className="px-5 py-2 font-medium">Outlet</th>
+        <th className="px-5 py-2 font-medium">Reviewed By</th>
+        <th className="px-5 py-2 font-medium">Date</th>
+        <th className="px-5 py-2 font-medium">Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      {signOffTrail.map((s, i) => (
+        <tr key={i} className="border-b last:border-0" style={{ borderColor: t.border }}>
+          <td className="px-5 py-3 font-medium" style={{ color: t.text }}>{s.outlet}</td>
+          <td className="px-5 py-3" style={{ color: t.textMuted }}>{s.reviewedBy}</td>
+          <td className="px-5 py-3" style={{ color: t.textFaint }}>{s.date}</td>
+          <td className="px-5 py-3">
+            <span
+              className="text-xs px-2 py-0.5 rounded-full border"
+              style={{
+                background: s.status === "Approved" ? `${accent}1A` : "#F59E0B1A",
+                color: s.status === "Approved" ? accent : "#F59E0B",
+                borderColor: "transparent",
+              }}
+            >
+              {s.status}
+            </span>
+          </td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
+
+{/* Repeat Offenders */}
+{getRepeatOffenders(audits).length > 0 && (
+  <div className="rounded-xl p-5 border border-l-4" style={{ background: t.card, borderTopColor: t.border, borderRightColor: t.border, borderBottomColor: t.border, borderLeftColor: "#FB7185" }}>
+    <div className="flex items-center gap-2 mb-1">
+      <Repeat size={15} color="#FB7185" />
+      <p className="text-sm font-semibold" style={{ color: t.text }}>Repeat Offenders</p>
+    </div>
+    <p className="text-sm leading-relaxed mb-3" style={{ color: t.textMuted }}>
+      Outlets flagged Watch or Critical more than once in recent audits — may indicate a systemic issue, not a one-off.
+    </p>
+    <div className="flex flex-wrap gap-2">
+      {getRepeatOffenders(audits).map((o) => (
+        <span
+          key={o.outlet}
+          className="text-xs px-2.5 py-1 rounded-full border"
+          style={{ background: "#FB71851A", color: "#FB7185", borderColor: "#FB718533" }}
+        >
+          {o.outlet}: flagged {o.count}x
+        </span>
+      ))}
+    </div>
+  </div>
+)}    
+{/* Customer Feedback Integration */}
+<div className="rounded-xl border overflow-hidden" style={{ background: t.card, borderColor: t.border }}>
+  <p className="text-sm font-semibold px-5 pt-5 pb-1 flex items-center gap-2" style={{ color: t.text }}>
+    <MessageSquare size={15} color={accent} /> Customer Feedback Integration
+  </p>
+  <table className="w-full text-sm mt-3">
+    <thead>
+      <tr className="text-left text-xs border-y" style={{ color: t.textFaint, borderColor: t.border }}>
+        <th className="px-5 py-2 font-medium">Outlet</th>
+        <th className="px-5 py-2 font-medium text-right">Rating</th>
+        <th className="px-5 py-2 font-medium text-right">Complaints</th>
+        <th className="px-5 py-2 font-medium">Sentiment</th>
+      </tr>
+    </thead>
+    <tbody>
+      {customerFeedbackByOutlet.map((f, i) => (
+        <tr key={i} className="border-b last:border-0" style={{ borderColor: t.border }}>
+          <td className="px-5 py-3 font-medium" style={{ color: t.text }}>{f.outlet}</td>
+          <td className="px-5 py-3 text-right" style={{ color: t.text }}>{f.rating} / 5</td>
+          <td className="px-5 py-3 text-right" style={{ color: t.textMuted }}>{f.complaints}</td>
+          <td className="px-5 py-3">
+            <span
+              className="text-xs px-2 py-0.5 rounded-full border"
+              style={{
+                background: f.sentiment === "Positive" ? `${accent}1A` : f.sentiment === "Negative" ? "#FB71851A" : "#F59E0B1A",
+                color: f.sentiment === "Positive" ? accent : f.sentiment === "Negative" ? "#FB7185" : "#F59E0B",
+                borderColor: "transparent",
+              }}
+            >
+              {f.sentiment}
+            </span>
+          </td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
+
+
+{/* Report Generation */}
+<div className="rounded-xl border p-5 transition-colors duration-200" style={{ background: t.card, borderColor: t.border }}>
+  <p className="text-sm font-semibold mb-1" style={{ color: t.text }}>Report Generation</p>
+  <p className="text-xs mb-4" style={{ color: t.textFaint }}>Generate a full audit report for the network or a specific outlet.</p>
+  <div className="flex flex-wrap gap-2">
+  <button
+    onClick={() => window.print()}
+    className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border transition-colors cursor-pointer hover:bg-white/5"
+    style={{ background: t.inputBg, borderColor: t.border, color: t.textMuted }}
+  >
+    <Download size={12} /> Export PDF
+  </button>
+  <button
+    onClick={() => exportToCSV(`audit_report_${new Date().toISOString().split("T")[0]}.xls`, audits)}
+    className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border transition-colors cursor-pointer hover:bg-white/5"
+    style={{ background: t.inputBg, borderColor: t.border, color: t.textMuted }}
+  >
+    <Download size={12} /> Export Excel
+  </button>
+  <button
+    onClick={() => exportToCSV(`audit_report_${new Date().toISOString().split("T")[0]}.csv`, audits)}
+    className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border transition-colors cursor-pointer hover:bg-white/5"
+    style={{ background: t.inputBg, borderColor: t.border, color: t.textMuted }}
+  >
+    <Download size={12} /> Export CSV
+  </button>
+</div>
+</div>
+
+</>          
+)}
+
               {/* Sub-Tab 1: Overview & History */}
               {auditSubTab === "operational" && (
   <div className="space-y-6">
@@ -3204,6 +3414,67 @@ function getPredictedRisks(auditList: any[]) {
                       ))}
                     </div>
                   </div>
+   
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+  <div className="rounded-xl border p-5" style={{ background: t.card, borderColor: t.border }}>
+    <p className="text-sm font-semibold mb-1 flex items-center gap-2" style={{ color: t.text }}>
+      <Activity size={15} color={accent} /> Network Compliance Trend
+    </p>
+    <p className="text-xs mb-4" style={{ color: t.textFaint }}>Average audit score, last 6 months</p>
+    <ResponsiveContainer width="100%" height={180}>
+      <LineChart data={complianceTrend}>
+        <CartesianGrid strokeDasharray="3 3" stroke={t.gridLine} />
+        <XAxis dataKey="month" tick={{ fontSize: 12, fill: t.textFaint }} stroke={t.gridLine} />
+        <YAxis tick={{ fontSize: 12, fill: t.textFaint }} stroke={t.gridLine} domain={[60, 100]} />
+        <Tooltip contentStyle={{ background: t.card, border: `1px solid ${t.border}`, borderRadius: 8, color: t.text }} formatter={(v: any) => `${v}/100`} />
+        <Line type="monotone" dataKey="score" stroke={accent} strokeWidth={2.5} dot={{ r: 3 }} />
+      </LineChart>
+    </ResponsiveContainer>
+  </div>
+
+  <div className="rounded-xl border overflow-hidden" style={{ background: t.card, borderColor: t.border }}>
+    <p className="text-sm font-semibold px-5 pt-5 pb-1 flex items-center gap-2" style={{ color: t.text }}>
+      <Grid3x3 size={15} color={accent} /> Weakest Compliance Categories
+    </p>
+    <p className="text-xs px-5 pb-3" style={{ color: t.textFaint }}>Pass rate by category, network-wide</p>
+    <div className="px-5 pb-5 space-y-3">
+      {complianceCategories.sort((a, b) => a.passRate - b.passRate).map((c) => (
+        <div key={c.category}>
+          <div className="flex items-center justify-between text-sm mb-1">
+            <span style={{ color: t.text }}>{c.category}</span>
+            <span style={{ color: c.passRate < 70 ? "#FB7185" : c.passRate < 85 ? "#F59E0B" : accent }}>{c.passRate}%</span>
+          </div>
+          <div className="w-full h-2 rounded-full" style={{ background: t.inputBg }}>
+            <div
+              className="h-2 rounded-full"
+              style={{ width: `${c.passRate}%`, background: c.passRate < 70 ? "#FB7185" : c.passRate < 85 ? "#F59E0B" : accent }}
+            />
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</div>
+
+{getPredictedRisks(audits).length > 0 && (
+  <div className="rounded-xl p-5 border border-l-4" style={{ background: t.card, borderTopColor: t.border, borderRightColor: t.border, borderBottomColor: t.border, borderLeftColor: "#F59E0B" }}>
+    <div className="flex items-center gap-2 mb-1">
+      <AlertOctagon size={15} color="#F59E0B" />
+      <p className="text-sm font-semibold" style={{ color: t.text }}>Predictive Risk Alert</p>
+    </div>
+    <p className="text-sm leading-relaxed mb-3" style={{ color: t.textMuted }}>
+      Score trending downward — likely to fail the next audit if the pattern continues.
+    </p>
+    <div className="flex flex-wrap gap-2">
+      {getPredictedRisks(audits).map((r) => (
+        <span key={r.outlet} className="text-xs px-2.5 py-1 rounded-full border" style={{ background: "#F59E0B1A", color: "#F59E0B", borderColor: "#F59E0B33" }}>
+          {r.outlet}: {r.trend}
+        </span>
+      ))}
+    </div>
+  </div>
+)}
+
                   {/* Audit History Table with Search & Filter */}
                   <div className="rounded-xl border overflow-hidden shadow-sm" style={{ background: t.card, borderColor: t.border }}>
                     <div className="p-4 border-b flex flex-wrap items-center justify-between gap-3" style={{ borderColor: t.border }}>
