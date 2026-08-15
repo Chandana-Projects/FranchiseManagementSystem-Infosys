@@ -1,5 +1,32 @@
 [
   {
+    "id": 1786625697745,
+    "outlet_id": 1,
+    "outlet_name": "Nashik City Center",
+    "date": "2026-08-13",
+    "score": 95,
+    "status": "Healthy",
+    "inspector": "Vision-AI Pro v4.2",
+    "category": "AI Photo Vision: Branding & Store Layout",
+    "details": "AI Computer Vision v4.2 verified official franchise branding, correct staff attire, sanitary counter hygiene, and front-row product alignment for Branding & Store Layout.",
+    "photo_url": null,
+    "photo_name": "storefront_facade.jpg",
+    "ai_metrics": {
+      "branding_logo_score": 97,
+      "uniform_attire_score": 94,
+      "cleanliness_score": 91,
+      "product_placement_score": 98,
+      "detected_objects": [
+        "Franchise Signboard (High Conf 99.4%)",
+        "Standard Uniform Apron & Cap",
+        "Sanitized Prep Counter",
+        "Front-Facing Display Stock"
+      ],
+      "corrective_actions": [],
+      "confidence": 0.982
+    }
+  },
+  {
     "id": 1786600946627,
     "outlet_id": 1,
     "outlet_name": "Nashik City Center",
