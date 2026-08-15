@@ -1859,7 +1859,17 @@ function getPredictedRisks(auditList: any[]) {
                 {dynamicKpis.map((k) => {
                   const Icon = k.icon;
                   return (
-                    <div key={k.label} className="rounded-xl border p-4 transition-all duration-300 stat-card-glow border-t-2" style={{ background: t.card, borderColor: t.border, borderTopColor: accent }}>
+                    <div
+                  key={k.label}
+                  className="rounded-xl border p-4 transition-all duration-300 stat-card-glow border-t-2"
+                  style={{
+                  background: t.card,
+                  borderTopColor: accent,
+                  borderRightColor: t.border,
+                  borderBottomColor: t.border,
+                  borderLeftColor: t.border,
+                   }}
+                    >
                       <div className="w-7 h-7 rounded-md flex items-center justify-center mb-3" style={{ background: `${accent}1A` }}>
                         <Icon size={13} color={accent} />
                       </div>
