@@ -79,3 +79,49 @@ exports.getOutletIntelligence = async (req, res, next) => {
         next(err);
     }
 };
+exports.getPerformanceRanking = async (req, res, next) => {
+    try {
+        const data = await intelligenceService.getPerformanceRanking();
+
+        return res.status(200).json(data);
+    } catch (err) {
+        next(err);
+    }
+};
+exports.compareOutlets = async (req, res, next) => {
+    try {
+        const { outlets } = req.query;
+
+        if (!outlets) {
+            return res.status(400).json({
+                error: "Please provide outlet IDs"
+            });
+        }
+
+        const outletIds = outlets
+            .split(",")
+            .map(id => id.trim())
+            .filter(Boolean);
+
+        if (outletIds.length < 2) {
+            return res.status(400).json({
+                error: "Please provide at least 2 outlet IDs"
+            });
+        }
+
+        const data = await intelligenceService.compareOutlets(outletIds);
+
+        return res.status(200).json(data);
+    } catch (err) {
+        next(err);
+    }
+};
+exports.getExpenseSummary = async (req, res, next) => {
+    try {
+        const data = await intelligenceService.getExpenseSummary();
+
+        return res.status(200).json(data);
+    } catch (err) {
+        next(err);
+    }
+};

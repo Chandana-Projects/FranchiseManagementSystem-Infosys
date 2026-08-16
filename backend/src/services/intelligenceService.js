@@ -663,3 +663,151 @@ exports.getOutletIntelligence = async (outletId) => {
         }
     };
 };
+exports.getPerformanceRanking = async () => {
+    const intelligence = await exports.getFranchiseIntelligence();
+
+    const rankings = intelligence.outletsHealth.map((health) => {
+        const forecast = intelligence.forecasts.find(
+            (item) => item.outletId === health.outlet_id
+        );
+
+        return {
+            outletId: health.outlet_id,
+            outletName: health.outlet_name,
+            revenue: forecast ? forecast.currentRevenue : 0,
+            predictedRevenue: forecast ? forecast.predictedRevenue : 0,
+            healthScore: health.calculatedHealth,
+            trend: forecast ? forecast.trend : "Unknown",
+            status: health.status
+        };
+    });
+
+    rankings.sort((a, b) => {
+        if (b.revenue !== a.revenue) {
+            return b.revenue - a.revenue;
+        }
+
+        return b.healthScore - a.healthScore;
+    });
+
+    const rankedOutlets = rankings.map((outlet, index) => ({
+        rank: index + 1,
+        ...outlet
+    }));
+
+    return {
+        totalOutlets: rankedOutlets.length,
+        rankings: rankedOutlets
+    };
+};
+exports.compareOutlets = async (outletIds) => {
+    const intelligence = await exports.getFranchiseIntelligence();
+
+    const ids = outletIds.map(Number);
+
+    const outlets = intelligence.outletsHealth
+        .filter(outlet => ids.includes(Number(outlet.outlet_id)))
+        .map(outlet => {
+            const forecast = intelligence.forecasts.find(
+                item => Number(item.outletId) === Number(outlet.outlet_id)
+            );
+
+            return {
+                outletId: outlet.outlet_id,
+                outletName: outlet.outlet_name,
+                revenue: forecast?.currentRevenue ?? 0,
+                predictedRevenue: forecast?.predictedRevenue ?? 0,
+                healthScore: outlet.calculatedHealth,
+                trend: forecast?.trend ?? "Unknown",
+                status: outlet.status
+            };
+        });
+
+    return {
+        total: outlets.length,
+        outlets
+    };
+};
+exports.getExpenseSummary = async () => {
+    const expenses = await prisma.expenses.findMany({
+        include: {
+            outlets: true
+        },
+        orderBy: {
+            expense_date: "desc"
+        }
+    });
+
+    let totalExpenses = 0;
+
+    const outletMap = {};
+    const typeMap = {};
+
+    for (const expense of expenses) {
+        const amount = Number(expense.amount || 0);
+
+        totalExpenses += amount;
+
+        // -------------------------
+        // Outlet-wise expenses
+        // -------------------------
+        const outletId = expense.outlet_id;
+
+        if (!outletMap[outletId]) {
+            outletMap[outletId] = {
+                outletId,
+                outletName: expense.outlets?.outlet_name || "Unknown",
+                totalExpense: 0
+            };
+        }
+
+        outletMap[outletId].totalExpense += amount;
+
+        // -------------------------
+        // Expense-type breakdown
+        // -------------------------
+        const type = expense.expense_type || "Other";
+
+        if (!typeMap[type]) {
+            typeMap[type] = {
+                type,
+                totalExpense: 0
+            };
+        }
+
+        typeMap[type].totalExpense += amount;
+    }
+
+    const outlets = Object.values(outletMap)
+        .map(outlet => ({
+            ...outlet,
+            totalExpense: Number(outlet.totalExpense.toFixed(2))
+        }))
+        .sort((a, b) => b.totalExpense - a.totalExpense);
+
+    const expenseByType = Object.values(typeMap)
+        .map(item => ({
+            ...item,
+            totalExpense: Number(item.totalExpense.toFixed(2))
+        }))
+        .sort((a, b) => b.totalExpense - a.totalExpense);
+
+    const averageExpense =
+        expenses.length > 0
+            ? totalExpenses / expenses.length
+            : 0;
+
+    const highestExpenseOutlet =
+        outlets.length > 0
+            ? outlets[0]
+            : null;
+
+    return {
+        totalExpenses: Number(totalExpenses.toFixed(2)),
+        totalExpenseRecords: expenses.length,
+        averageExpense: Number(averageExpense.toFixed(2)),
+        highestExpenseOutlet,
+        outlets,
+        expenseByType
+    };
+};

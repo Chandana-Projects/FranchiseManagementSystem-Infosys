@@ -36,6 +36,18 @@ router.get(
     "/outlet/:outletId",
     intelligenceController.getOutletIntelligence
 );
+router.get(
+    "/performance-ranking",
+    intelligenceController.getPerformanceRanking
+);
+router.get(
+    "/compare",
+    intelligenceController.compareOutlets
+);
+router.get(
+    "/expense-summary",
+    intelligenceController.getExpenseSummary
+);
 
 // ML service health proxy — lets the frontend check if ML is running
 router.get("/ml-status", (req, res) => {
