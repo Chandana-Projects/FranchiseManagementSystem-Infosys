@@ -2,9 +2,40 @@ const express = require("express");
 const router  = express.Router();
 const http    = require("http");
 const intelligenceController = require("../controllers/intelligenceController");
+const intelligenceService = require("../services/intelligenceService");
 
 // Existing intelligence endpoint — unchanged
 router.get("/", intelligenceController.getFranchiseIntelligence);
+router.get("/recommendations", intelligenceController.getRecommendations);
+router.get("/recommendations/stats", intelligenceController.getRecommendationStats);
+router.get(
+    "/critical-outlets",
+    intelligenceController.getCriticalOutlets
+);
+router.get(
+    "/inventory-risk",
+    intelligenceController.getInventoryRiskSummary
+);
+router.get(
+    "/sales-summary",
+    intelligenceController.getSalesPerformanceSummary
+);
+router.get("/health-breakdown", intelligenceController.getHealthBreakdown);
+router.get("/outlet/:outletId", async (req, res, next) => {
+    try {
+        const data = await intelligenceService.getOutletIntelligence(
+            req.params.outletId
+        );
+
+        res.json(data);
+    } catch (err) {
+        next(err);
+    }
+});
+router.get(
+    "/outlet/:outletId",
+    intelligenceController.getOutletIntelligence
+);
 
 // ML service health proxy — lets the frontend check if ML is running
 router.get("/ml-status", (req, res) => {

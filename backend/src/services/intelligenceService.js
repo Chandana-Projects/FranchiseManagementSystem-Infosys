@@ -340,3 +340,326 @@ exports.getFranchiseIntelligence = async () => {
         throw err;
     }
 };
+exports.getRecommendations = async (filters = {}) => {
+    const intelligence = await exports.getFranchiseIntelligence();
+
+    let recommendations = intelligence.recommendations || [];
+
+    // Filter by priority
+    if (filters.priority) {
+        recommendations = recommendations.filter(
+            (item) =>
+                item.priority?.toLowerCase() ===
+                filters.priority.toLowerCase()
+        );
+    }
+
+    // Filter by recommendation type
+    if (filters.type) {
+        recommendations = recommendations.filter(
+            (item) =>
+                item.type?.toLowerCase() ===
+                filters.type.toLowerCase()
+        );
+    }
+
+    // Filter by outlet
+    if (filters.outletId) {
+        recommendations = recommendations.filter(
+            (item) =>
+                Number(item.outletId) === Number(filters.outletId)
+        );
+    }
+
+    return {
+        total: recommendations.length,
+        filters: {
+            priority: filters.priority || null,
+            type: filters.type || null,
+            outletId: filters.outletId || null
+        },
+        recommendations
+    };
+};
+exports.getRecommendationStats = async () => {
+    const intelligence = await exports.getFranchiseIntelligence();
+
+    const recommendations = intelligence.recommendations || [];
+
+    const highPriority = recommendations.filter(
+        r => r.priority?.toLowerCase() === "high"
+    ).length;
+
+    const mediumPriority = recommendations.filter(
+        r => r.priority?.toLowerCase() === "medium"
+    ).length;
+
+    const lowPriority = recommendations.filter(
+        r => r.priority?.toLowerCase() === "low"
+    ).length;
+
+    const inventoryIssues = recommendations.filter(
+        r => r.type?.toLowerCase() === "inventory"
+    ).length;
+
+    const performanceIssues = recommendations.filter(
+        r => r.type?.toLowerCase() === "performance"
+    ).length;
+
+    const affectedOutlets = new Set(
+        recommendations.map(r => r.outletId)
+    ).size;
+
+    return {
+        totalRecommendations: recommendations.length,
+        highPriority,
+        mediumPriority,
+        lowPriority,
+        inventoryIssues,
+        performanceIssues,
+        affectedOutlets
+    };
+};
+exports.getCriticalOutlets = async () => {
+    const intelligence = await exports.getFranchiseIntelligence();
+
+    const outlets = intelligence.outletsHealth || [];
+
+    const criticalOutlets = outlets
+        .filter(outlet => {
+            return (
+                outlet.status?.toLowerCase() === "critical" ||
+                Number(outlet.calculatedHealth) < 60
+            );
+        })
+        .map(outlet => ({
+            outletId: outlet.outlet_id,
+            outletName: outlet.outlet_name,
+            city: outlet.city,
+            healthScore: outlet.calculatedHealth,
+            status: outlet.status
+        }));
+
+    return {
+        total: criticalOutlets.length,
+        outlets: criticalOutlets
+    };
+};
+exports.getInventoryRiskSummary = async () => {
+    const intelligence = await exports.getFranchiseIntelligence();
+
+    const recommendations = intelligence.recommendations || [];
+
+    const inventoryRecommendations = recommendations.filter(
+        r => r.type?.toLowerCase() === "inventory"
+    );
+
+    const highRiskItems = inventoryRecommendations.filter(
+        r => r.priority?.toLowerCase() === "high"
+    );
+
+    const mediumRiskItems = inventoryRecommendations.filter(
+        r => r.priority?.toLowerCase() === "medium"
+    );
+
+    const affectedOutlets = new Set(
+        inventoryRecommendations.map(r => r.outletId)
+    );
+
+    return {
+        totalInventoryIssues: inventoryRecommendations.length,
+        highRiskItems: highRiskItems.length,
+        mediumRiskItems: mediumRiskItems.length,
+        affectedOutlets: affectedOutlets.size,
+        items: inventoryRecommendations
+    };
+};
+exports.getSalesPerformanceSummary = async () => {
+    const intelligence = await exports.getFranchiseIntelligence();
+
+    const forecasts = intelligence.forecasts || [];
+
+    const outlets = forecasts.map(outlet => ({
+        outletId: outlet.outletId,
+        outletName: outlet.outletName,
+        currentRevenue: Number(outlet.currentRevenue || 0),
+        predictedRevenue: Number(outlet.predictedRevenue || 0),
+        trend: outlet.trend,
+        confidence: outlet.confidence
+    }));
+
+    const totalRevenue = outlets.reduce(
+        (sum, outlet) => sum + outlet.currentRevenue,
+        0
+    );
+
+    const totalPredictedRevenue = outlets.reduce(
+        (sum, outlet) => sum + outlet.predictedRevenue,
+        0
+    );
+
+    const bestOutlet = outlets.length
+        ? outlets.reduce((best, outlet) =>
+            outlet.currentRevenue > best.currentRevenue ? outlet : best
+        )
+        : null;
+
+    const lowestOutlet = outlets.length
+        ? outlets.reduce((lowest, outlet) =>
+            outlet.currentRevenue < lowest.currentRevenue ? outlet : lowest
+        )
+        : null;
+
+    const growingOutlets = outlets.filter(
+        outlet => outlet.trend?.toLowerCase() === "upward"
+    ).length;
+
+    const decliningOutlets = outlets.filter(
+        outlet => outlet.trend?.toLowerCase() === "downward"
+    ).length;
+
+    const averageRevenue = outlets.length
+        ? totalRevenue / outlets.length
+        : 0;
+
+    return {
+        totalOutlets: outlets.length,
+        totalRevenue: Number(totalRevenue.toFixed(2)),
+        averageRevenue: Number(averageRevenue.toFixed(2)),
+        totalPredictedRevenue: Number(totalPredictedRevenue.toFixed(2)),
+        growingOutlets,
+        decliningOutlets,
+        bestOutlet,
+        lowestOutlet,
+        outlets
+    };
+};
+async function getHealthBreakdown() {
+    const intelligence = await getFranchiseIntelligence();
+
+    const outlets = intelligence.outletsHealth || [];
+
+    return {
+        total: outlets.length,
+        outlets: outlets.map((outlet) => {
+            const healthScore = Number(outlet.calculatedHealth || 0);
+
+            let status = "Healthy";
+
+            if (healthScore < 50) {
+                status = "Critical";
+            } else if (healthScore < 75) {
+                status = "Watch";
+            }
+
+            return {
+                outletId: outlet.outlet_id,
+                outletName: outlet.outlet_name,
+                city: outlet.city,
+                overallHealthScore: healthScore,
+                status,
+                performanceScore: Number(outlet.perfScore || 0),
+                customScore: Number(outlet.customScore || 0)
+            };
+        })
+    };
+};
+exports.getHealthBreakdown = async () => {
+    const intelligence = await exports.getFranchiseIntelligence();
+
+    const outlets = intelligence.outletsHealth || [];
+
+    return {
+        totalOutlets: outlets.length,
+        averageHealth: outlets.length
+            ? Math.round(
+                outlets.reduce(
+                    (sum, outlet) => sum + Number(outlet.calculatedHealth || 0),
+                    0
+                ) / outlets.length
+            )
+            : 0,
+
+        healthy: outlets.filter(
+            outlet => Number(outlet.calculatedHealth || 0) >= 80
+        ).length,
+
+        warning: outlets.filter(
+            outlet =>
+                Number(outlet.calculatedHealth || 0) >= 60 &&
+                Number(outlet.calculatedHealth || 0) < 80
+        ).length,
+
+        critical: outlets.filter(
+            outlet => Number(outlet.calculatedHealth || 0) < 60
+        ).length,
+
+        outlets: outlets.map(outlet => ({
+            outletId: outlet.outlet_id,
+            outletName: outlet.outlet_name,
+            city: outlet.city,
+            healthScore: outlet.calculatedHealth,
+            status: outlet.status
+        }))
+    };
+};
+exports.getOutletIntelligence = async (outletId) => {
+    const id = Number(outletId);
+
+    if (!Number.isInteger(id)) {
+        throw new Error("Invalid outlet ID");
+    }
+
+    const intelligence = await exports.getFranchiseIntelligence();
+
+    const outlet = (intelligence.outletsHealth || []).find(
+        item => Number(item.outlet_id) === id
+    );
+
+    if (!outlet) {
+        const error = new Error("Outlet not found");
+        error.statusCode = 404;
+        throw error;
+    }
+
+    const forecast = (intelligence.forecasts || []).find(
+        item => Number(item.outletId) === id
+    );
+
+    const recommendations = (intelligence.recommendations || []).filter(
+        item => Number(item.outletId) === id
+    );
+
+    return {
+        outlet: {
+            outletId: outlet.outlet_id,
+            outletName: outlet.outlet_name,
+            city: outlet.city,
+            healthScore: outlet.calculatedHealth,
+            status: outlet.status
+        },
+
+        revenue: forecast
+            ? {
+                currentRevenue: forecast.currentRevenue,
+                predictedRevenue: forecast.predictedRevenue,
+                trend: forecast.trend,
+                confidence: forecast.confidence
+            }
+            : null,
+
+        recommendations: {
+            total: recommendations.length,
+            highPriority: recommendations.filter(
+                item => item.priority === "High"
+            ).length,
+            mediumPriority: recommendations.filter(
+                item => item.priority === "Medium"
+            ).length,
+            lowPriority: recommendations.filter(
+                item => item.priority === "Low"
+            ).length,
+            items: recommendations
+        }
+    };
+};
