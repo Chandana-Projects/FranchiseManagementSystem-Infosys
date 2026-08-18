@@ -18,7 +18,8 @@ import {
   Camera, CheckCircle2, UploadCloud, FileText, Check, ChevronRight,
   Gauge, TrendingUpDown, ListChecks, Layers,
   Rocket,
-  ArrowRight, Database
+  ArrowRight, Database,
+  Filter, BarChart2
 } from "lucide-react";
 
 import AuditComplianceSummary from "./AuditComplianceSummary";
@@ -309,41 +310,6 @@ const healthRadar = [
   { dimension: "Marketing ROI", Nashik: 70, Pune: 79, Aurangabad: 33 },
 ];
 
-const healthComponents: HealthComponent[] = [
-  { label: "Sales", weight: 30, score: 82, note: "Revenue trending up network-wide, Pune leading on margins" },
-  { label: "Operations", weight: 20, score: 71, note: "Staffing gaps at Mumbai Andheri and Aurangabad" },
-  { label: "Audit / Compliance", weight: 15, score: 65, note: "Aurangabad CIDCO critical, fire safety cert expired" },
-  { label: "Customer", weight: 15, score: 78, note: "Mixed sentiment at Mumbai Andheri, strong elsewhere" },
-  { label: "Finance", weight: 10, score: 74, note: "Margins stable, minor payment delays at 2 outlets" },
-  { label: "Inventory", weight: 10, score: 69, note: "Raw material wastage above 5% target" },
-];
-
-const predictedRisks: RiskPrediction[] = [
-  { riskType: "Compliance Risk", probability: 72, impact: "High", horizon: "Next 7 days", evidence: "Aurangabad CIDCO: expired fire safety certificate + 2 failed checklist items" },
-  { riskType: "Inventory Disruption", probability: 64, impact: "High", horizon: "Next 14 days", evidence: "Coffee bean stock at Aurangabad declining below reorder threshold 3 weeks running" },
-  { riskType: "Revenue Risk", probability: 41, impact: "Medium", horizon: "Next 30 days", evidence: "Mumbai Andheri East growth -3.2%, second consecutive month declining" },
-];
-
-const growthOpportunities: GrowthOpportunity[] = [
-  { opportunity: "Weekend beverage sales potential", evidence: "Weekend foot traffic +18% vs weekday average, but conversion rate flat", estimatedImpact: "+12% weekend revenue", suggestedAction: "Run a weekend combo promotion; extend weekend hours by 1 hour", confidence: 81 },
-  { opportunity: "Underserved Nagpur customer segment", evidence: "Nagpur outlet growth strong (+8.7%) but has the lowest marketing spend in the network", estimatedImpact: "+8-10% outlet revenue", suggestedAction: "Increase Nagpur's marketing budget allocation by 20%", confidence: 68 },
-  { opportunity: "High-demand item, low availability", evidence: "Cold brew concentrate sells out by 3pm at 3 outlets, weekly", estimatedImpact: "+5% daily transactions at affected outlets", suggestedAction: "Increase cold brew concentrate reorder quantity by 30%", confidence: 74 },
-];
-
-const recommendations: Recommendation[] = [
-  { title: "Fix recurring audit non-compliance at Aurangabad CIDCO", priority: "High", owner: "Regional Manager", expectedImpact: "Avoid re-audit penalty, restore compliance score to Healthy", deadline: "2026-08-19", evidence: "Fire safety certificate expired + cash shortfall 2 days running" },
-  { title: "Increase weekend inventory for high-demand items by 15%", priority: "High", owner: "Inventory Team", expectedImpact: "+12% weekend revenue capture", deadline: "Next 4 weeks", evidence: "Weekend traffic +18%, conversion flat due to stockouts" },
-  { title: "Approve pending hire requisition for Mumbai Andheri East", priority: "Medium", owner: "HR Team", expectedImpact: "Resolve understaffing, improve service speed and customer sentiment", deadline: "2026-08-25", evidence: "2/3 minimum staff — contributing to declining growth trend" },
-];
-
-const consolidatedFindings: ConsolidatedFinding[] = [
-  { sourceAgent: "Audit Agent", franchiseId: "FR-005", kpiAffected: "Compliance Score", finding: "Fire safety certificate expired, cash shortfall 2 days running", severity: "Critical", timestamp: "2026-08-13 09:14" },
-  { sourceAgent: "Inventory Agent", franchiseId: "FR-005", kpiAffected: "Stock Availability", finding: "Coffee bean reorder pace declining, 3 weeks running", severity: "High", timestamp: "2026-08-13 08:02" },
-  { sourceAgent: "Sales Agent", franchiseId: "FR-003", kpiAffected: "Revenue Growth", finding: "Growth -3.2%, second consecutive month declining", severity: "Medium", timestamp: "2026-08-12 18:40" },
-  { sourceAgent: "HR/Operations Agent", franchiseId: "FR-003", kpiAffected: "Staffing Level", finding: "2 of 3 minimum staff — understaffed", severity: "High", timestamp: "2026-08-12 17:55" },
-  { sourceAgent: "Customer Agent", franchiseId: "FR-003", kpiAffected: "Sentiment", finding: "11 complaints logged this month, mixed sentiment", severity: "Medium", timestamp: "2026-08-11 14:20" },
-  { sourceAgent: "Finance Agent", franchiseId: "FR-005", kpiAffected: "Margin", finding: "Cash reconciliation variance flagged 2 consecutive days", severity: "Low", timestamp: "2026-08-11 10:05" },
-];
 
 const severityColor: Record<string, { bg: string; color: string }> = {
   Critical: { bg: "#FB71851A", color: "#FB7185" },
@@ -698,6 +664,7 @@ const upcomingCampaigns = [
 
 function AppSplashLoader({ t, accent, label, onComplete }: { t: typeof themes.dark; accent: string; label: string; onComplete?: () => void }) {
   const [progress, setProgress] = useState(0);
+
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -1084,6 +1051,8 @@ export default function FranchiseOSDashboard({ initialModule = "dashboard" }: Fr
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [checkingAuth, setCheckingAuth] = useState(true);
   const [active, setActiveState] = useState(initialModule);
+  const [recPriorityFilter, setRecPriorityFilter] = useState("All");
+  const [selectedIntelOutlet, setSelectedIntelOutlet] = useState("");
 
   function setActive(moduleKey: string) {
     setActiveState(moduleKey);
@@ -1437,6 +1406,273 @@ export default function FranchiseOSDashboard({ initialModule = "dashboard" }: Fr
     .map((name) => ({ name, count: staffCountByOutlet[name] || 0 }))
     .filter((o) => o.count < MIN_STAFF_PER_OUTLET)
     .sort((a, b) => a.count - b.count);
+
+  // ===== MODULE 6: Intelligence Engine — computed from REAL agent data =====
+
+const avgOutletGrowth = outletPerformance.length > 0
+  ? outletPerformance.reduce((s, o) => s + o.growth, 0) / outletPerformance.length
+  : 0;
+
+const avgAuditScoreReal = audits.length > 0
+  ? Math.round(audits.reduce((s, a) => s + a.score, 0) / audits.length)
+  : 75;
+
+const avgCustomerRating = customerFeedbackByOutlet.length > 0
+  ? customerFeedbackByOutlet.reduce((s, f) => s + f.rating, 0) / customerFeedbackByOutlet.length
+  : 4;
+
+const healthComponents: HealthComponent[] = [
+  {
+    label: "Sales",
+    weight: 30,
+    score: Math.max(0, Math.min(100, Math.round(70 + avgOutletGrowth * 2))),
+    note: `Avg growth ${avgOutletGrowth.toFixed(1)}% across ${outletPerformance.length} outlets`,
+  },
+  {
+    label: "Operations",
+    weight: 20,
+    score: Math.max(0, 100 - understaffedOutlets.length * 12 - Math.max(0, 100 - attendanceRateToday)),
+    note: `${understaffedOutlets.length} understaffed outlet(s) · ${attendanceRateToday}% attendance today`,
+  },
+  {
+    label: "Audit / Compliance",
+    weight: 15,
+    score: avgAuditScoreReal,
+    note: `Avg score ${avgAuditScoreReal}/100 across ${audits.length} recorded audits`,
+  },
+  {
+    label: "Customer",
+    weight: 15,
+    score: Math.round((avgCustomerRating / 5) * 100),
+    note: `Avg rating ${avgCustomerRating.toFixed(1)}/5 across tracked outlets`,
+  },
+  {
+    label: "Finance",
+    weight: 10,
+    score: Math.max(0, Math.min(100, Math.round(avgROI * 15))),
+    note: `Marketing ROI averaging ${avgROI}x network-wide`,
+  },
+  {
+    label: "Inventory",
+    weight: 10,
+    score: inventorySummary ? Math.max(0, Math.round(inventorySummary.healthPct - avgWastagePercent)) : 70,
+    note: inventorySummary ? `${inventorySummary.healthPct}% inventory health, ${avgWastagePercent}% avg wastage` : "Inventory data loading...",
+  },
+];
+
+const predictedRisks: RiskPrediction[] = [];
+
+const criticalAudit = audits.find((a) => a.status === "Critical");
+if (criticalAudit) {
+  predictedRisks.push({
+    riskType: "Compliance Risk",
+    probability: 100 - criticalAudit.score,
+    impact: "High",
+    horizon: "Next 7 days",
+    evidence: `${criticalAudit.outlet_name}: audit score ${criticalAudit.score}/100, Critical status`,
+  });
+}
+
+if (understaffedOutlets.length > 0) {
+  predictedRisks.push({
+    riskType: "Service Risk",
+    probability: Math.min(90, understaffedOutlets.length * 25 + 30),
+    impact: understaffedOutlets.length > 1 ? "High" : "Medium",
+    horizon: "Next 14 days",
+    evidence: `${understaffedOutlets.map((o) => o.name).join(", ")} below minimum staffing (${MIN_STAFF_PER_OUTLET} required)`,
+  });
+}
+
+const decliningOutlet = [...outletPerformance].filter((o) => o.growth < 0).sort((a, b) => a.growth - b.growth)[0];
+if (decliningOutlet) {
+  predictedRisks.push({
+    riskType: "Revenue Risk",
+    probability: Math.min(85, Math.abs(decliningOutlet.growth) * 6 + 20),
+    impact: decliningOutlet.growth < -5 ? "High" : "Medium",
+    horizon: "Next 30 days",
+    evidence: `${decliningOutlet.name}: growth ${decliningOutlet.growth}%, trending down`,
+  });
+}
+
+const criticalInvItem = inventoryItems.find((i) => Number(i.quantity) <= Number(i.reorder_at) * 0.5);
+if (criticalInvItem) {
+  predictedRisks.push({
+    riskType: "Inventory Disruption",
+    probability: 68,
+    impact: "High",
+    horizon: "Next 10 days",
+    evidence: `${criticalInvItem.name} at ${criticalInvItem.outlets?.outlet_name || "an outlet"}: ${criticalInvItem.quantity} ${criticalInvItem.unit || ""} remaining, below critical threshold`,
+  });
+}
+
+const growthOpportunities: GrowthOpportunity[] = [];
+
+const bestGrowthOutlet = [...outletPerformance].sort((a, b) => b.growth - a.growth)[0];
+if (bestGrowthOutlet) {
+  growthOpportunities.push({
+    opportunity: `Replicate ${bestGrowthOutlet.name}'s playbook`,
+    evidence: `Leading the network at +${bestGrowthOutlet.growth}% growth`,
+    estimatedImpact: `+${Math.round(bestGrowthOutlet.growth / 2)}% at underperforming outlets`,
+    suggestedAction: `Document ${bestGrowthOutlet.name}'s staffing and marketing approach, roll out to Watch/Critical outlets`,
+    confidence: 76,
+  });
+}
+
+const bestCampaign = [...marketingCampaigns].sort((a, b) => b.roi - a.roi)[0];
+if (bestCampaign) {
+  growthOpportunities.push({
+    opportunity: `Scale "${bestCampaign.name}" campaign`,
+    evidence: `Highest ROI in network at ${bestCampaign.roi}x on ${bestCampaign.channel}`,
+    estimatedImpact: `Meaningful revenue uplift if budget increased`,
+    suggestedAction: `Increase ${bestCampaign.channel} budget by 50%, replicate creative across other outlets`,
+    confidence: 71,
+  });
+}
+
+const recommendations: Recommendation[] = [];
+
+if (criticalAudit) {
+  recommendations.push({
+    title: `Resolve compliance issues at ${criticalAudit.outlet_name}`,
+    priority: "High",
+    owner: "Regional Manager",
+    expectedImpact: "Restore compliance score to Healthy, avoid re-audit penalty",
+    deadline: reAuditDeadlines.find((r) => r.outlet === criticalAudit.outlet_name)?.dueDate || "Within 7 days",
+    evidence: `Audit score ${criticalAudit.score}/100 recorded ${criticalAudit.date}`,
+  });
+}
+
+if (understaffedOutlets.length > 0) {
+  recommendations.push({
+    title: `Fill staffing gaps at ${understaffedOutlets[0].name}`,
+    priority: "High",
+    owner: "HR Team",
+    expectedImpact: "Improve service speed and staff-related audit scores",
+    deadline: "Next 2 weeks",
+    evidence: `${understaffedOutlets[0].count}/${MIN_STAFF_PER_OUTLET} minimum staff — see Recommended Candidates in Staff Agent`,
+  });
+}
+
+if (decliningOutlet) {
+  recommendations.push({
+    title: `Investigate revenue decline at ${decliningOutlet.name}`,
+    priority: "Medium",
+    owner: "Outlet Manager",
+    expectedImpact: "Reverse negative growth trend",
+    deadline: "Next 30 days",
+    evidence: `Growth ${decliningOutlet.growth}%, target ₹${decliningOutlet.target.toLocaleString("en-IN")}`,
+  });
+}
+
+if (recommendations.length === 0) {
+  recommendations.push({
+    title: "No urgent issues detected — maintain current standards",
+    priority: "Low",
+    owner: "Regional Manager",
+    expectedImpact: "Sustain current network health",
+    deadline: "Ongoing",
+    evidence: "All tracked KPIs within acceptable range",
+  });
+}
+
+const consolidatedFindings: ConsolidatedFinding[] = [
+  ...audits.filter((a) => a.status !== "Healthy").map((a) => ({
+    sourceAgent: "Audit Agent",
+    franchiseId: `FR-${a.outlet_id}`,
+    kpiAffected: "Compliance Score",
+    finding: `${a.outlet_name}: score ${a.score}/100, ${a.status}`,
+    severity: (a.status === "Critical" ? "Critical" : "Medium") as "Critical" | "Medium",
+    timestamp: a.date,
+  })),
+  ...understaffedOutlets.map((o) => ({
+    sourceAgent: "HR/Operations Agent",
+    franchiseId: o.name,
+    kpiAffected: "Staffing Level",
+    finding: `${o.name}: ${o.count}/${MIN_STAFF_PER_OUTLET} minimum staff`,
+    severity: "High" as const,
+    timestamp: new Date().toISOString().split("T")[0],
+  })),
+  ...customerFeedbackByOutlet.filter((f) => f.sentiment !== "Positive").map((f) => ({
+    sourceAgent: "Customer Agent",
+    franchiseId: f.outlet,
+    kpiAffected: "Sentiment",
+    finding: `${f.outlet}: ${f.rating}/5 rating, ${f.complaints} complaints, ${f.sentiment} sentiment`,
+    severity: (f.sentiment === "Negative" ? "High" : "Medium") as "High" | "Medium",
+    timestamp: new Date().toISOString().split("T")[0],
+  })),
+  ...inventoryItems.filter((i) => Number(i.quantity) <= Number(i.reorder_at) * 0.5).map((i) => ({
+    sourceAgent: "Inventory Agent",
+    franchiseId: i.outlets?.outlet_name || `Outlet ${i.outlet_id}`,
+    kpiAffected: "Stock Availability",
+    finding: `${i.name}: ${i.quantity} ${i.unit || "units"} remaining, below critical threshold`,
+    severity: "Critical" as const,
+    timestamp: new Date().toISOString().split("T")[0],
+  })),
+  ...marketingCampaigns.filter((c) => c.status === "Underperforming").map((c) => ({
+    sourceAgent: "Marketing Agent",
+    franchiseId: "Network",
+    kpiAffected: "Campaign ROI",
+    finding: `${c.name}: ${c.roi}x ROI on ${c.channel}, underperforming`,
+    severity: "Medium" as const,
+    timestamp: new Date().toISOString().split("T")[0],
+  })),
+];
+
+const outletHealthRankings = [...outletPerformance]
+  .map((o) => {
+    const outletAudit = [...audits].filter((a) => a.outlet_name === o.name).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0];
+    const auditComponent = outletAudit ? outletAudit.score : 75;
+    const isUnderstaffed = understaffedOutlets.some((u) => o.name.includes(u.name));
+    const salesComponent = Math.max(0, Math.min(100, 70 + o.growth * 2));
+    const healthScore = Math.max(0, Math.min(100, Math.round(salesComponent * 0.4 + auditComponent * 0.4 + (isUnderstaffed ? 5 : 20))));
+    return {
+      outlet: o.name,
+      revenue: o.sales,
+      predictedRevenue: Math.round(o.sales * (1 + o.growth / 100)),
+      healthScore,
+      trend: o.growth,
+      status: healthScore >= 80 ? "Healthy" : healthScore >= 60 ? "Watch" : healthScore >= 40 ? "At Risk" : "Critical",
+    };
+  })
+  .sort((a, b) => b.healthScore - a.healthScore)
+  .map((o, i) => ({ ...o, rank: i + 1 }));
+
+const criticalOutletsDetected = outletHealthRankings.filter((o) => o.status === "Critical" || o.status === "At Risk");
+
+const totalRevenue = outletPerformance.reduce((s, o) => s + o.sales, 0);
+const avgRevenue = Math.round(totalRevenue / outletPerformance.length);
+const totalPredictedRevenue = outletHealthRankings.reduce((s, o) => s + o.predictedRevenue, 0);
+const growingOutletsCount = outletPerformance.filter((o) => o.growth > 0).length;
+const decliningOutletsCount = outletPerformance.filter((o) => o.growth < 0).length;
+const bestOutletBySales = [...outletPerformance].sort((a, b) => b.growth - a.growth)[0];
+const worstOutletBySales = [...outletPerformance].sort((a, b) => a.growth - b.growth)[0];
+
+const inventoryRisks = inventoryItems
+  .filter((i) => Number(i.quantity) <= Number(i.reorder_at))
+  .map((i) => {
+    const qty = Number(i.quantity);
+    const reorder = Number(i.reorder_at);
+    const suggestedQty = Math.round(reorder * 1.5 - qty);
+    return {
+      item: i.name,
+      outlet: i.outlets?.outlet_name || "Network",
+      riskLevel: qty <= reorder * 0.5 ? "Critical" : "Watch",
+      quantity: qty,
+      reorderAt: reorder,
+      supplier: i.supplier || "Not specified",
+      suggestion: `Reorder ${suggestedQty > 0 ? suggestedQty : reorder} ${i.unit || "units"} to restore healthy stock`,
+    };
+  });
+
+
+const recStats = {
+  total: recommendations.length,
+  high: recommendations.filter((r) => r.priority === "High").length,
+  medium: recommendations.filter((r) => r.priority === "Medium").length,
+  low: recommendations.filter((r) => r.priority === "Low").length,
+};
+const filteredRecommendations = recommendations.filter((r) => recPriorityFilter === "All" || r.priority === recPriorityFilter);
+  
 
   const hubOutlet = outletLocations.find((o) => o.name.includes("Pune")) || outletLocations[0];
 
@@ -5111,6 +5347,180 @@ function getPredictedRisks(auditList: any[]) {
 
               </div>
 
+            <div className="rounded-xl border overflow-hidden" style={{ background: t.card, borderColor: t.border }}>
+  <div className="flex items-center justify-between px-5 pt-5 pb-1 flex-wrap gap-2">
+    <p className="text-sm font-semibold flex items-center gap-2" style={{ color: t.text }}>
+      <Trophy size={15} color={accent} /> Outlet Health & Rankings
+    </p>
+    {criticalOutletsDetected.length > 0 && (
+      <span className="text-xs px-2.5 py-1 rounded-full border" style={{ background: "#FB71851A", color: "#FB7185", borderColor: "#FB718533" }}>
+        {criticalOutletsDetected.length} outlet(s) flagged Critical / At Risk
+      </span>
+    )}
+  </div>
+  <table className="w-full text-sm mt-3">
+    <thead>
+      <tr className="text-left text-xs border-y" style={{ color: t.textFaint, borderColor: t.border }}>
+        <th className="px-5 py-2 font-medium">Rank</th>
+        <th className="px-5 py-2 font-medium">Outlet</th>
+        <th className="px-5 py-2 font-medium text-right">Revenue</th>
+        <th className="px-5 py-2 font-medium text-right">Predicted</th>
+        <th className="px-5 py-2 font-medium text-right">Health Score</th>
+        <th className="px-5 py-2 font-medium text-right">Trend</th>
+        <th className="px-5 py-2 font-medium">Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      {outletHealthRankings.map((o) => (
+        <tr key={o.outlet} className="border-b last:border-0" style={{ borderColor: t.border }}>
+          <td className="px-5 py-3 font-mono" style={{ color: t.textFaint }}>#{o.rank}</td>
+          <td className="px-5 py-3 font-medium" style={{ color: t.text }}>{o.outlet}</td>
+          <td className="px-5 py-3 text-right" style={{ color: t.text }}>₹{o.revenue.toLocaleString("en-IN")}</td>
+          <td className="px-5 py-3 text-right" style={{ color: t.textMuted }}>₹{o.predictedRevenue.toLocaleString("en-IN")}</td>
+          <td className="px-5 py-3 text-right font-semibold" style={{ color: o.healthScore >= 80 ? accent : o.healthScore >= 60 ? "#F59E0B" : "#FB7185" }}>{o.healthScore}/100</td>
+          <td className="px-5 py-3 text-right" style={{ color: o.trend >= 0 ? accent : "#FB7185" }}>{o.trend >= 0 ? "+" : ""}{o.trend}%</td>
+          <td className="px-5 py-3">
+            <span
+              className="text-xs px-2 py-0.5 rounded-full border"
+              style={{
+                background: o.status === "Healthy" ? `${accent}1A` : o.status === "Watch" ? "#F59E0B1A" : "#FB71851A",
+                color: o.status === "Healthy" ? accent : o.status === "Watch" ? "#F59E0B" : "#FB7185",
+                borderColor: "transparent",
+              }}
+            >
+              {o.status}
+            </span>
+          </td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
+
+
+<div className="rounded-xl border p-5" style={{ background: t.card, borderColor: t.border }}>
+  <p className="text-sm font-semibold mb-4 flex items-center gap-2" style={{ color: t.text }}>
+    <BarChart2 size={15} color={accent} /> Sales Performance Summary
+  </p>
+  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+    <div className="rounded-lg border p-3" style={{ background: t.panel, borderColor: t.border }}>
+      <p className="text-xs mb-1" style={{ color: t.textFaint }}>Total Revenue</p>
+      <p className="text-lg font-bold" style={{ color: t.text }}>₹{totalRevenue.toLocaleString("en-IN")}</p>
+    </div>
+    <div className="rounded-lg border p-3" style={{ background: t.panel, borderColor: t.border }}>
+      <p className="text-xs mb-1" style={{ color: t.textFaint }}>Average Revenue</p>
+      <p className="text-lg font-bold" style={{ color: t.text }}>₹{avgRevenue.toLocaleString("en-IN")}</p>
+    </div>
+    <div className="rounded-lg border p-3" style={{ background: t.panel, borderColor: t.border }}>
+      <p className="text-xs mb-1" style={{ color: t.textFaint }}>Predicted Revenue</p>
+      <p className="text-lg font-bold" style={{ color: accent }}>₹{totalPredictedRevenue.toLocaleString("en-IN")}</p>
+    </div>
+    <div className="rounded-lg border p-3" style={{ background: t.panel, borderColor: t.border }}>
+      <p className="text-xs mb-1" style={{ color: t.textFaint }}>Growing / Declining</p>
+      <p className="text-lg font-bold" style={{ color: t.text }}><span style={{ color: accent }}>{growingOutletsCount}</span> / <span style={{ color: "#FB7185" }}>{decliningOutletsCount}</span></p>
+    </div>
+  </div>
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+    <div className="rounded-lg border p-3 flex items-center justify-between" style={{ background: `${accent}0A`, borderColor: `${accent}33` }}>
+      <span className="text-xs" style={{ color: t.textMuted }}>Best Performing Outlet</span>
+      <span className="text-sm font-semibold" style={{ color: accent }}>{bestOutletBySales.name} (+{bestOutletBySales.growth}%)</span>
+    </div>
+    <div className="rounded-lg border p-3 flex items-center justify-between" style={{ background: "#FB71850A", borderColor: "#FB718533" }}>
+      <span className="text-xs" style={{ color: t.textMuted }}>Lowest Performing Outlet</span>
+      <span className="text-sm font-semibold" style={{ color: "#FB7185" }}>{worstOutletBySales.name} ({worstOutletBySales.growth}%)</span>
+    </div>
+  </div>
+</div>
+
+
+<div className="rounded-xl border overflow-hidden" style={{ background: t.card, borderColor: t.border }}>
+  <p className="text-sm font-semibold px-5 pt-5 pb-1 flex items-center gap-2" style={{ color: t.text }}>
+    <AlertTriangle size={15} color="#F59E0B" /> Inventory Risk Analysis
+  </p>
+  <p className="text-xs px-5 pb-3" style={{ color: t.textFaint }}>Low-stock items with reorder suggestions, network-wide.</p>
+  {inventoryRisks.length === 0 ? (
+    <p className="text-sm px-5 pb-5" style={{ color: t.textMuted }}>No inventory items currently at risk.</p>
+  ) : (
+    <table className="w-full text-sm mt-1">
+      <thead>
+        <tr className="text-left text-xs border-y" style={{ color: t.textFaint, borderColor: t.border }}>
+          <th className="px-5 py-2 font-medium">Item</th>
+          <th className="px-5 py-2 font-medium">Outlet</th>
+          <th className="px-5 py-2 font-medium">Supplier</th>
+          <th className="px-5 py-2 font-medium">Suggestion</th>
+          <th className="px-5 py-2 font-medium">Risk</th>
+        </tr>
+      </thead>
+      <tbody>
+        {inventoryRisks.map((r, i) => (
+          <tr key={i} className="border-b last:border-0" style={{ borderColor: t.border }}>
+            <td className="px-5 py-3 font-medium" style={{ color: t.text }}>{r.item}</td>
+            <td className="px-5 py-3" style={{ color: t.textMuted }}>{r.outlet}</td>
+            <td className="px-5 py-3" style={{ color: t.textFaint }}>{r.supplier}</td>
+            <td className="px-5 py-3" style={{ color: t.textMuted }}>{r.suggestion}</td>
+            <td className="px-5 py-3">
+              <span className="text-xs px-2 py-0.5 rounded-full border" style={{ background: r.riskLevel === "Critical" ? "#FB71851A" : "#F59E0B1A", color: r.riskLevel === "Critical" ? "#FB7185" : "#F59E0B", borderColor: "transparent" }}>
+                {r.riskLevel}
+              </span>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  )}
+</div>
+
+<div className="rounded-xl border p-5" style={{ background: t.card, borderColor: t.border }}>
+  <p className="text-sm font-semibold mb-3 flex items-center gap-2" style={{ color: t.text }}>
+    <Filter size={15} color={accent} /> Individual Outlet Intelligence
+  </p>
+  <select
+    value={selectedIntelOutlet || outletPerformance[0]?.name || ""}
+    onChange={(e) => setSelectedIntelOutlet(e.target.value)}
+    className="w-full md:w-64 rounded-lg border px-3 py-2 text-xs mb-4 focus:outline-none"
+    style={{ background: t.bg, borderColor: t.border, color: t.text }}
+  >
+    {outletPerformance.map((o) => (
+      <option key={o.name} value={o.name} style={{ background: "#1A1D24", color: "#FFFFFF" }}>{o.name}</option>
+    ))}
+  </select>
+
+  {(() => {
+    const activeOutletName = selectedIntelOutlet || outletPerformance[0]?.name;
+    const detail = outletHealthRankings.find((o) => o.outlet === activeOutletName);
+    const relevantRecs = recommendations.filter((r) => r.title.includes(activeOutletName || "___"));
+    if (!detail) return null;
+    return (
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <div className="rounded-lg border p-3" style={{ background: t.panel, borderColor: t.border }}>
+          <p className="text-xs mb-1" style={{ color: t.textFaint }}>Health Score</p>
+          <p className="text-lg font-bold" style={{ color: t.text }}>{detail.healthScore}/100</p>
+        </div>
+        <div className="rounded-lg border p-3" style={{ background: t.panel, borderColor: t.border }}>
+          <p className="text-xs mb-1" style={{ color: t.textFaint }}>Revenue</p>
+          <p className="text-lg font-bold" style={{ color: t.text }}>₹{detail.revenue.toLocaleString("en-IN")}</p>
+        </div>
+        <div className="rounded-lg border p-3" style={{ background: t.panel, borderColor: t.border }}>
+          <p className="text-xs mb-1" style={{ color: t.textFaint }}>Predicted Revenue</p>
+          <p className="text-lg font-bold" style={{ color: accent }}>₹{detail.predictedRevenue.toLocaleString("en-IN")}</p>
+        </div>
+        <div className="rounded-lg border p-3" style={{ background: t.panel, borderColor: t.border }}>
+          <p className="text-xs mb-1" style={{ color: t.textFaint }}>Trend</p>
+          <p className="text-lg font-bold" style={{ color: detail.trend >= 0 ? accent : "#FB7185" }}>{detail.trend >= 0 ? "+" : ""}{detail.trend}%</p>
+        </div>
+        {relevantRecs.length > 0 && (
+          <div className="col-span-2 md:col-span-4 rounded-lg border p-3 mt-1" style={{ background: `${accent}0A`, borderColor: `${accent}33` }}>
+            <p className="text-xs font-semibold mb-1" style={{ color: accent }}>Recommendation for this outlet:</p>
+            <p className="text-xs" style={{ color: t.textMuted }}>{relevantRecs[0].title}</p>
+          </div>
+        )}
+      </div>
+    );
+  })()}
+</div>
+
+
+
               <div className="rounded-xl border p-6" style={{ background: t.card, borderColor: t.border }}>
   <h3 className="text-sm font-semibold flex items-center gap-2 mb-4" style={{ color: t.text }}>
     <Gauge size={16} color={accent} /> Franchise Health Score Engine
@@ -5214,8 +5624,33 @@ function getPredictedRisks(auditList: any[]) {
     <Lightbulb size={15} color="#F59E0B" /> Strategic Recommendations
   </p>
   <p className="text-xs px-5 pb-3" style={{ color: t.textFaint }}>Specific, actionable — not generic advice.</p>
+
+<div className="flex flex-wrap items-center gap-2 px-5 pb-3">
+  <span className="text-xs px-2.5 py-1 rounded-full border" style={{ background: t.panel, borderColor: t.border, color: t.textMuted }}>Total: {recStats.total}</span>
+  <span className="text-xs px-2.5 py-1 rounded-full border" style={{ background: "#FB71851A", borderColor: "#FB718533", color: "#FB7185" }}>High: {recStats.high}</span>
+  <span className="text-xs px-2.5 py-1 rounded-full border" style={{ background: "#F59E0B1A", borderColor: "#F59E0B33", color: "#F59E0B" }}>Medium: {recStats.medium}</span>
+  <span className="text-xs px-2.5 py-1 rounded-full border" style={{ background: `${accent}1A`, borderColor: `${accent}33`, color: accent }}>Low: {recStats.low}</span>
+  <div className="ml-auto flex items-center gap-1">
+    {["All", "High", "Medium", "Low"].map((p) => (
+      <button
+        key={p}
+        onClick={() => setRecPriorityFilter(p)}
+        className="text-xs px-2.5 py-1 rounded-md border cursor-pointer transition-colors"
+        style={{
+          borderColor: recPriorityFilter === p ? accent : t.border,
+          background: recPriorityFilter === p ? `${accent}1A` : "transparent",
+          color: recPriorityFilter === p ? accent : t.textMuted,
+        }}
+      >
+        {p}
+      </button>
+    ))}
+  </div>
+</div>   
+  
+
   <div className="px-5 pb-5 space-y-3">
-    {recommendations.map((r, i) => (
+    {filteredRecommendations.map((r, i) => (
       <div key={i} className="p-4 rounded-lg border" style={{ background: t.panel, borderColor: t.border }}>
         <div className="flex items-center justify-between mb-1 flex-wrap gap-2">
           <p className="text-sm font-semibold" style={{ color: t.text }}>{r.title}</p>
@@ -5321,26 +5756,63 @@ function getPredictedRisks(auditList: any[]) {
   <p className="text-sm font-semibold mb-1 flex items-center gap-2" style={{ color: t.text }}>
     <Database size={15} color={accent} /> End-to-End Architecture
   </p>
-  <p className="text-xs mb-5" style={{ color: t.textFaint }}>Data Sources → Specialized Agents → Agent Outputs → Intelligence Engine → Dashboard</p>
-  <div className="flex flex-wrap items-center justify-center gap-2">
-    {[
-      "Data Consolidation & Normalization",
-      "KPI Calculation",
-      "Health Score Engine",
-      "Risk Prediction Engine",
-      "Opportunity Detection Engine",
-      "Recommendation Engine",
-      "Dashboard / Reports / Alerts",
-    ].map((stage, i, arr) => (
-      <React.Fragment key={stage}>
-        <div className="rounded-lg border px-3 py-2.5 text-xs font-medium text-center max-w-[130px]" style={{ background: t.panel, borderColor: t.border, color: t.text }}>
-          {stage}
-        </div>
-        {i < arr.length - 1 && <ArrowRight size={14} color={t.textFaint} className="shrink-0" />}
-      </React.Fragment>
-    ))}
+  <p className="text-xs mb-6" style={{ color: t.textFaint }}>
+    How raw data becomes a decision — from the outlets, through every agent, into one engine.
+  </p>
+
+  {/* Outer flow: Data Sources -> Specialized Agents -> Agent Outputs -> [Intelligence Engine] */}
+  <div className="flex flex-col lg:flex-row items-center gap-3">
+    <div className="rounded-lg border px-4 py-3 text-xs font-semibold text-center w-full lg:w-auto" style={{ background: t.panel, borderColor: t.border, color: t.text }}>
+      Data Sources
+    </div>
+    <ArrowRight size={16} color={t.textFaint} className="shrink-0 rotate-90 lg:rotate-0" />
+
+    <div className="rounded-lg border px-4 py-3 text-xs font-semibold text-center w-full lg:w-auto" style={{ background: t.panel, borderColor: t.border, color: t.text }}>
+      Specialized Agents
+    </div>
+    <ArrowRight size={16} color={t.textFaint} className="shrink-0 rotate-90 lg:rotate-0" />
+
+    <div className="rounded-lg border px-4 py-3 text-xs font-semibold text-center w-full lg:w-auto" style={{ background: t.panel, borderColor: t.border, color: t.text }}>
+      Agent Outputs
+    </div>
+    <ArrowRight size={16} color={t.textFaint} className="shrink-0 rotate-90 lg:rotate-0" />
+
+    {/* Intelligence Engine — a CONTAINER, not just another box */}
+    <div className="flex-1 w-full rounded-xl border-2 p-4" style={{ background: `${accent}0A`, borderColor: `${accent}50` }}>
+      <p className="text-xs font-bold uppercase tracking-wide mb-3 text-center" style={{ color: accent }}>
+        Intelligence Engine
+      </p>
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+        {[
+          "1. Data Consolidation & Normalization",
+          "2. KPI Calculation",
+          "3. Health Score Engine",
+          "4. Risk Prediction Engine",
+          "5. Opportunity Detection Engine",
+          "6. Recommendation Engine",
+        ].map((stage) => (
+          <div
+            key={stage}
+            className="rounded-md border px-2.5 py-2 text-[11px] font-medium text-center"
+            style={{ background: t.card, borderColor: t.border, color: t.textMuted }}
+          >
+            {stage}
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+
+  {/* Final output, coming OUT of the Intelligence Engine container */}
+  <div className="flex flex-col items-center mt-4">
+    <ArrowRight size={16} color={t.textFaint} className="rotate-90" />
+    <div className="rounded-lg border px-5 py-3 text-xs font-semibold mt-2" style={{ background: `${accent}1A`, borderColor: `${accent}40`, color: accent }}>
+      7. Dashboard / Reports / Alerts
+    </div>
   </div>
 </div>
+
+
 
             </div>
 
