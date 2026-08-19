@@ -54,3 +54,8 @@ export function playTechChime(type: "click" | "nav" | "alert" | "success" = "cli
     // Ignore audio autoplay restrictions gracefully
   }
 }
+
+export function playNotificationSFX() {
+  playTechChime("alert");
+}
+

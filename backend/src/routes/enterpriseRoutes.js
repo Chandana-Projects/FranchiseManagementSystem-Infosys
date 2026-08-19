@@ -110,4 +110,24 @@ router.get('/royalty-settlement', (req, res) => {
   res.json({ settlements });
 });
 
+// 7. Franchise SOP RAG Knowledge Base Engine
+const { querySOPKnowledgeBase, SOP_KNOWLEDGE_BASE } = require('../services/ragService');
+
+router.post('/sop-rag', (req, res) => {
+  const { query } = req.body || {};
+  const result = querySOPKnowledgeBase(query || "");
+  res.json({
+    success: true,
+    ...result
+  });
+});
+
+router.get('/sop-rag/list', (req, res) => {
+  res.json({
+    success: true,
+    sops: SOP_KNOWLEDGE_BASE
+  });
+});
+
 module.exports = router;
+

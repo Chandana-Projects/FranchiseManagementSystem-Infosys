@@ -38,9 +38,14 @@ import AnomalyAlertBanner from "./AnomalyAlertBanner";
 import { LANGUAGES, SupportedLanguage, translateKey } from "../lib/MultiLangEngine";
 import { playTechChime } from "../lib/WebAudioSFX";
 import { CURRENCY_CONFIGS, CurrencyCode, formatCurrencyValue } from "../lib/CurrencyEngine";
-
+import SOPKnowledgeBot from "./SOPKnowledgeBot";
+import RealtimeNotificationToast from "./RealtimeNotificationToast";
+import DemoTour from "./DemoTour";
+import QRStockScannerModal from "./QRStockScannerModal";
+import { BookOpen, Compass, QrCode } from "lucide-react";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
+
 
 const SAMPLE_STORE_PHOTOS = [
   {
@@ -1250,9 +1255,13 @@ export default function FranchiseOSDashboard({ initialModule = "dashboard" }: Fr
 
   const [activeCurrency, setActiveCurrency] = useState<CurrencyCode>("INR");
   const [isDispatchModalOpen, setIsDispatchModalOpen] = useState(false);
+  const [isSOPBotOpen, setIsSOPBotOpen] = useState(false);
+  const [isDemoTourOpen, setIsDemoTourOpen] = useState(false);
+  const [isQRScannerOpen, setIsQRScannerOpen] = useState(false);
   const [selectedCountry, setSelectedCountry] = useState("All");
   const [selectedState, setSelectedState] = useState("All");
   const [activeLang, setActiveLang] = useState<SupportedLanguage>("EN");
+
 
   const SEARCH_DESTINATIONS = [
     { name: "Executive Dashboard Overview", category: "Module", key: "dashboard", icon: "📊" },
@@ -1988,6 +1997,34 @@ function getPredictedRisks(auditList: any[]) {
             >
               <Truck size={14} /> Supplier PO Dispatch
             </button>
+
+            {/* Guided Tour Trigger */}
+            <button
+              onClick={() => { playTechChime("nav"); setIsDemoTourOpen(true); }}
+              className="flex items-center gap-1.5 text-xs px-3 py-2 rounded-lg border font-bold transition-all hover:scale-105"
+              style={{ background: "#F59E0B20", borderColor: "#F59E0B50", color: "#F59E0B" }}
+            >
+              <Compass size={14} /> Guided Tour
+            </button>
+
+            {/* RAG SOP AI Bot Trigger */}
+            <button
+              onClick={() => { playTechChime("nav"); setIsSOPBotOpen(true); }}
+              className="flex items-center gap-1.5 text-xs px-3 py-2 rounded-lg border font-bold transition-all hover:scale-105"
+              style={{ background: "#10B98120", borderColor: "#10B98150", color: "#10B981" }}
+            >
+              <BookOpen size={14} /> SOP Bot
+            </button>
+
+            {/* PWA Mobile QR Scanner Trigger */}
+            <button
+              onClick={() => { playTechChime("nav"); setIsQRScannerOpen(true); }}
+              className="flex items-center gap-1.5 text-xs px-3 py-2 rounded-lg border font-bold transition-all hover:scale-105"
+              style={{ background: "#06B6D420", borderColor: "#06B6D450", color: "#06B6D4" }}
+            >
+              <QrCode size={14} /> Scan QR
+            </button>
+
 
             <button
               onClick={() => setShowAskAI(true)}
@@ -6715,6 +6752,11 @@ function getPredictedRisks(auditList: any[]) {
 
       <VoiceAssistant onNavigate={(key) => setActive(key)} accentColor={accent} theme={t} />
       <SupplierDispatchModal isOpen={isDispatchModalOpen} onClose={() => setIsDispatchModalOpen(false)} accentColor={accent} theme={t} />
+      <RealtimeNotificationToast />
+      <SOPKnowledgeBot isOpen={isSOPBotOpen} onClose={() => setIsSOPBotOpen(false)} />
+      <DemoTour isOpen={isDemoTourOpen} onClose={() => setIsDemoTourOpen(false)} />
+      <QRStockScannerModal isOpen={isQRScannerOpen} onClose={() => setIsQRScannerOpen(false)} />
     </div>
+
   );
 }
