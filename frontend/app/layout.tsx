@@ -20,6 +20,8 @@ export const metadata: Metadata = {
 };
 
 
+import CookieConsentBanner from "../components/CookieConsentBanner";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -43,6 +45,7 @@ export default function RootLayout({
         {/* Gradient colour overlay */}
         <div id="bg-overlay" />
         {children}
+        <CookieConsentBanner />
       </body>
 
     </html>

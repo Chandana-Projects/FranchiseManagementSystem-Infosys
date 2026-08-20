@@ -197,6 +197,31 @@ body {
   box-shadow: 0 0 10px #FB7185;
 }
 
+/* High Precision Tabular Telemetry & Monospace Numerals */
+.metric-num, .tabular-num {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1, "zero" 1;
+}
+
+.telemetry-beacon {
+  position: relative;
+}
+
+.telemetry-beacon::after {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: 9999px;
+  background: currentColor;
+  opacity: 0.4;
+  animation: beaconPulse 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+@keyframes beaconPulse {
+  0% { transform: scale(1); opacity: 0.6; }
+  100% { transform: scale(2.2); opacity: 0; }
+}
+
 /* 👑 LUXURY EXECUTIVE PRINT & PDF STYLESHEET */
 @media print {
   @page {
@@ -281,7 +306,7 @@ body {
   }
 }
 /* =====================================================
-   AUDIT COMPLIANCE SUMMARY
+   AUDIT COMPLIANCE SUMMARY (Dark Glassmorphic Harmony)
    ===================================================== */
 
 .audit-compliance-card {
@@ -289,9 +314,12 @@ body {
   margin-top: 24px;
   padding: 24px;
   border-radius: 18px;
-  background: rgba(255, 255, 255, 0.96);
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  background: rgba(11, 13, 18, 0.82) !important;
+  backdrop-filter: blur(18px) !important;
+  -webkit-backdrop-filter: blur(18px) !important;
+  border: 1px solid rgba(245, 158, 11, 0.2) !important;
+  box-shadow: 0 12px 32px -8px rgba(0, 0, 0, 0.7), 0 0 24px -4px rgba(245, 158, 11, 0.15);
+  color: #FFFBEB;
 }
 
 .audit-header {
@@ -306,11 +334,12 @@ body {
   margin: 0;
   font-size: 24px;
   font-weight: 700;
+  color: #FFFBEB;
 }
 
 .audit-header p {
   margin: 5px 0 0;
-  color: #666;
+  color: #94A3B8;
 }
 
 .compliance-score {
@@ -318,18 +347,20 @@ body {
   padding: 14px;
   text-align: center;
   border-radius: 14px;
-  background: #eefbf3;
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.35);
 }
 
 .compliance-score span {
   display: block;
   font-size: 28px;
   font-weight: 800;
-  color: #16803c;
+  color: #34D399;
 }
 
 .compliance-score small {
-  color: #555;
+  color: #A7F3D0;
+  font-weight: 500;
 }
 
 .compliance-summary {
@@ -342,13 +373,13 @@ body {
 .compliance-box {
   padding: 18px;
   border-radius: 14px;
-  background: #f7f8fa;
-  border: 1px solid #e5e7eb;
+  background: rgba(17, 19, 26, 0.75);
+  border: 1px solid rgba(203, 213, 225, 0.12);
 }
 
 .compliance-box span {
   display: block;
-  color: #555;
+  color: #94A3B8;
   font-size: 14px;
 }
 
@@ -356,10 +387,11 @@ body {
   display: block;
   margin-top: 8px;
   font-size: 26px;
+  color: #FFFBEB;
 }
 
 .compliance-box small {
-  color: #16803c;
+  color: #34D399;
   font-weight: 600;
 }
 
@@ -370,6 +402,7 @@ body {
 .audit-section h3 {
   margin-bottom: 12px;
   font-size: 17px;
+  color: #FDE68A;
 }
 
 .audit-checks {
@@ -384,12 +417,13 @@ body {
   align-items: center;
   padding: 13px 15px;
   border-radius: 10px;
-  background: #f8fafc;
-  border: 1px solid #e5e7eb;
+  background: rgba(17, 19, 26, 0.6);
+  border: 1px solid rgba(203, 213, 225, 0.1);
+  color: #E2E8F0;
 }
 
 .audit-check strong {
-  color: #16803c;
+  color: #34D399;
 }
 
 .audit-alert {
@@ -398,17 +432,19 @@ body {
   align-items: center;
   padding: 14px;
   border-radius: 10px;
-  background: #fff7ed;
-  border: 1px solid #fed7aa;
+  background: rgba(245, 158, 11, 0.12);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  color: #FDE68A;
 }
 
 .audit-alert strong {
-  color: #c2410c;
+  color: #F59E0B;
 }
 
 .corrective-actions {
   margin: 0;
   padding-left: 20px;
+  color: #CBD5E1;
 }
 
 .corrective-actions li {

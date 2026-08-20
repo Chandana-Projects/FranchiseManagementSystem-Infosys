@@ -112,6 +112,27 @@ router.get('/royalty-settlement', (req, res) => {
 
 // 7. Franchise SOP RAG Knowledge Base Engine
 const { querySOPKnowledgeBase, SOP_KNOWLEDGE_BASE } = require('../services/ragService');
+const auditTrailService = require('../services/auditTrailService');
+
+// 8. Cryptographic Audit Trail
+router.get('/audit-trail', (req, res) => {
+  const limit = req.query.limit ? parseInt(req.query.limit, 10) : 50;
+  const logs = auditTrailService.getLogs({ limit });
+  res.json({
+    success: true,
+    count: logs.length,
+    logs,
+  });
+});
+
+router.get('/audit-trail/verify', (req, res) => {
+  const verification = auditTrailService.verifyChainIntegrity();
+  res.json({
+    success: true,
+    ...verification,
+    verifiedAt: new Date().toISOString(),
+  });
+});
 
 router.post('/sop-rag', (req, res) => {
   const { query } = req.body || {};

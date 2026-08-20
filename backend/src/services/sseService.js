@@ -63,4 +63,8 @@ if (timer && timer.unref) {
 }
 
 
-module.exports = { registerClient, broadcast };
+function getClientCount() {
+  return clients.length;
+}
+
+module.exports = { registerClient, broadcast, getClientCount };

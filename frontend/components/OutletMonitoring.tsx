@@ -42,6 +42,8 @@ import SOPKnowledgeBot from "./SOPKnowledgeBot";
 import RealtimeNotificationToast from "./RealtimeNotificationToast";
 import DemoTour from "./DemoTour";
 import QRStockScannerModal from "./QRStockScannerModal";
+import CommandPaletteModal from "./CommandPaletteModal";
+import ExecutiveQuickDock from "./ExecutiveQuickDock";
 import { BookOpen, Compass, QrCode } from "lucide-react";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
@@ -1258,9 +1260,21 @@ export default function FranchiseOSDashboard({ initialModule = "dashboard" }: Fr
   const [isSOPBotOpen, setIsSOPBotOpen] = useState(false);
   const [isDemoTourOpen, setIsDemoTourOpen] = useState(false);
   const [isQRScannerOpen, setIsQRScannerOpen] = useState(false);
+  const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
   const [selectedCountry, setSelectedCountry] = useState("All");
   const [selectedState, setSelectedState] = useState("All");
   const [activeLang, setActiveLang] = useState<SupportedLanguage>("EN");
+
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        setIsCommandPaletteOpen((prev) => !prev);
+      }
+    }
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
 
   const SEARCH_DESTINATIONS = [
@@ -1941,6 +1955,14 @@ function getPredictedRisks(auditList: any[]) {
                 className="w-full bg-transparent outline-none text-xs"
                 style={{ color: t.text }}
               />
+              <button
+                type="button"
+                onClick={() => setIsCommandPaletteOpen(true)}
+                className="hidden sm:inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-mono border border-slate-700 bg-slate-800/90 text-amber-400 hover:text-amber-300 hover:border-amber-400 transition-all cursor-pointer shadow-xs shrink-0"
+                title="Open Spotlight Command Palette (Ctrl+K or Cmd+K)"
+              >
+                ⌘K
+              </button>
             </div>
 
             {/* Smart Navigation Options Dropdown */}
@@ -6756,6 +6778,23 @@ function getPredictedRisks(auditList: any[]) {
       <SOPKnowledgeBot isOpen={isSOPBotOpen} onClose={() => setIsSOPBotOpen(false)} />
       <DemoTour isOpen={isDemoTourOpen} onClose={() => setIsDemoTourOpen(false)} />
       <QRStockScannerModal isOpen={isQRScannerOpen} onClose={() => setIsQRScannerOpen(false)} />
+      <CommandPaletteModal
+        isOpen={isCommandPaletteOpen}
+        onClose={() => setIsCommandPaletteOpen(false)}
+        onNavigate={(key) => setActive(key)}
+        onOpenQRScanner={() => setIsQRScannerOpen(true)}
+        onOpenSOPBot={() => setIsSOPBotOpen(true)}
+        onOpenDispatch={() => setIsDispatchModalOpen(true)}
+        onOpenTour={() => setIsDemoTourOpen(true)}
+      />
+      <ExecutiveQuickDock
+        onOpenCommandPalette={() => setIsCommandPaletteOpen(true)}
+        onOpenQRScanner={() => setIsQRScannerOpen(true)}
+        onOpenSOPBot={() => setIsSOPBotOpen(true)}
+        onOpenDispatch={() => setIsDispatchModalOpen(true)}
+        onOpenTour={() => setIsDemoTourOpen(true)}
+        onOpenAskAI={() => setShowAskAI(true)}
+      />
     </div>
 
   );

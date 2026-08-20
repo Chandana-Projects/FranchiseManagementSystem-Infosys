@@ -2,6 +2,11 @@ const express = require("express");
 const cors = require("cors");
 const helmet = require("helmet");
 
+const requestTracker = require("./middlewares/requestTracker");
+const inputSanitizer = require("./middlewares/sanitizer");
+const { apiLimiter, authLimiter } = require("./middlewares/rateLimiter");
+
+const healthRoutes = require("./routes/healthRoutes");
 const outletRoutes = require("./routes/outletRoutes");
 const authRoutes = require("./routes/authRoutes");
 const inventoryRoutes = require("./routes/inventoryRoutes");
@@ -10,12 +15,24 @@ const employeeRoutes = require("./routes/employeeRoutes");
 const intelligenceRoutes = require("./routes/intelligenceRoutes");
 const campaignRoutes = require("./routes/campaignRoutes");
 const reportsRoutes = require("./routes/reportsRoutes");
+const sseRoutes = require("./routes/sseRoutes");
+const complianceRoutes = require("./routes/complianceRoutes");
+const enterpriseRoutes = require("./routes/enterpriseRoutes");
 const setupSwagger = require("./swagger");
 const errorHandler = require("./middlewares/errorHandler");
 
 const app = express();
 
-app.use(helmet());
+app.use(helmet({
+  contentSecurityPolicy: false, // Enabled for Swagger & SSE compatibility
+  crossOriginEmbedderPolicy: false,
+  crossOriginResourcePolicy: { policy: "cross-origin" },
+  frameguard: { action: "sameorigin" },
+  hsts: { maxAge: 31536000, includeSubDomains: true, preload: true },
+  noSniff: true,
+  referrerPolicy: { policy: "strict-origin-when-cross-origin" },
+}));
+app.use(requestTracker);
 
 const allowedOrigins = process.env.ALLOWED_ORIGINS 
   ? process.env.ALLOWED_ORIGINS.split(",") 
@@ -33,14 +50,19 @@ app.use(cors({
   credentials: true
 }));
 
-app.use(express.json());
+app.use(express.json({ limit: "5mb" }));
+app.use(express.urlencoded({ extended: true, limit: "5mb" }));
+app.use(inputSanitizer);
 
-const sseRoutes = require("./routes/sseRoutes");
-const complianceRoutes = require("./routes/complianceRoutes");
-const enterpriseRoutes = require("./routes/enterpriseRoutes");
+// Rate limit general API requests
+app.use("/api", apiLimiter);
 
+// Health & Diagnostic Telemetry
+app.use("/api/health", healthRoutes);
+
+// Core Business Routes
+app.use("/api/auth", authLimiter, authRoutes);
 app.use("/api/outlets", outletRoutes);
-app.use("/api/auth", authRoutes);
 app.use("/api/inventory", inventoryRoutes);
 app.use("/api/events", sseRoutes);
 app.use("/api/compliance", complianceRoutes);
@@ -52,8 +74,19 @@ app.use("/api/campaigns", campaignRoutes);
 app.use("/api/reports", reportsRoutes);
 app.use("/api/enterprise", enterpriseRoutes);
 
+// Swagger Documentation
 setupSwagger(app);
 
+// 404 Fallback for unmatched API routes
+app.use((req, res, next) => {
+  res.status(404).json({
+    status: "error",
+    error: "Not Found",
+    message: `Cannot ${req.method} ${req.originalUrl || req.url}`,
+  });
+});
+
+// Centralized Global Error Handler
 app.use(errorHandler);
 
-module.exports = app;
+module.exports = app;
