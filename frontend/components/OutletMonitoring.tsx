@@ -1069,6 +1069,7 @@ export default function FranchiseOSDashboard({ initialModule = "dashboard" }: Fr
     if (typeof window !== "undefined") {
       const routeMap: Record<string, string> = {
         dashboard: "/",
+        agentDashboards: "/agent-dashboards",
         outlet: "/outlet",
         inventory: "/inventory",
         staff: "/staff",
@@ -1091,6 +1092,7 @@ export default function FranchiseOSDashboard({ initialModule = "dashboard" }: Fr
     if (typeof window === "undefined") return;
     const pathMap: Record<string, string> = {
       "/": "dashboard",
+      "/agent-dashboards": "agentDashboards",
       "/outlet": "outlet",
       "/inventory": "inventory",
       "/staff": "staff",
@@ -1107,8 +1109,17 @@ export default function FranchiseOSDashboard({ initialModule = "dashboard" }: Fr
       const mod = pathMap[window.location.pathname] || "dashboard";
       setActiveState(mod);
     };
+    const handleCustomNav = (e: any) => {
+      if (e.detail?.moduleKey) {
+        setActive(e.detail.moduleKey);
+      }
+    };
     window.addEventListener("popstate", handlePopState);
-    return () => window.removeEventListener("popstate", handlePopState);
+    window.addEventListener("fops-navigate", handleCustomNav);
+    return () => {
+      window.removeEventListener("popstate", handlePopState);
+      window.removeEventListener("fops-navigate", handleCustomNav);
+    };
   }, []);
 
   // Additional state for Audit, Intelligence, Reporting, and Notifications
