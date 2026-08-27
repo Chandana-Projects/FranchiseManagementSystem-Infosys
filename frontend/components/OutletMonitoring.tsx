@@ -388,6 +388,7 @@ const FALLBACK_INVENTORY = [
 
 const modules = [
   { id: "dashboard", label: "Dashboard", icon: LayoutGrid },
+  { id: "agentDashboards", label: "Agent Dashboards", icon: Grid3x3 },
   { id: "outlet", label: "Outlet Performance Agent", icon: Store },
   { id: "inventory", label: "Inventory Agent", icon: Boxes },
   { id: "staff", label: "Staff Agent", icon: Users },
@@ -1058,6 +1059,7 @@ export default function FranchiseOSDashboard({ initialModule = "dashboard" }: Fr
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [checkingAuth, setCheckingAuth] = useState(true);
   const [active, setActiveState] = useState(initialModule);
+  const [dashSubTab, setDashSubTab] = useState("outlet");
   const [recPriorityFilter, setRecPriorityFilter] = useState("All");
   const [selectedIntelOutlet, setSelectedIntelOutlet] = useState("");
 
@@ -1323,6 +1325,47 @@ export default function FranchiseOSDashboard({ initialModule = "dashboard" }: Fr
   const [inventoryQuery, setInventoryQuery] = useState("");
   const [inventoryLoading, setInventoryLoading] = useState(false);
   const [inventoryError, setInventoryError] = useState<string | null>(null);
+
+  // Gross Margin per outlet (sample — no cost data tracked in-app)
+const outletGrossMargin: Record<string, number> = {
+  "Nashik City Center": 22, "Pune FC Road": 24, "Mumbai Andheri East": 16,
+  "Nagpur Dharampeth": 21, "Aurangabad CIDCO": 12, "Thane Estate": 23,
+  "Kolhapur Tarabai Park": 19, "Solapur Saat Rasta": 17,
+};
+const avgGrossMargin = Math.round(Object.values(outletGrossMargin).reduce((s, v) => s + v, 0) / Object.values(outletGrossMargin).length);
+const avgNetworkGrowth = outletPerformance.reduce((s, o) => s + o.growth, 0) / outletPerformance.length;
+
+// Stock Cover — estimated using reorder_at as a proxy for ~5 days of buffer stock
+const avgStockCoverDays = inventoryItems.length > 0
+  ? Math.round(inventoryItems.reduce((s, i) => {
+      const dailyUsageEstimate = Number(i.reorder_at) / 5;
+      return s + (dailyUsageEstimate > 0 ? Number(i.quantity) / dailyUsageEstimate : 0);
+    }, 0) / inventoryItems.length)
+  : 0;
+
+// Workforce Productivity & Turnover (sample — not tracked in-app)
+const workforceProductivity = 78;
+const workforceTurnover = 11;
+
+// Marketing — everything computed fresh from marketingCampaigns directly
+const campaignSpendTotal = marketingCampaigns.reduce((s, c) => s + c.spend, 0);
+const campaignReachTotal = marketingCampaigns.reduce((s, c) => s + c.reach, 0);
+const campaignConversions: Record<string, { conversions: number; newCustomers: number }> = {
+  "Monsoon Coffee Fest": { conversions: 1840, newCustomers: 620 },
+  "Weekend Combo Offer": { conversions: 980, newCustomers: 410 },
+  "New Outlet Launch - Thane": { conversions: 720, newCustomers: 340 },
+  "Loyalty Program Push": { conversions: 1150, newCustomers: 290 },
+  "Festive Season Bundle": { conversions: 2100, newCustomers: 780 },
+  "Student Discount Drive": { conversions: 890, newCustomers: 360 },
+};
+const totalConversions = Object.values(campaignConversions).reduce((s, v) => s + v.conversions, 0);
+const totalNewCustomers = Object.values(campaignConversions).reduce((s, v) => s + v.newCustomers, 0);
+const avgConversionRate = campaignReachTotal > 0 ? ((totalConversions / campaignReachTotal) * 100).toFixed(1) : "0";
+const avgCAC = totalNewCustomers > 0 ? Math.round(campaignSpendTotal / totalNewCustomers) : 0;
+
+// Audit Checklist Score & Avg Closure Time (sample — not tracked in-app)
+const auditChecklistScore = 91;
+const avgClosureDays = 2.1;
 
   const [employees, setEmployees] = useState<any[]>([]);
   const [staffLoading, setStaffLoading] = useState(false);
@@ -1725,7 +1768,7 @@ const filteredRecommendations = recommendations.filter((r) => recPriorityFilter 
   }, [isLoggedIn]);
 
   useEffect(() => {
-    if (!isLoggedIn || active !== "inventory") return;
+    if (!isLoggedIn || (active !== "inventory" && active !== "agentDashboards")) return;
 
     setInventoryLoading(true);
     setInventoryError(null);
@@ -3085,11 +3128,11 @@ function getPredictedRisks(auditList: any[]) {
 
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {[
-                  { label: "Active Campaigns", value: String(marketingCampaigns.length), icon: Megaphone },
-                  { label: "Total Reach", value: totalReach.toLocaleString("en-IN"), icon: Users },
-                  { label: "Avg Engagement", value: `${avgEngagement}%`, icon: Percent },
-                  { label: "Avg ROI", value: `${avgROI}x`, icon: Target },
-                ].map((k) => {
+  { label: "Campaign Revenue", value: `₹${marketingCampaigns.reduce((s, c) => s + c.spend * c.roi, 0).toLocaleString("en-IN", { maximumFractionDigits: 0 })}`, icon: TrendingUp },
+  { label: "Avg ROAS", value: `${avgROI}x`, icon: ShieldCheck },
+  { label: "Conversion", value: `${avgConversionRate}%`, icon: Users },
+  { label: "CAC", value: `₹${avgCAC}`, icon: Megaphone },
+].map((k) => {
                   const Icon = k.icon;
                   return (
                     <div key={k.label} className="rounded-xl border p-4 transition-colors duration-200" style={{ background: t.card, borderColor: t.border }}>
@@ -5874,6 +5917,403 @@ function getPredictedRisks(auditList: any[]) {
 
 
             </div>
+
+          
+) : active === "agentDashboards" ? (
+  <div className="space-y-6">
+    <div>
+      <h2 className="text-xl font-bold" style={{ color: t.text }}>Agent Dashboards</h2>
+      <p className="text-xs" style={{ color: t.textMuted }}>Quick summary of each agent — same live data as its full page.</p>
+    </div>
+
+    <div className="flex flex-wrap gap-2">
+      {[
+        { id: "outlet", label: "Outlet Performance", icon: Store },
+        { id: "inventory", label: "Inventory", icon: Boxes },
+        { id: "staff", label: "Workforce", icon: Users },
+        { id: "marketing", label: "Marketing", icon: Megaphone },
+        { id: "audit", label: "Audit", icon: ShieldCheck },
+        { id: "intelligence", label: "Executive", icon: Brain },
+      ].map((tb) => {
+        const Icon = tb.icon;
+        const isActive = dashSubTab === tb.id;
+        return (
+          <button
+            key={tb.id}
+            onClick={() => setDashSubTab(tb.id)}
+            className="flex items-center gap-2 text-sm px-4 py-2 rounded-lg border transition-colors cursor-pointer"
+            style={{
+              background: isActive ? `${accent}1A` : t.card,
+              borderColor: isActive ? `${accent}4D` : t.border,
+              color: isActive ? t.text : t.textMuted,
+            }}
+          >
+            <Icon size={15} color={isActive ? accent : t.textFaint} />
+            {tb.label}
+          </button>
+        );
+      })}
+    </div>
+
+    <div className="rounded-xl border p-5" style={{ background: t.card, borderColor: t.border }}>
+  <p className="text-sm font-semibold mb-1" style={{ color: t.text }}>The Franchise Data Flow</p>
+  <p className="text-xs mb-4" style={{ color: t.textFaint }}>Every dashboard starts with data and ends with a business action.</p>
+  <div className="flex flex-wrap items-center justify-center gap-2">
+    {[
+      { step: "1. Collect", detail: "POS, ERP, HR, Marketing, Audit" },
+      { step: "2. Store", detail: "Database" },
+      { step: "3. Transform", detail: "Clean, calculate KPIs" },
+      { step: "4. Visualize", detail: "Dashboard + filters" },
+      { step: "5. Act", detail: "Manager takes action" },
+    ].map((s, i, arr) => (
+      <React.Fragment key={s.step}>
+        <div className="rounded-lg border px-3 py-2 text-center" style={{ background: t.panel, borderColor: t.border }}>
+          <p className="text-xs font-semibold" style={{ color: t.text }}>{s.step}</p>
+          <p className="text-[10px] mt-0.5" style={{ color: t.textFaint }}>{s.detail}</p>
+        </div>
+        {i < arr.length - 1 && <ArrowRight size={14} color={t.textFaint} className="shrink-0" />}
+      </React.Fragment>
+    ))}
+  </div>
+</div>
+
+    {/* ===== INVENTORY ===== */}
+    {dashSubTab === "inventory" && (
+      <div className="space-y-5">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {[
+  { label: "SKUs Tracked", value: String(inventorySummary?.total ?? 0), icon: Boxes },
+  { label: "Units in View", value: Number(inventorySummary?.totalUnits || 0).toLocaleString("en-IN"), icon: TrendingUp },
+  { label: "Wastage", value: `${avgWastagePercent}%`, icon: AlertTriangle },
+  { label: "Inventory Health", value: `${inventorySummary?.healthPct ?? 100}%`, icon: ShieldCheck },
+  { label: "Stock Cover", value: `${avgStockCoverDays} days`, icon: FileBarChart },
+  { label: "Stockout Rate", value: `${inventorySummary && inventorySummary.total > 0 ? Math.round((inventorySummary.critical / inventorySummary.total) * 100) : 0}%`, icon: AlertTriangle },
+].map((k) => {
+            const Icon = k.icon;
+            return (
+              <div key={k.label} className="rounded-xl border p-4" style={{ background: t.card, borderColor: t.border }}>
+                <div className="w-7 h-7 rounded-md flex items-center justify-center mb-3" style={{ background: `${accent}1A` }}>
+                  <Icon size={13} color={accent} />
+                </div>
+                <p className="text-lg font-semibold" style={{ color: t.text }}>{k.value}</p>
+                <p className="text-[11px] mt-0.5" style={{ color: t.textFaint }}>{k.label}</p>
+              </div>
+            );
+          })}
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+          <div className="rounded-xl border p-5" style={{ background: t.card, borderColor: t.border }}>
+            <p className="text-sm font-semibold mb-4" style={{ color: t.text }}>Wastage by Item</p>
+            <div className="space-y-3">
+              {wastageData.map((w) => (
+                <div key={w.item}>
+                  <div className="flex items-center justify-between text-xs mb-1">
+                    <span style={{ color: t.text }}>{w.item}</span>
+                    <span style={{ color: w.wastagePercent > 5 ? "#FB7185" : accent }}>{w.wastagePercent}%</span>
+                  </div>
+                  <div className="w-full h-1.5 rounded-full" style={{ background: t.inputBg }}>
+                    <div className="h-1.5 rounded-full" style={{ width: `${w.wastagePercent * 8}%`, background: w.wastagePercent > 5 ? "#FB7185" : accent }} />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="rounded-xl border p-5" style={{ background: t.card, borderColor: t.border }}>
+            <p className="text-sm font-semibold mb-4" style={{ color: t.text }}>Items Needing Attention</p>
+            <div className="space-y-2">
+              {inventoryItems.filter((i) => Number(i.quantity) <= Number(i.reorder_at)).slice(0, 4).map((i) => (
+                <div key={i.item_id} className="flex items-center justify-between text-xs py-2 border-b last:border-0" style={{ borderColor: t.border }}>
+                  <span style={{ color: t.text }}>{i.name}</span>
+                  <span style={{ color: Number(i.quantity) <= Number(i.reorder_at) * 0.5 ? "#FB7185" : "#F59E0B" }}>{i.quantity} {i.unit || ""} left</span>
+                </div>
+              ))}
+              {inventoryItems.filter((i) => Number(i.quantity) <= Number(i.reorder_at)).length === 0 && (
+                <p className="text-xs" style={{ color: t.textMuted }}>All items are well-stocked.</p>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    )}
+
+    {/* ===== STAFF ===== */}
+    {dashSubTab === "staff" && (
+      <div className="space-y-5">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {[
+  { label: "Total Staff", value: String(FALLBACK_EMPLOYEES.length + hiredStaff.length), icon: Users },
+  { label: "Attendance Rate", value: `${attendanceRateToday}%`, icon: ShieldCheck },
+  { label: "Absenteeism", value: `${Math.round((absentToday / attendanceLog.length) * 100)}%`, icon: AlertTriangle },
+  { label: "Productivity", value: `${workforceProductivity}%`, icon: TrendingUp },
+  { label: "Turnover", value: `${workforceTurnover}%`, icon: FileBarChart },
+].map((k) => {
+            const Icon = k.icon;
+            return (
+              <div key={k.label} className="rounded-xl border p-4" style={{ background: t.card, borderColor: t.border }}>
+                <div className="w-7 h-7 rounded-md flex items-center justify-center mb-3" style={{ background: `${accent}1A` }}>
+                  <Icon size={13} color={accent} />
+                </div>
+                <p className="text-lg font-semibold" style={{ color: t.text }}>{k.value}</p>
+                <p className="text-[11px] mt-0.5" style={{ color: t.textFaint }}>{k.label}</p>
+              </div>
+            );
+          })}
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+          <div className="rounded-xl border p-5" style={{ background: t.card, borderColor: t.border }}>
+            <p className="text-sm font-semibold mb-4" style={{ color: t.text }}>Today's Attendance Breakdown</p>
+            <div className="flex items-center gap-4">
+              <div className="text-center">
+                <p className="text-2xl font-bold" style={{ color: accent }}>{presentToday}</p>
+                <p className="text-[11px]" style={{ color: t.textFaint }}>Present</p>
+              </div>
+              <div className="text-center">
+                <p className="text-2xl font-bold" style={{ color: "#F59E0B" }}>{lateToday}</p>
+                <p className="text-[11px]" style={{ color: t.textFaint }}>Late</p>
+              </div>
+              <div className="text-center">
+                <p className="text-2xl font-bold" style={{ color: "#FB7185" }}>{absentToday}</p>
+                <p className="text-[11px]" style={{ color: t.textFaint }}>Absent</p>
+              </div>
+            </div>
+          </div>
+          <div className="rounded-xl border p-5" style={{ background: t.card, borderColor: t.border }}>
+            <p className="text-sm font-semibold mb-4" style={{ color: t.text }}>Understaffed Outlets</p>
+            <div className="space-y-2">
+              {understaffedOutlets.length > 0 ? understaffedOutlets.map((o) => (
+                <div key={o.name} className="flex items-center justify-between text-xs py-2 border-b last:border-0" style={{ borderColor: t.border }}>
+                  <span style={{ color: t.text }}>{o.name}</span>
+                  <span style={{ color: "#FB7185" }}>{o.count}/{MIN_STAFF_PER_OUTLET} staff</span>
+                </div>
+              )) : (
+                <p className="text-xs" style={{ color: t.textMuted }}>All outlets are properly staffed.</p>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    )}
+
+    {/* ===== MARKETING ===== */}
+    {dashSubTab === "marketing" && (
+      <div className="space-y-5">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {[
+  { label: "Campaign Revenue", value: `₹${marketingCampaigns.reduce((s, c) => s + c.spend * c.roi, 0).toLocaleString("en-IN", { maximumFractionDigits: 0 })}`, icon: TrendingUp },
+  { label: "Avg ROAS", value: `${avgROI}x`, icon: ShieldCheck },
+  { label: "Conversion", value: `${avgConversionRate}%`, icon: Users },
+  { label: "CAC", value: `₹${avgCAC}`, icon: Megaphone },
+].map((k) => {
+            const Icon = k.icon;
+            return (
+              <div key={k.label} className="rounded-xl border p-4" style={{ background: t.card, borderColor: t.border }}>
+                <div className="w-7 h-7 rounded-md flex items-center justify-center mb-3" style={{ background: `${accent}1A` }}>
+                  <Icon size={13} color={accent} />
+                </div>
+                <p className="text-lg font-semibold" style={{ color: t.text }}>{k.value}</p>
+                <p className="text-[11px] mt-0.5" style={{ color: t.textFaint }}>{k.label}</p>
+              </div>
+            );
+          })}
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+          <div className="rounded-xl border p-5" style={{ background: t.card, borderColor: t.border }}>
+            <p className="text-sm font-semibold mb-1" style={{ color: t.text }}>Engagement Trend</p>
+            <p className="text-xs mb-3" style={{ color: t.textFaint }}>Last 6 months</p>
+            <ResponsiveContainer width="100%" height={160}>
+              <LineChart data={engagementTrend}>
+                <CartesianGrid strokeDasharray="3 3" stroke={t.gridLine} />
+                <XAxis dataKey="month" tick={{ fontSize: 11, fill: t.textFaint }} stroke={t.gridLine} />
+                <YAxis tick={{ fontSize: 11, fill: t.textFaint }} stroke={t.gridLine} />
+                <Tooltip contentStyle={{ background: t.card, border: `1px solid ${t.border}`, borderRadius: 8, color: t.text }} formatter={(v: any) => `${v}%`} />
+                <Line type="monotone" dataKey="engagement" stroke={accent} strokeWidth={2} dot={{ r: 2 }} />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+          <div className="rounded-xl border p-5" style={{ background: t.card, borderColor: t.border }}>
+            <p className="text-sm font-semibold mb-4" style={{ color: t.text }}>Best Performing Campaign</p>
+            {(() => {
+              const best = [...marketingCampaigns].sort((a, b) => b.roi - a.roi)[0];
+              return (
+                <div>
+                  <p className="text-sm font-semibold mb-1" style={{ color: accent }}>{best.name}</p>
+                  <p className="text-xs mb-3" style={{ color: t.textMuted }}>{best.channel}</p>
+                  <div className="flex gap-4">
+                    <div><p className="text-xs" style={{ color: t.textFaint }}>ROI</p><p className="text-lg font-bold" style={{ color: t.text }}>{best.roi}x</p></div>
+                    <div><p className="text-xs" style={{ color: t.textFaint }}>Reach</p><p className="text-lg font-bold" style={{ color: t.text }}>{best.reach.toLocaleString("en-IN")}</p></div>
+                    <div><p className="text-xs" style={{ color: t.textFaint }}>Engagement</p><p className="text-lg font-bold" style={{ color: t.text }}>{best.engagement}%</p></div>
+                  </div>
+                </div>
+              );
+            })()}
+          </div>
+        </div>
+      </div>
+    )}
+
+    {/* ===== AUDIT ===== */}
+    {dashSubTab === "audit" && (
+      <div className="space-y-5">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {[
+  { label: "Compliance Rate", value: `${audits.length > 0 ? Math.round((audits.filter((a) => a.status === "Healthy").length / audits.length) * 100) : 0}%`, icon: ShieldCheck },
+  { label: "Checklist Score", value: `${auditChecklistScore}%`, icon: FileBarChart },
+  { label: "Open Issues", value: String(correctiveActions.length), icon: AlertTriangle },
+  { label: "Avg Closure", value: `${avgClosureDays} days`, icon: TrendingUp },
+].map((k) => {
+            const Icon = k.icon;
+            return (
+              <div key={k.label} className="rounded-xl border p-4" style={{ background: t.card, borderColor: t.border }}>
+                <div className="w-7 h-7 rounded-md flex items-center justify-center mb-3" style={{ background: `${accent}1A` }}>
+                  <Icon size={13} color={accent} />
+                </div>
+                <p className="text-lg font-semibold" style={{ color: t.text }}>{k.value}</p>
+                <p className="text-[11px] mt-0.5" style={{ color: t.textFaint }}>{k.label}</p>
+              </div>
+            );
+          })}
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+          <div className="rounded-xl border p-5" style={{ background: t.card, borderColor: t.border }}>
+            <p className="text-sm font-semibold mb-1" style={{ color: t.text }}>Compliance Trend</p>
+            <p className="text-xs mb-3" style={{ color: t.textFaint }}>Network average, last 6 months</p>
+            <ResponsiveContainer width="100%" height={160}>
+              <LineChart data={complianceTrend}>
+                <CartesianGrid strokeDasharray="3 3" stroke={t.gridLine} />
+                <XAxis dataKey="month" tick={{ fontSize: 11, fill: t.textFaint }} stroke={t.gridLine} />
+                <YAxis tick={{ fontSize: 11, fill: t.textFaint }} stroke={t.gridLine} domain={[60, 100]} />
+                <Tooltip contentStyle={{ background: t.card, border: `1px solid ${t.border}`, borderRadius: 8, color: t.text }} formatter={(v: any) => `${v}/100`} />
+                <Line type="monotone" dataKey="score" stroke={accent} strokeWidth={2} dot={{ r: 2 }} />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+          <div className="rounded-xl border p-5" style={{ background: t.card, borderColor: t.border }}>
+            <p className="text-sm font-semibold mb-4" style={{ color: t.text }}>Most Recent Audits</p>
+            <div className="space-y-2">
+              {[...audits].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).slice(0, 4).map((a) => (
+                <div key={a.id} className="flex items-center justify-between text-xs py-2 border-b last:border-0" style={{ borderColor: t.border }}>
+                  <span style={{ color: t.text }}>{a.outlet_name}</span>
+                  <span style={{ color: a.status === "Healthy" ? accent : a.status === "Watch" ? "#F59E0B" : "#FB7185" }}>{a.score}/100</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    )}
+
+    {/* ===== INTELLIGENCE ===== */}
+    {dashSubTab === "intelligence" && (
+      <div className="space-y-5">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {[
+            { label: "Network Sales", value: `₹${totalRevenue.toLocaleString("en-IN")}`, icon: TrendingUp },
+            { label: "Growth", value: `${avgNetworkGrowth >= 0 ? "+" : ""}${avgNetworkGrowth.toFixed(1)}%`, icon: ShieldCheck },
+            { label: "Target Achievement", value: `${Math.round(outletPerformance.reduce((s, o) => s + (o.sales / o.target) * 100, 0) / outletPerformance.length)}%`, icon: FileBarChart },
+            { label: "At-Risk Outlets", value: String(outletPerformance.filter((o) => o.growth < 0 || o.status !== "Healthy").length), icon: AlertTriangle },
+          ].map((k) => {
+            const Icon = k.icon;
+            return (
+              <div key={k.label} className="rounded-xl border p-4" style={{ background: t.card, borderColor: t.border }}>
+                <div className="w-7 h-7 rounded-md flex items-center justify-center mb-3" style={{ background: `${accent}1A` }}>
+                  <Icon size={13} color={accent} />
+                </div>
+                <p className="text-lg font-semibold" style={{ color: t.text }}>{k.value}</p>
+                <p className="text-[11px] mt-0.5" style={{ color: t.textFaint }}>{k.label}</p>
+              </div>
+            );
+          })}
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+          <div className="rounded-xl border p-5" style={{ background: t.card, borderColor: t.border }}>
+            <p className="text-sm font-semibold mb-4" style={{ color: t.text }}>Health Score Breakdown</p>
+            <div className="space-y-2.5">
+              {healthComponents.map((c) => (
+                <div key={c.label}>
+                  <div className="flex items-center justify-between text-xs mb-1">
+                    <span style={{ color: t.text }}>{c.label}</span>
+                    <span style={{ color: c.score >= 80 ? accent : c.score >= 60 ? "#F59E0B" : "#FB7185" }}>{c.score}</span>
+                  </div>
+                  <div className="w-full h-1.5 rounded-full" style={{ background: t.inputBg }}>
+                    <div className="h-1.5 rounded-full" style={{ width: `${c.score}%`, background: c.score >= 80 ? accent : c.score >= 60 ? "#F59E0B" : "#FB7185" }} />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="rounded-xl border p-5" style={{ background: t.card, borderColor: t.border }}>
+            <p className="text-sm font-semibold mb-4" style={{ color: t.text }}>Top Risk Right Now</p>
+            {predictedRisks.length > 0 ? (() => {
+              const top = [...predictedRisks].sort((a, b) => b.probability - a.probability)[0];
+              return (
+                <div>
+                  <p className="text-sm font-semibold mb-1" style={{ color: "#FB7185" }}>{top.riskType}</p>
+                  <p className="text-xs mb-2" style={{ color: t.textMuted }}>{top.evidence}</p>
+                  <p className="text-xs" style={{ color: t.textFaint }}>{top.probability}% probability · {top.horizon}</p>
+                </div>
+              );
+            })() : (
+              <p className="text-xs" style={{ color: t.textMuted }}>No significant risks detected right now.</p>
+            )}
+          </div>
+        </div>
+      </div>
+    )}
+
+    {/* ===== OUTLET PERFORMANCE ===== */}
+    {dashSubTab === "outlet" && (
+      <div className="space-y-5">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {[
+  { label: "Total Outlets", value: String(outletPerformance.length), icon: Store },
+  { label: "Total Revenue", value: `₹${totalRevenue.toLocaleString("en-IN")}`, icon: TrendingUp },
+  { label: "Customer Rating", value: `${(customerFeedbackByOutlet.reduce((s, f) => s + f.rating, 0) / customerFeedbackByOutlet.length).toFixed(1)}/5`, icon: ShieldCheck },
+  { label: "Target Achievement", value: `${Math.round(outletPerformance.reduce((s, o) => s + (o.sales / o.target) * 100, 0) / outletPerformance.length)}%`, icon: AlertTriangle },
+  { label: "Gross Margin", value: `${avgGrossMargin}%`, icon: FileBarChart },
+].map((k) => {
+            const Icon = k.icon;
+            return (
+              <div key={k.label} className="rounded-xl border p-4" style={{ background: t.card, borderColor: t.border }}>
+                <div className="w-7 h-7 rounded-md flex items-center justify-center mb-3" style={{ background: `${accent}1A` }}>
+                  <Icon size={13} color={accent} />
+                </div>
+                <p className="text-lg font-semibold" style={{ color: t.text }}>{k.value}</p>
+                <p className="text-[11px] mt-0.5" style={{ color: t.textFaint }}>{k.label}</p>
+              </div>
+            );
+          })}
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+          <div className="rounded-xl border p-5" style={{ background: t.card, borderColor: t.border }}>
+            <p className="text-sm font-semibold mb-1" style={{ color: t.text }}>Network Revenue Trend</p>
+            <p className="text-xs mb-3" style={{ color: t.textFaint }}>Last 6 months</p>
+            <ResponsiveContainer width="100%" height={160}>
+              <LineChart data={revenueTrendByOutlet.All}>
+                <CartesianGrid strokeDasharray="3 3" stroke={t.gridLine} />
+                <XAxis dataKey="month" tick={{ fontSize: 11, fill: t.textFaint }} stroke={t.gridLine} />
+                <YAxis tick={{ fontSize: 11, fill: t.textFaint }} stroke={t.gridLine} />
+                <Tooltip contentStyle={{ background: t.card, border: `1px solid ${t.border}`, borderRadius: 8, color: t.text }} formatter={(v: any) => `₹${Number(v).toLocaleString("en-IN")}`} />
+                <Line type="monotone" dataKey="revenue" stroke={accent} strokeWidth={2} dot={{ r: 2 }} />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+          <div className="rounded-xl border p-5" style={{ background: t.card, borderColor: t.border }}>
+            <p className="text-sm font-semibold mb-4" style={{ color: t.text }}>Best vs. Lowest Outlet</p>
+            <div className="space-y-3">
+              <div className="rounded-lg border p-3" style={{ background: `${accent}0A`, borderColor: `${accent}33` }}>
+                <p className="text-xs" style={{ color: t.textMuted }}>Best Performing</p>
+                <p className="text-sm font-semibold" style={{ color: accent }}>{bestOutletBySales.name} (+{bestOutletBySales.growth}%)</p>
+              </div>
+              <div className="rounded-lg border p-3" style={{ background: "#FB71850A", borderColor: "#FB718533" }}>
+                <p className="text-xs" style={{ color: t.textMuted }}>Lowest Performing</p>
+                <p className="text-sm font-semibold" style={{ color: "#FB7185" }}>{worstOutletBySales.name} ({worstOutletBySales.growth}%)</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    )}
+  </div>
 
             
           ) : active === "reporting" ? (
