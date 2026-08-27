@@ -186,9 +186,9 @@ const SOP_LIBRARY_DATA = [
 
 const themes = {
   dark: {
-    bg: "transparent", panel: "rgba(11, 13, 18, 0.82)", card: "rgba(17, 19, 26, 0.76)", border: "rgba(245, 158, 11, 0.16)",
+    bg: "transparent", panel: "rgba(13, 17, 26, 0.94)", card: "rgba(18, 24, 38, 0.92)", border: "rgba(203, 213, 225, 0.16)",
     text: "#FFFBEB", textMuted: "#CBD5E1", textFaint: "#94A3B8", textOnAccent: "#060709",
-    gridLine: "rgba(203, 213, 225, 0.14)", inputBg: "rgba(6, 7, 9, 0.85)",
+    gridLine: "rgba(203, 213, 225, 0.12)", inputBg: "rgba(8, 10, 15, 0.94)",
   },
   light: {
     bg: "#F4F6F8", panel: "#FFFFFF", card: "#FFFFFF", border: "#E2E8F0",

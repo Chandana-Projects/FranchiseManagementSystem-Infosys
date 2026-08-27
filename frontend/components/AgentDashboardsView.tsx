@@ -205,8 +205,8 @@ export default function AgentDashboardsView({
 
       {/* LIVE NEURAL TICKER */}
       <div
-        className="rounded-xl border px-4 py-2 flex items-center justify-between gap-3 text-xs overflow-hidden"
-        style={{ background: isDark ? "rgba(10, 15, 26, 0.7)" : "#F1F5F9", borderColor: t.border }}
+        className="rounded-xl border px-4 py-2 flex items-center justify-between gap-3 text-xs overflow-hidden shadow-md backdrop-blur-md"
+        style={{ background: isDark ? "rgba(13, 17, 26, 0.94)" : "#F1F5F9", borderColor: t.border }}
       >
         <div className="flex items-center gap-2 shrink-0 font-mono text-[11px] font-bold text-sky-400">
           <Radio size={13} className="animate-pulse" /> LIVE TELEMETRY LOGS:
