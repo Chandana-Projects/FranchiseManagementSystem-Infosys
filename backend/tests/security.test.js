@@ -2,6 +2,14 @@ const request = require("supertest");
 const inputSanitizer = require("../src/middlewares/sanitizer");
 const { CircuitBreaker } = require("../src/services/circuitBreaker");
 
+// Mock Prisma config to avoid database connection timeouts during tests
+jest.mock("../src/config/prisma", () => {
+  return {
+    $queryRaw: jest.fn().mockRejectedValue(new Error("Database offline in test")),
+  };
+});
+
+
 describe("Security, Sanitization & Audit Trail", () => {
   it("should sanitize prototype pollution and script tags from request objects", () => {
     const req = {
