@@ -51,22 +51,6 @@ export default function AgentDashboardsView({
   // Navigation & Control States
   const [activeTab, setActiveTab] = useState<string>("outlet");
   const [timeRange, setTimeRange] = useState<string>("30D");
-  const [caseStudyExpanded, setCaseStudyExpanded] = useState<boolean>(true);
-  const [activeQuestion, setActiveQuestion] = useState<number | null>(1);
-  const [isSimulatingFix, setIsSimulatingFix] = useState<boolean>(false);
-  const [simulationComplete, setSimulationComplete] = useState<boolean>(false);
-  
-  // Interactive Case Study Remediation Toggles
-  const [selectedStrategy, setSelectedStrategy] = useState<"balanced" | "margin" | "volume">("balanced");
-  const [appliedActions, setAppliedActions] = useState<{
-    roster: boolean;
-    discount: boolean;
-    transfer: boolean;
-  }>({
-    roster: false,
-    discount: false,
-    transfer: false,
-  });
 
   // What-If Sandbox States
   const [sandboxOpen, setSandboxOpen] = useState<boolean>(false);
@@ -140,24 +124,8 @@ export default function AgentDashboardsView({
     { outlet: "Mumbai Andheri", hygiene: 84, safety: 78, cash: 92, branding: 88, overall: "85%" },
     { outlet: "Nagpur Central", hygiene: 94, safety: 90, cash: 96, branding: 92, overall: "93%" },
     { outlet: "Aurangabad Hub", hygiene: 68, safety: 62, cash: 74, branding: 70, overall: "68%" },
-    { outlet: "Outlet 17 (Diagnostic)", hygiene: 82, safety: 79, cash: 88, branding: 85, overall: "83%" },
+    { outlet: "Solapur Branch", hygiene: 88, safety: 85, cash: 90, branding: 89, overall: "88%" },
   ];
-
-  // Trigger Case Study Simulation
-  const handleRunSimulation = () => {
-    try { playTechChime(); } catch (e) {}
-    setIsSimulatingFix(true);
-    setTimeout(() => {
-      setIsSimulatingFix(false);
-      setSimulationComplete(true);
-      setAppliedActions({ roster: true, discount: true, transfer: true });
-    }, 1500);
-  };
-
-  const toggleAction = (key: "roster" | "discount" | "transfer") => {
-    try { playTechChime(); } catch (e) {}
-    setAppliedActions((prev) => ({ ...prev, [key]: !prev[key] }));
-  };
 
   return (
     <div className="space-y-6">
@@ -231,22 +199,6 @@ export default function AgentDashboardsView({
           >
             <Sliders size={14} />
             {sandboxOpen ? "Close What-If Sandbox" : "What-If AI Sandbox"}
-          </button>
-
-          <button
-            onClick={() => {
-              try { playTechChime(); } catch (e) {}
-              setCaseStudyExpanded(!caseStudyExpanded);
-            }}
-            className="flex items-center gap-1.5 text-xs font-bold px-3.5 py-2 rounded-xl border transition-all cursor-pointer shadow-sm hover:scale-[1.02] active:scale-95"
-            style={{
-              background: caseStudyExpanded ? "#F59E0B22" : "rgba(245, 158, 11, 0.1)",
-              borderColor: caseStudyExpanded ? "#F59E0B88" : "rgba(245, 158, 11, 0.3)",
-              color: "#F59E0B",
-            }}
-          >
-            <Activity size={14} className="animate-spin" style={{ animationDuration: "8s" }} />
-            {caseStudyExpanded ? "Hide Outlet 17 Study" : "Outlet 17 Diagnostic"}
           </button>
         </div>
       </div>
@@ -407,203 +359,7 @@ export default function AgentDashboardsView({
         )}
       </AnimatePresence>
 
-      {/* ========================================================================= */}
-      {/* INTERACTIVE MINI CASE STUDY: OUTLET 17 DEEP DIVE DIAGNOSTIC CONSOLE */}
-      {/* ========================================================================= */}
-      <AnimatePresence>
-        {caseStudyExpanded && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            className="rounded-2xl border p-6 shadow-2xl relative overflow-hidden space-y-5"
-            style={{
-              background: "linear-gradient(135deg, rgba(15, 23, 42, 0.96), rgba(30, 41, 59, 0.92))",
-              borderColor: "#F59E0B77",
-            }}
-          >
-            {/* Header with Diagnostic Status */}
-            <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-amber-500/20">
-              <div className="flex items-center gap-3">
-                <div className="p-2.5 rounded-xl bg-amber-500/20 text-amber-400 border border-amber-500/40 shadow-inner">
-                  <AlertOctagon size={22} className="animate-pulse" />
-                </div>
-                <div>
-                  <h3 className="text-base font-extrabold text-white flex items-center gap-2">
-                    Mini Case Study: Something Is Wrong at Outlet 17
-                    <span className="text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/40 font-bold">
-                      ANOMALY DETECTED
-                    </span>
-                  </h3>
-                  <p className="text-xs text-slate-300">
-                    High sales volume (+14%) paired with margin compression (-9%), stockout friction (-18%), and staff burnout (+22% overtime).
-                  </p>
-                </div>
-              </div>
 
-              {/* Action Simulation Trigger */}
-              <button
-                onClick={handleRunSimulation}
-                disabled={isSimulatingFix}
-                className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold text-black transition-all cursor-pointer shadow-xl disabled:opacity-50 hover:scale-[1.02] active:scale-95"
-                style={{ background: "#F59E0B" }}
-              >
-                {isSimulatingFix ? (
-                  <>
-                    <RefreshCw size={14} className="animate-spin" /> Running Neural Correlation...
-                  </>
-                ) : simulationComplete ? (
-                  <>
-                    <CheckCircle2 size={14} /> Diagnostic Complete (Rerun)
-                  </>
-                ) : (
-                  <>
-                    <Play size={14} fill="#000" /> Run AI Root-Cause Diagnostic
-                  </>
-                )}
-              </button>
-            </div>
-
-            {/* 4 Anomaly KPI Cards */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3.5">
-              <div className="rounded-xl p-3.5 border bg-emerald-950/30 border-emerald-500/30 text-center shadow-lg">
-                <div className="flex items-center justify-center gap-1 text-emerald-400 font-bold text-xs mb-1">
-                  <ArrowUpRight size={14} /> Top-Line Growth
-                </div>
-                <div className="text-3xl font-black text-emerald-400">+14%</div>
-                <div className="text-xs font-bold text-emerald-200 mt-0.5">Sales Volume</div>
-                <div className="text-[10px] text-slate-400 mt-1">High footfall during rush hour</div>
-              </div>
-
-              <div className="rounded-xl p-3.5 border bg-rose-950/30 border-rose-500/30 text-center shadow-lg">
-                <div className="flex items-center justify-center gap-1 text-rose-400 font-bold text-xs mb-1">
-                  <ArrowDownRight size={14} /> Margin Compression
-                </div>
-                <div className="text-3xl font-black text-rose-400">-9%</div>
-                <div className="text-xs font-bold text-rose-200 mt-0.5">Gross Margin</div>
-                <div className="text-[10px] text-slate-400 mt-1">Unapproved 30% discount combos</div>
-              </div>
-
-              <div className="rounded-xl p-3.5 border bg-amber-950/30 border-amber-500/30 text-center shadow-lg">
-                <div className="flex items-center justify-center gap-1 text-amber-400 font-bold text-xs mb-1">
-                  <ArrowDownRight size={14} /> Supply Depletion
-                </div>
-                <div className="text-3xl font-black text-amber-400">-18%</div>
-                <div className="text-xs font-bold text-amber-200 mt-0.5">Stock Cover</div>
-                <div className="text-[10px] text-slate-400 mt-1">Arabica & Dairy near stockout</div>
-              </div>
-
-              <div className="rounded-xl p-3.5 border bg-orange-950/30 border-orange-500/30 text-center shadow-lg">
-                <div className="flex items-center justify-center gap-1 text-orange-400 font-bold text-xs mb-1">
-                  <ArrowUpRight size={14} /> Staff Fatigue
-                </div>
-                <div className="text-3xl font-black text-orange-400">+22%</div>
-                <div className="text-xs font-bold text-orange-200 mt-0.5">Overtime Hours</div>
-                <div className="text-[10px] text-slate-400 mt-1">Static roster unable to cover surge</div>
-              </div>
-            </div>
-
-            {/* 3 Interactive Questions & Expected Strategic Thinking */}
-            <div className="space-y-3">
-              <div className="flex items-center justify-between text-xs font-bold uppercase tracking-wider text-amber-400 font-mono">
-                <span>Investigative Framework (Click to explore):</span>
-                <span className="text-[11px] text-slate-400 lowercase font-sans">
-                  Click questions to inspect root causes & actions
-                </span>
-              </div>
-
-              {[
-                {
-                  id: 1,
-                  q: "Question 1: What could explain the combination of higher sales and lower margin?",
-                  ans: "Unfavorable Product Mix & Discounting: Store staff heavily pushed a promotional 30% discount combo with high COGS. While transaction volume expanded by 14%, net margin dropped by 9% because discounted items squeezed out high-margin espresso sales.",
-                  action: "Throttle discount cap from 30% to 15% and mandate high-margin food pairing prompts on the POS.",
-                  key: "discount" as const,
-                },
-                {
-                  id: 2,
-                  q: "Question 2: How could low stock cover affect sales and customer experience?",
-                  ans: "Stockout Friction & Order Rejections: With stock cover down 18%, Outlet 17 is running out of specialty Arabica beans and dairy syrups before evening peak hours, leading to 14% longer wait times, order cancellations, and customer dissatisfaction.",
-                  action: "Trigger an urgent 25kg inter-outlet transfer from Pune FC Road (holding 14 days cover) to arrive in 4 hours.",
-                  key: "transfer" as const,
-                },
-                {
-                  id: 3,
-                  q: "Question 3: Why might overtime increase at the same time?",
-                  ans: "Static Roster & Peak Hour Imbalance: Demand surged during 13:00-15:00 and 19:00-21:00, but only 3 baristas were scheduled. Unable to take breaks or change shifts, staff worked continuous overtime to handle customer queues.",
-                  action: "Rebalance roster with 2 flexible part-time barista shifts during 12:30-15:30 and 18:30-21:30 peak windows.",
-                  key: "roster" as const,
-                },
-              ].map((item) => {
-                const isResolved = appliedActions[item.key];
-                return (
-                  <div
-                    key={item.id}
-                    className="rounded-xl border border-white/10 bg-slate-900/70 overflow-hidden transition-all shadow-md"
-                  >
-                    <button
-                      onClick={() => {
-                        try { playTechChime(); } catch (e) {}
-                        setActiveQuestion(activeQuestion === item.id ? null : item.id);
-                      }}
-                      className="w-full flex items-center justify-between p-3.5 text-left cursor-pointer hover:bg-white/5 text-xs font-bold text-slate-200"
-                    >
-                      <span className="flex items-center gap-2.5">
-                        <HelpCircle size={15} color="#F59E0B" /> {item.q}
-                      </span>
-                      <div className="flex items-center gap-2">
-                        {isResolved ? (
-                          <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center gap-1 font-bold">
-                            <Check size={11} /> REMEDIATED
-                          </span>
-                        ) : (
-                          <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30 font-bold">
-                            ACTION PENDING
-                          </span>
-                        )}
-                        {activeQuestion === item.id ? <ChevronUp size={15} /> : <ChevronDown size={15} />}
-                      </div>
-                    </button>
-
-                    {activeQuestion === item.id && (
-                      <div className="p-4 pt-0 text-xs space-y-3 border-t border-white/5 bg-slate-950/40">
-                        <p className="text-slate-300 leading-relaxed font-sans pt-3">{item.ans}</p>
-                        <div className="flex flex-wrap items-center justify-between gap-2 p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-300 text-xs">
-                          <span className="font-medium">⚡ Recommended Action: {item.action}</span>
-                          <button
-                            onClick={() => toggleAction(item.key)}
-                            className="px-3 py-1 rounded-lg text-xs font-bold transition-transform active:scale-95 cursor-pointer shadow-sm"
-                            style={{
-                              background: isResolved ? "#10B981" : "#F59E0B",
-                              color: isResolved ? "#FFFFFF" : "#000000",
-                            }}
-                          >
-                            {isResolved ? "✓ Applied (Undo)" : "Apply Action Now"}
-                          </button>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* Strategic Summary Box */}
-            <div className="rounded-xl border border-cyan-500/40 p-3.5 bg-cyan-950/20 text-cyan-200 text-xs flex items-center justify-between flex-wrap gap-2">
-              <div className="flex items-center gap-2">
-                <Sparkles size={16} className="text-cyan-400 shrink-0" />
-                <span>
-                  <strong>Expected Strategic Thinking:</strong> Investigate product mix/discounts, stock replenishment,
-                  staffing levels, and demand patterns collectively — preventing siloed operational failures.
-                </span>
-              </div>
-              <span className="font-mono text-[10px] text-cyan-300 bg-cyan-500/20 px-2.5 py-1 rounded-md border border-cyan-500/40 font-bold">
-                CROSS-AGENT RESOLUTION ENGINE
-              </span>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
 
       {/* ========================================================================= */}
       {/* 6 SUB-TABS SELECTOR */}
