@@ -235,33 +235,36 @@ export default function AgentDashboardsView({
             exit={{ opacity: 0, height: 0 }}
             className="rounded-2xl border p-6 shadow-2xl relative overflow-hidden space-y-4"
             style={{
-              background: "linear-gradient(135deg, rgba(15, 23, 42, 0.98), rgba(24, 32, 54, 0.95))",
-              borderColor: `${accent}88`,
+              background: isDark
+                ? "linear-gradient(135deg, rgba(15, 23, 42, 0.98), rgba(24, 32, 54, 0.95))"
+                : "linear-gradient(135deg, #FFFFFF, #F8FAFC)",
+              borderColor: isDark ? `${accent}88` : `${accent}66`,
+              color: t.text,
             }}
           >
-            <div className="flex items-center justify-between border-b border-white/10 pb-3">
+            <div className="flex items-center justify-between border-b pb-3" style={{ borderColor: isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.08)" }}>
               <div className="flex items-center gap-2">
                 <Sliders size={20} color={accent} />
                 <div>
-                  <h3 className="text-base font-extrabold text-white">
+                  <h3 className="text-base font-extrabold" style={{ color: t.text }}>
                     What-If AI Operational Scenario Simulator
                   </h3>
-                  <p className="text-xs text-slate-400">
+                  <p className="text-xs" style={{ color: t.textFaint }}>
                     Adjust operational levers to model live impact on margins, revenue growth, stockouts & queue times.
                   </p>
                 </div>
               </div>
-              <span className="text-xs font-mono px-3 py-1 rounded-full bg-cyan-500/10 text-cyan-300 border border-cyan-500/30">
+              <span className="text-xs font-mono px-3 py-1 rounded-full bg-cyan-500/10 text-cyan-600 dark:text-cyan-300 border border-cyan-500/30">
                 DYNAMIC ML PREDICTIVE MODEL
               </span>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {/* Slider 1: Discount Rate */}
-              <div className="space-y-2 p-3.5 rounded-xl bg-slate-900/60 border border-white/5">
-                <div className="flex justify-between text-xs font-bold text-slate-200">
+              <div className="space-y-2 p-3.5 rounded-xl border" style={{ background: isDark ? "rgba(15, 23, 42, 0.6)" : "#F1F5F9", borderColor: t.border }}>
+                <div className="flex justify-between text-xs font-bold" style={{ color: t.text }}>
                   <span>Promotional Discount Rate</span>
-                  <span className="text-amber-400 font-mono text-sm">{simDiscount}%</span>
+                  <span className="text-amber-500 dark:text-amber-400 font-mono text-sm">{simDiscount}%</span>
                 </div>
                 <input
                   type="range"
@@ -271,7 +274,7 @@ export default function AgentDashboardsView({
                   onChange={(e) => setSimDiscount(Number(e.target.value))}
                   className="w-full accent-amber-400 cursor-pointer"
                 />
-                <div className="flex justify-between text-[10px] text-slate-400">
+                <div className="flex justify-between text-[10px]" style={{ color: t.textFaint }}>
                   <span>0% (Full Price)</span>
                   <span>20% (Standard)</span>
                   <span>40% (Aggressive)</span>
@@ -279,10 +282,10 @@ export default function AgentDashboardsView({
               </div>
 
               {/* Slider 2: Staff Coverage */}
-              <div className="space-y-2 p-3.5 rounded-xl bg-slate-900/60 border border-white/5">
-                <div className="flex justify-between text-xs font-bold text-slate-200">
+              <div className="space-y-2 p-3.5 rounded-xl border" style={{ background: isDark ? "rgba(15, 23, 42, 0.6)" : "#F1F5F9", borderColor: t.border }}>
+                <div className="flex justify-between text-xs font-bold" style={{ color: t.text }}>
                   <span>Peak Shift Staff Coverage</span>
-                  <span className="text-sky-400 font-mono text-sm">{simStaffCoverage}%</span>
+                  <span className="text-sky-500 dark:text-sky-400 font-mono text-sm">{simStaffCoverage}%</span>
                 </div>
                 <input
                   type="range"
@@ -292,7 +295,7 @@ export default function AgentDashboardsView({
                   onChange={(e) => setSimStaffCoverage(Number(e.target.value))}
                   className="w-full accent-sky-400 cursor-pointer"
                 />
-                <div className="flex justify-between text-[10px] text-slate-400">
+                <div className="flex justify-between text-[10px]" style={{ color: t.textFaint }}>
                   <span>60% (Understaffed)</span>
                   <span>100% (Balanced)</span>
                   <span>140% (Full Support)</span>
@@ -300,10 +303,10 @@ export default function AgentDashboardsView({
               </div>
 
               {/* Slider 3: Reorder Frequency */}
-              <div className="space-y-2 p-3.5 rounded-xl bg-slate-900/60 border border-white/5">
-                <div className="flex justify-between text-xs font-bold text-slate-200">
+              <div className="space-y-2 p-3.5 rounded-xl border" style={{ background: isDark ? "rgba(15, 23, 42, 0.6)" : "#F1F5F9", borderColor: t.border }}>
+                <div className="flex justify-between text-xs font-bold" style={{ color: t.text }}>
                   <span>JIT Reorder Cycle</span>
-                  <span className="text-emerald-400 font-mono text-sm">{simReorderDays} days</span>
+                  <span className="text-emerald-500 dark:text-emerald-400 font-mono text-sm">{simReorderDays} days</span>
                 </div>
                 <input
                   type="range"
@@ -313,7 +316,7 @@ export default function AgentDashboardsView({
                   onChange={(e) => setSimReorderDays(Number(e.target.value))}
                   className="w-full accent-emerald-400 cursor-pointer"
                 />
-                <div className="flex justify-between text-[10px] text-slate-400">
+                <div className="flex justify-between text-[10px]" style={{ color: t.textFaint }}>
                   <span>2 days (Hyper JIT)</span>
                   <span>7 days (Weekly)</span>
                   <span>14 days (Bi-weekly)</span>
@@ -323,36 +326,36 @@ export default function AgentDashboardsView({
 
             {/* Projected Impact Output Cards */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 pt-2">
-              <div className="p-3 rounded-xl bg-black/40 border border-white/10 text-center">
-                <div className="text-xs text-slate-400 font-semibold mb-1">Simulated Margin</div>
-                <div className={`text-2xl font-black ${simulatedGrossMargin >= 18 ? "text-emerald-400" : "text-rose-400"}`}>
+              <div className="p-3 rounded-xl border text-center" style={{ background: isDark ? "rgba(0,0,0,0.4)" : "#F8FAFC", borderColor: t.border }}>
+                <div className="text-xs font-semibold mb-1" style={{ color: t.textFaint }}>Simulated Margin</div>
+                <div className={`text-2xl font-black ${simulatedGrossMargin >= 18 ? "text-emerald-500 dark:text-emerald-400" : "text-rose-500 dark:text-rose-400"}`}>
                   {simulatedGrossMargin}%
                 </div>
-                <div className="text-[10px] text-slate-400 mt-0.5">
+                <div className="text-[10px] mt-0.5" style={{ color: t.textFaint }}>
                   {simulatedGrossMargin >= 18 ? "✓ Healthy Profitability" : "⚠️ Margin Compression"}
                 </div>
               </div>
 
-              <div className="p-3 rounded-xl bg-black/40 border border-white/10 text-center">
-                <div className="text-xs text-slate-400 font-semibold mb-1">Projected Sales Lift</div>
-                <div className="text-2xl font-black text-sky-400">+{simulatedRevenueGrowth}%</div>
-                <div className="text-[10px] text-slate-400 mt-0.5">Estimated Footfall Uplift</div>
+              <div className="p-3 rounded-xl border text-center" style={{ background: isDark ? "rgba(0,0,0,0.4)" : "#F8FAFC", borderColor: t.border }}>
+                <div className="text-xs font-semibold mb-1" style={{ color: t.textFaint }}>Projected Sales Lift</div>
+                <div className="text-2xl font-black text-sky-500 dark:text-sky-400">+{simulatedRevenueGrowth}%</div>
+                <div className="text-[10px] mt-0.5" style={{ color: t.textFaint }}>Estimated Footfall Uplift</div>
               </div>
 
-              <div className="p-3 rounded-xl bg-black/40 border border-white/10 text-center">
-                <div className="text-xs text-slate-400 font-semibold mb-1">Stockout Probability</div>
-                <div className={`text-2xl font-black ${simulatedStockoutRisk <= 4 ? "text-emerald-400" : "text-amber-400"}`}>
+              <div className="p-3 rounded-xl border text-center" style={{ background: isDark ? "rgba(0,0,0,0.4)" : "#F8FAFC", borderColor: t.border }}>
+                <div className="text-xs font-semibold mb-1" style={{ color: t.textFaint }}>Stockout Probability</div>
+                <div className={`text-2xl font-black ${simulatedStockoutRisk <= 4 ? "text-emerald-500 dark:text-emerald-400" : "text-amber-500 dark:text-amber-400"}`}>
                   {simulatedStockoutRisk}%
                 </div>
-                <div className="text-[10px] text-slate-400 mt-0.5">Risk of item depletion</div>
+                <div className="text-[10px] mt-0.5" style={{ color: t.textFaint }}>Risk of item depletion</div>
               </div>
 
-              <div className="p-3 rounded-xl bg-black/40 border border-white/10 text-center">
-                <div className="text-xs text-slate-400 font-semibold mb-1">Avg Customer Wait</div>
-                <div className={`text-2xl font-black ${simulatedQueueTime <= 3.0 ? "text-emerald-400" : "text-orange-400"}`}>
+              <div className="p-3 rounded-xl border text-center" style={{ background: isDark ? "rgba(0,0,0,0.4)" : "#F8FAFC", borderColor: t.border }}>
+                <div className="text-xs font-semibold mb-1" style={{ color: t.textFaint }}>Avg Customer Wait</div>
+                <div className={`text-2xl font-black ${simulatedQueueTime <= 3.0 ? "text-emerald-500 dark:text-emerald-400" : "text-orange-500 dark:text-orange-400"}`}>
                   {simulatedQueueTime} mins
                 </div>
-                <div className="text-[10px] text-slate-400 mt-0.5">Service speed benchmark</div>
+                <div className="text-[10px] mt-0.5" style={{ color: t.textFaint }}>Service speed benchmark</div>
               </div>
             </div>
           </motion.div>

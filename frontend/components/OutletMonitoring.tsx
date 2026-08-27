@@ -1064,6 +1064,22 @@ export default function FranchiseOSDashboard({ initialModule = "dashboard" }: Fr
   const [recPriorityFilter, setRecPriorityFilter] = useState("All");
   const [selectedIntelOutlet, setSelectedIntelOutlet] = useState("");
 
+  useEffect(() => {
+    if (typeof document !== "undefined") {
+      if (isDark) {
+        document.documentElement.classList.remove("light-theme");
+        document.documentElement.classList.add("dark-theme");
+        document.body.classList.remove("light-theme");
+        document.body.classList.add("dark-theme");
+      } else {
+        document.documentElement.classList.remove("dark-theme");
+        document.documentElement.classList.add("light-theme");
+        document.body.classList.remove("dark-theme");
+        document.body.classList.add("light-theme");
+      }
+    }
+  }, [isDark]);
+
   function setActive(moduleKey: string) {
     setActiveState(moduleKey);
     if (typeof window !== "undefined") {

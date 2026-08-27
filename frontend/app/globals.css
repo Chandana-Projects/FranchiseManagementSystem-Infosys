@@ -76,13 +76,14 @@ body {
   background: linear-gradient(to bottom, #FDE68A, #7DD3FC);
 }
 
-/* Master Glassmorphism System */
+/* Master Glassmorphism System - Dark Default */
 .glass-panel {
   background: rgba(13, 17, 26, 0.92) !important;
   backdrop-filter: blur(20px) saturate(180%) !important;
   -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
   border: 1px solid rgba(203, 213, 225, 0.16) !important;
   box-shadow: 0 16px 40px -10px rgba(0, 0, 0, 0.65), inset 0 1px 0 0 rgba(255, 255, 255, 0.06) !important;
+  color: #FFFBEB;
 }
 
 .glass-card {
@@ -92,6 +93,7 @@ body {
   border: 1px solid rgba(203, 213, 225, 0.16) !important;
   box-shadow: 0 12px 32px -8px rgba(0, 0, 0, 0.6), inset 0 1px 0 0 rgba(255, 255, 255, 0.08) !important;
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  color: #FFFBEB;
 }
 
 .glass-card:hover {
@@ -113,23 +115,79 @@ body {
   outline: none;
 }
 
-/* Metallic Badge Utilities */
-.badge-gold {
-  background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(180, 83, 9, 0.25));
-  border: 1px solid rgba(245, 158, 11, 0.4);
-  color: #FDE68A;
+/* ── Light Mode System (White Theme) ── */
+body.light-theme,
+html.light-theme {
+  background-color: #F8FAFC !important;
+  color: #0F172A !important;
 }
 
-.badge-silver {
-  background: linear-gradient(135deg, rgba(203, 213, 225, 0.15), rgba(148, 163, 184, 0.2));
-  border: 1px solid rgba(203, 213, 225, 0.3);
-  color: #F8FAFC;
+.light-theme #bg-video {
+  opacity: 0.12 !important;
+  filter: brightness(1.2) contrast(0.8) !important;
 }
 
-.badge-cyber {
-  background: linear-gradient(135deg, rgba(56, 189, 248, 0.2), rgba(45, 212, 191, 0.25));
-  border: 1px solid rgba(56, 189, 248, 0.4);
-  color: #7DD3FC;
+.light-theme #bg-overlay {
+  background-image:
+    radial-gradient(circle at 15% 15%, rgba(245, 158, 11, 0.05) 0%, transparent 45%),
+    radial-gradient(circle at 85% 85%, rgba(56, 189, 248, 0.05) 0%, transparent 45%),
+    linear-gradient(to bottom, #F8FAFCF5, #F1F5F9FA) !important;
+}
+
+.light-theme .glass-panel {
+  background: rgba(255, 255, 255, 0.96) !important;
+  border: 1px solid rgba(226, 232, 240, 0.95) !important;
+  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.03) !important;
+  color: #0F172A !important;
+}
+
+.light-theme .glass-card {
+  background: linear-gradient(145deg, #FFFFFF 0%, #F8FAFC 100%) !important;
+  border: 1px solid rgba(226, 232, 240, 0.95) !important;
+  box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.07), inset 0 1px 0 0 rgba(255, 255, 255, 0.8) !important;
+  color: #0F172A !important;
+}
+
+.light-theme .glass-card:hover {
+  border-color: #38BDF8 !important;
+  box-shadow: 0 14px 32px -4px rgba(56, 189, 248, 0.18), 0 0 16px -2px rgba(56, 189, 248, 0.12) !important;
+}
+
+.light-theme .glass-input {
+  background: #FFFFFF !important;
+  border: 1px solid #CBD5E1 !important;
+  color: #0F172A !important;
+}
+
+.light-theme .glass-input:focus {
+  border-color: #0284C7 !important;
+  box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15) !important;
+}
+
+.light-theme .badge-silver {
+  background: #F1F5F9 !important;
+  border: 1px solid #CBD5E1 !important;
+  color: #334155 !important;
+}
+
+.light-theme .badge-gold {
+  background: #FEF3C7 !important;
+  border: 1px solid #F59E0B !important;
+  color: #B45309 !important;
+}
+
+.light-theme .badge-cyber {
+  background: #E0F2FE !important;
+  border: 1px solid #38BDF8 !important;
+  color: #0369A1 !important;
+}
+
+.light-theme .shimmer-text {
+  background: linear-gradient(90deg, #0F172A 0%, #B45309 30%, #0284C7 60%, #0F172A 100%) !important;
+  background-size: 200% auto !important;
+  color: transparent !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
 }
 
 /* Keyframe Animations */
