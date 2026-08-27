@@ -46,7 +46,7 @@ interface PaletteItem {
   id: string;
   title: string;
   subtitle: string;
-  category: "Navigation" | "Agent Dashboards" | "AI & Tools" | "Audio & Controls" | "Operations";
+  category: "Navigation" | "AI & Tools" | "Audio & Controls" | "Operations";
   icon: React.ReactNode;
   action: () => void;
   shortcut?: string;
@@ -196,85 +196,6 @@ export default function CommandPaletteModal({
       icon: <Settings className="w-4 h-4 text-slate-400" />,
       action: () => {
         onNavigate("settings");
-        onClose();
-      },
-    },
-
-    // Agent Dashboards Direct Sub-Pillars
-    {
-      id: "agent-outlet-perf",
-      title: "Agent Dashboard: 1. Outlet Performance",
-      subtitle: "Revenue trends, 18% gross margin benchmarks, and ranking leaderboard",
-      category: "Agent Dashboards",
-      icon: <Store className="w-4 h-4 text-sky-400" />,
-      action: () => {
-        onNavigate("agentDashboards");
-        onClose();
-      },
-    },
-    {
-      id: "agent-inventory-intel",
-      title: "Agent Dashboard: 2. Inventory Intelligence",
-      subtitle: "7.2 days stock cover, ABC stock classification, and wastage metrics",
-      category: "Agent Dashboards",
-      icon: <Boxes className="w-4 h-4 text-emerald-400" />,
-      action: () => {
-        onNavigate("agentDashboards");
-        onClose();
-      },
-    },
-    {
-      id: "agent-workforce-roster",
-      title: "Agent Dashboard: 3. Workforce & Roster",
-      subtitle: "Attendance tracking (86%), peak shift demand curves, and RBAC governance",
-      category: "Agent Dashboards",
-      icon: <Users className="w-4 h-4 text-purple-400" />,
-      action: () => {
-        onNavigate("agentDashboards");
-        onClose();
-      },
-    },
-    {
-      id: "agent-marketing-funnel",
-      title: "Agent Dashboard: 4. Marketing Engine",
-      subtitle: "4.1x ROAS, CAC tracking, and 4-stage funnel conversion rate",
-      category: "Agent Dashboards",
-      icon: <Megaphone className="w-4 h-4 text-pink-400" />,
-      action: () => {
-        onNavigate("agentDashboards");
-        onClose();
-      },
-    },
-    {
-      id: "agent-audit-compliance",
-      title: "Agent Dashboard: 5. Audit & Compliance",
-      subtitle: "94% SOP compliance, multi-outlet inspection heatmap, and ledger verify",
-      category: "Agent Dashboards",
-      icon: <ShieldCheck className="w-4 h-4 text-emerald-400" />,
-      action: () => {
-        onNavigate("agentDashboards");
-        onClose();
-      },
-    },
-    {
-      id: "agent-radar-strategic",
-      title: "Agent Dashboard: 6. Executive Overview Radar",
-      subtitle: "6-axis multi-dimensional radar comparison against network targets",
-      category: "Agent Dashboards",
-      icon: <Brain className="w-4 h-4 text-amber-400" />,
-      action: () => {
-        onNavigate("agentDashboards");
-        onClose();
-      },
-    },
-    {
-      id: "agent-what-if-sandbox",
-      title: "What-If AI Scenario Simulator Sandbox",
-      subtitle: "Interactive sliders for discount %, shift coverage %, and JIT reorder days",
-      category: "Agent Dashboards",
-      icon: <Sliders className="w-4 h-4 text-cyan-400" />,
-      action: () => {
-        onNavigate("agentDashboards");
         onClose();
       },
     },

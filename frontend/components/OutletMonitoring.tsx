@@ -1291,14 +1291,7 @@ export default function FranchiseOSDashboard({ initialModule = "dashboard" }: Fr
   }, []);
 
   const SEARCH_DESTINATIONS = [
-    { name: "Agent Dashboards (Executive Multi-Pillar Suite)", category: "Agent Dashboards", key: "agentDashboards", icon: "🤖" },
-    { name: "Agent Dashboard: 1. Outlet Performance", category: "Agent Dashboards", key: "agentDashboards", icon: "🏬" },
-    { name: "Agent Dashboard: 2. Inventory Intelligence", category: "Agent Dashboards", key: "agentDashboards", icon: "📦" },
-    { name: "Agent Dashboard: 3. Workforce & Roster", category: "Agent Dashboards", key: "agentDashboards", icon: "👥" },
-    { name: "Agent Dashboard: 4. Marketing Engine", category: "Agent Dashboards", key: "agentDashboards", icon: "📢" },
-    { name: "Agent Dashboard: 5. Audit & Compliance", category: "Agent Dashboards", key: "agentDashboards", icon: "📹" },
-    { name: "Agent Dashboard: 6. Executive Overview Radar", category: "Agent Dashboards", key: "agentDashboards", icon: "🧠" },
-    { name: "What-If AI Operational Scenario Simulator", category: "Agent Dashboards", key: "agentDashboards", icon: "🎛️" },
+    { name: "Agent Dashboards — Executive Intelligence Suite", category: "Module", key: "agentDashboards", icon: "🤖" },
     { name: "Executive Dashboard Overview", category: "Module", key: "dashboard", icon: "📊" },
     { name: "Outlet Performance & Analytics", category: "Module", key: "outlet", icon: "🏬" },
     { name: "Inventory Telemetry & Reorders", category: "Module", key: "inventory", icon: "📦" },
