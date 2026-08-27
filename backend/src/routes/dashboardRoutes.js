@@ -20,3 +20,7 @@ router.get(
     "/agent/:agent",
     dashboardController.getAgentDashboard
 );
+router.get(
+    "/agent/:agent",
+    dashboardController.getAgentDashboard
+);

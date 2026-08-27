@@ -146,3 +146,50 @@ exports.getAgentDashboard = async (agent) => {
             throw new Error(`Unknown dashboard agent: ${agent}`);
     }
 };
+exports.getAgentDashboard = async (agent) => {
+    const agentName = agent.toLowerCase();
+
+    switch (agentName) {
+        case "inventory": {
+            const inventory =
+                await intelligenceService.getInventoryRiskSummary();
+
+            return {
+                agent: "Inventory",
+                summary: {
+                    totalIssues: inventory.totalInventoryIssues,
+                    highRiskItems: inventory.highRiskItems,
+                    mediumRiskItems: inventory.mediumRiskItems,
+                    affectedOutlets: inventory.affectedOutlets
+                },
+                items: inventory.items || [],
+                generatedAt: new Date().toISOString()
+            };
+        }
+
+        case "sales": {
+            const sales =
+                await intelligenceService.getSalesPerformanceSummary();
+
+            return {
+                agent: "Sales",
+                summary: {
+                    totalOutlets: sales.totalOutlets,
+                    totalRevenue: sales.totalRevenue,
+                    averageRevenue: sales.averageRevenue,
+                    growingOutlets: sales.growingOutlets,
+                    decliningOutlets: sales.decliningOutlets
+                },
+                bestOutlet: sales.bestOutlet,
+                lowestOutlet: sales.lowestOutlet,
+                outlets: sales.outlets || [],
+                generatedAt: new Date().toISOString()
+            };
+        }
+
+        default:
+            throw new Error(
+                `Unsupported agent: ${agent}`
+            );
+    }
+};

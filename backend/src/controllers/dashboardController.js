@@ -36,3 +36,15 @@ exports.getAgentDashboard = async (req, res, next) => {
         next(err);
     }
 };
+exports.getAgentDashboard = async (req, res, next) => {
+    try {
+        const { agent } = req.params;
+
+        const data =
+            await dashboardService.getAgentDashboard(agent);
+
+        return res.status(200).json(data);
+    } catch (err) {
+        next(err);
+    }
+};
