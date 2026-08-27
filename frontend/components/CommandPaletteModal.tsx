@@ -24,7 +24,12 @@ import {
   ArrowRight,
   Command,
   X,
+  Sliders,
+  Volume2,
+  VolumeX,
+  Activity,
 } from "lucide-react";
+import { isAudioMuted, toggleAudioMute, playTechChime } from "@/lib/WebAudioSFX";
 
 interface CommandPaletteModalProps {
   isOpen: boolean;
@@ -34,13 +39,14 @@ interface CommandPaletteModalProps {
   onOpenSOPBot?: () => void;
   onOpenDispatch?: () => void;
   onOpenTour?: () => void;
+  onOpenVoiceAssistant?: () => void;
 }
 
 interface PaletteItem {
   id: string;
   title: string;
   subtitle: string;
-  category: "Navigation" | "AI & Tools" | "Operations";
+  category: "Navigation" | "Agent Dashboards" | "AI & Tools" | "Audio & Controls" | "Operations";
   icon: React.ReactNode;
   action: () => void;
   shortcut?: string;
@@ -54,15 +60,38 @@ export default function CommandPaletteModal({
   onOpenSOPBot,
   onOpenDispatch,
   onOpenTour,
+  onOpenVoiceAssistant,
 }: CommandPaletteModalProps) {
   const [query, setQuery] = useState("");
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const [audioMuted, setAudioMuted] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
   const listContainerRef = useRef<HTMLDivElement>(null);
 
+  useEffect(() => {
+    setAudioMuted(isAudioMuted());
+    const handleAudioChange = (e: any) => {
+      setAudioMuted(e.detail?.muted ?? isAudioMuted());
+    };
+    window.addEventListener("fops-audio-state-changed", handleAudioChange);
+    return () => window.removeEventListener("fops-audio-state-changed", handleAudioChange);
+  }, []);
+
   const items: PaletteItem[] = [
     // Navigation
+    {
+      id: "agentDashboards",
+      title: "Agent Dashboards (Executive Multi-Pillar Suite)",
+      subtitle: "Full deck intelligence: Outlet, Inventory, Workforce, Marketing, Audit & Radar",
+      category: "Navigation",
+      icon: <Bot className="w-4 h-4 text-amber-400" />,
+      action: () => {
+        onNavigate("agentDashboards");
+        onClose();
+      },
+      shortcut: "G B",
+    },
     {
       id: "dashboard",
       title: "Executive Overview",
@@ -169,6 +198,111 @@ export default function CommandPaletteModal({
         onNavigate("settings");
         onClose();
       },
+    },
+
+    // Agent Dashboards Direct Sub-Pillars
+    {
+      id: "agent-outlet-perf",
+      title: "Agent Dashboard: 1. Outlet Performance",
+      subtitle: "Revenue trends, 18% gross margin benchmarks, and ranking leaderboard",
+      category: "Agent Dashboards",
+      icon: <Store className="w-4 h-4 text-sky-400" />,
+      action: () => {
+        onNavigate("agentDashboards");
+        onClose();
+      },
+    },
+    {
+      id: "agent-inventory-intel",
+      title: "Agent Dashboard: 2. Inventory Intelligence",
+      subtitle: "7.2 days stock cover, ABC stock classification, and wastage metrics",
+      category: "Agent Dashboards",
+      icon: <Boxes className="w-4 h-4 text-emerald-400" />,
+      action: () => {
+        onNavigate("agentDashboards");
+        onClose();
+      },
+    },
+    {
+      id: "agent-workforce-roster",
+      title: "Agent Dashboard: 3. Workforce & Roster",
+      subtitle: "Attendance tracking (86%), peak shift demand curves, and RBAC governance",
+      category: "Agent Dashboards",
+      icon: <Users className="w-4 h-4 text-purple-400" />,
+      action: () => {
+        onNavigate("agentDashboards");
+        onClose();
+      },
+    },
+    {
+      id: "agent-marketing-funnel",
+      title: "Agent Dashboard: 4. Marketing Engine",
+      subtitle: "4.1x ROAS, CAC tracking, and 4-stage funnel conversion rate",
+      category: "Agent Dashboards",
+      icon: <Megaphone className="w-4 h-4 text-pink-400" />,
+      action: () => {
+        onNavigate("agentDashboards");
+        onClose();
+      },
+    },
+    {
+      id: "agent-audit-compliance",
+      title: "Agent Dashboard: 5. Audit & Compliance",
+      subtitle: "94% SOP compliance, multi-outlet inspection heatmap, and ledger verify",
+      category: "Agent Dashboards",
+      icon: <ShieldCheck className="w-4 h-4 text-emerald-400" />,
+      action: () => {
+        onNavigate("agentDashboards");
+        onClose();
+      },
+    },
+    {
+      id: "agent-radar-strategic",
+      title: "Agent Dashboard: 6. Executive Overview Radar",
+      subtitle: "6-axis multi-dimensional radar comparison against network targets",
+      category: "Agent Dashboards",
+      icon: <Brain className="w-4 h-4 text-amber-400" />,
+      action: () => {
+        onNavigate("agentDashboards");
+        onClose();
+      },
+    },
+    {
+      id: "agent-what-if-sandbox",
+      title: "What-If AI Scenario Simulator Sandbox",
+      subtitle: "Interactive sliders for discount %, shift coverage %, and JIT reorder days",
+      category: "Agent Dashboards",
+      icon: <Sliders className="w-4 h-4 text-cyan-400" />,
+      action: () => {
+        onNavigate("agentDashboards");
+        onClose();
+      },
+    },
+
+    // Audio & Voice Controls
+    {
+      id: "audio-control-toggle",
+      title: audioMuted ? "Audio Control: Unmute Sound Effects (SFX)" : "Audio Control: Mute Sound Effects (SFX)",
+      subtitle: audioMuted ? "Currently muted. Click to enable synthesized WebAudio chimes" : "Currently active. Click to silence all UI sound effects",
+      category: "Audio & Controls",
+      icon: audioMuted ? <VolumeX className="w-4 h-4 text-rose-400" /> : <Volume2 className="w-4 h-4 text-emerald-400" />,
+      action: () => {
+        toggleAudioMute();
+        setAudioMuted(isAudioMuted());
+      },
+      shortcut: "⌥ M",
+    },
+    {
+      id: "audio-voice-briefing",
+      title: "AI Voice Assistant & Oral Briefing",
+      subtitle: "Hands-free voice recognition, navigation commands & audio summary",
+      category: "Audio & Controls",
+      icon: <Mic className="w-4 h-4 text-amber-400" />,
+      action: () => {
+        if (onOpenVoiceAssistant) onOpenVoiceAssistant();
+        onClose();
+      },
+      shortcut: "⌥ V",
     },
 
     // AI & Tools

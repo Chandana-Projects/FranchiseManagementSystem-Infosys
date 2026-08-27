@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Mic, MicOff, Volume2, VolumeX, Sparkles, X, Bot } from "lucide-react";
+import { Mic, MicOff, Volume2, VolumeX, Sparkles, X, Bot, Sliders, Volume1 } from "lucide-react";
+import { isAudioMuted, setAudioMuted, toggleAudioMute, getAudioVolume, setAudioVolume } from "@/lib/WebAudioSFX";
 
 interface VoiceAssistantProps {
   onNavigate?: (moduleKey: string) => void;
@@ -15,6 +16,22 @@ export default function VoiceAssistant({ onNavigate, accentColor = "#3B82F6", th
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [recognition, setRecognition] = useState<any>(null);
+  const [audioMuted, setAudioMutedState] = useState(false);
+  const [volume, setVolumeState] = useState(1.0);
+
+  useEffect(() => {
+    setAudioMutedState(isAudioMuted());
+    setVolumeState(getAudioVolume());
+
+    const handleAudioChange = (e: any) => {
+      if (e.detail) {
+        setAudioMutedState(e.detail.muted);
+        setVolumeState(e.detail.volume);
+      }
+    };
+    window.addEventListener("fops-audio-state-changed", handleAudioChange);
+    return () => window.removeEventListener("fops-audio-state-changed", handleAudioChange);
+  }, []);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -44,26 +61,51 @@ export default function VoiceAssistant({ onNavigate, accentColor = "#3B82F6", th
   }, []);
 
   const handleVoiceCommand = (cmd: string) => {
+    // Audio Commands
+    if (cmd.includes("mute audio") || cmd.includes("mute sound") || cmd.includes("turn off sound") || cmd.includes("silence")) {
+      setAudioMuted(true);
+      speakText("Audio sound effects have been muted.");
+      return;
+    } else if (cmd.includes("unmute audio") || cmd.includes("unmute sound") || cmd.includes("turn on sound") || cmd.includes("enable sound")) {
+      setAudioMuted(false);
+      speakText("Audio sound effects are now active.");
+      return;
+    }
+
     if (!onNavigate) return;
 
-    if (cmd.includes("map") || cmd.includes("outlet") || cmd.includes("location")) {
+    // Agent Dashboards & What-If Sandbox
+    if (
+      cmd.includes("agent") ||
+      cmd.includes("agent dashboard") ||
+      cmd.includes("agents") ||
+      cmd.includes("what if") ||
+      cmd.includes("scenario") ||
+      cmd.includes("radar")
+    ) {
+      onNavigate("agentDashboards");
+      speakText("Opening Agent Dashboards Executive Suite.");
+    } else if (cmd.includes("map") || cmd.includes("outlet") || cmd.includes("location")) {
       onNavigate("outlet");
-      speakText("Opening Outlet Location Map HUD");
+      speakText("Opening Outlet Location Map HUD.");
     } else if (cmd.includes("inventory") || cmd.includes("stock") || cmd.includes("reorder")) {
       onNavigate("inventory");
-      speakText("Navigating to Inventory Control");
+      speakText("Navigating to Inventory Control.");
     } else if (cmd.includes("audit") || cmd.includes("compliance") || cmd.includes("checklist")) {
       onNavigate("audit");
-      speakText("Opening Audit Compliance Checklist");
-    } else if (cmd.includes("staff") || cmd.includes("employee") || cmd.includes("attendance")) {
+      speakText("Opening Audit Compliance Checklist.");
+    } else if (cmd.includes("staff") || cmd.includes("employee") || cmd.includes("attendance") || cmd.includes("roster")) {
       onNavigate("staff");
-      speakText("Opening Staff Operations Directory");
+      speakText("Opening Staff Operations Directory.");
+    } else if (cmd.includes("marketing") || cmd.includes("campaign") || cmd.includes("roas")) {
+      onNavigate("marketing");
+      speakText("Opening Marketing Engine.");
     } else if (cmd.includes("enterprise") || cmd.includes("cctv") || cmd.includes("royalty")) {
       onNavigate("enterprise");
-      speakText("Opening Enterprise AI Command Center");
+      speakText("Opening Enterprise AI Command Center.");
     } else if (cmd.includes("dashboard") || cmd.includes("home") || cmd.includes("overview")) {
       onNavigate("dashboard");
-      speakText("Returning to Executive Dashboard");
+      speakText("Returning to Executive Dashboard.");
     } else if (cmd.includes("briefing") || cmd.includes("report") || cmd.includes("summary")) {
       playExecutiveBriefing();
     }
@@ -100,9 +142,8 @@ export default function VoiceAssistant({ onNavigate, accentColor = "#3B82F6", th
   const playExecutiveBriefing = () => {
     const briefing =
       "Good evening, Executive Director. OmniFranchise network is operating at 96% health capacity. " +
-      "Network daily revenue stands at 561,000 Rupees across 6 connected outlets. " +
-      "Pune HQ and Mumbai Central are leading performance targets. " +
-      "Delhi Connaught Place requires inventory audit review. " +
+      "Network daily revenue stands at 561,000 Rupees across connected outlets. " +
+      "The Agent Dashboards suite and What-If AI Simulator are active. " +
       "All automated Isolation Forest POS anomaly detectors are online and clear.";
     speakText(briefing);
   };
@@ -121,58 +162,97 @@ export default function VoiceAssistant({ onNavigate, accentColor = "#3B82F6", th
 
   return (
     <div className="fixed bottom-6 right-6 z-[1000] flex flex-col items-end gap-3">
-      {/* Floating Voice Drawer */}
+      {/* Floating Voice & Audio Controls Drawer */}
       {isOpen && (
         <div
-          className="w-80 rounded-2xl border p-4 shadow-2xl backdrop-blur-xl transition-all"
-          style={{ background: `${bgCard}F2`, borderColor: borderCol }}
+          className="w-88 rounded-2xl border p-4 shadow-2xl backdrop-blur-xl transition-all space-y-3"
+          style={{ background: `${bgCard}FA`, borderColor: borderCol }}
         >
-          <div className="flex items-center justify-between border-b pb-3 mb-3" style={{ borderColor: borderCol }}>
+          <div className="flex items-center justify-between border-b pb-2.5" style={{ borderColor: borderCol }}>
             <div className="flex items-center gap-2">
               <Bot size={18} color={accentColor} />
               <h4 className="text-sm font-bold" style={{ color: textColor }}>
-                Omni AI Voice Assistant
+                Omni AI Voice & Audio Control
               </h4>
             </div>
-            <button onClick={() => setIsOpen(false)} className="text-slate-400 hover:text-slate-200">
+            <button onClick={() => setIsOpen(false)} className="text-slate-400 hover:text-slate-200 cursor-pointer">
               <X size={16} />
             </button>
           </div>
 
-          <div className="space-y-3">
-            <div
-              className="p-3 rounded-xl border text-xs min-h-[50px] flex items-center justify-center text-center"
-              style={{ background: "#06070940", borderColor: borderCol, color: textColor }}
+          {/* Transcript Box */}
+          <div
+            className="p-3 rounded-xl border text-xs min-h-[52px] flex items-center justify-center text-center"
+            style={{ background: "#06070960", borderColor: borderCol, color: textColor }}
+          >
+            {transcript || 'Say "Open Agent Dashboard", "Mute Audio", or "Read Briefing"'}
+          </div>
+
+          {/* Quick Voice Triggers */}
+          <div className="grid grid-cols-2 gap-2">
+            <button
+              onClick={toggleListen}
+              className="flex items-center justify-center gap-2 text-xs py-2.5 rounded-xl font-bold border transition-all cursor-pointer shadow-sm hover:scale-[1.02] active:scale-95"
+              style={{
+                background: isListening ? "#FB718520" : `${accentColor}20`,
+                borderColor: isListening ? "#FB7185" : accentColor,
+                color: isListening ? "#FB7185" : accentColor,
+              }}
             >
-              {transcript || 'Say "Open map", "Show inventory", or "Read executive briefing"'}
+              {isListening ? <MicOff size={14} /> : <Mic size={14} />}
+              {isListening ? "Listening..." : "Mic On"}
+            </button>
+
+            <button
+              onClick={isSpeaking ? stopSpeaking : playExecutiveBriefing}
+              className="flex items-center justify-center gap-2 text-xs py-2.5 rounded-xl font-bold border transition-all cursor-pointer shadow-sm hover:scale-[1.02] active:scale-95"
+              style={{
+                background: isSpeaking ? "#F59E0B20" : "#10B98120",
+                borderColor: isSpeaking ? "#F59E0B" : "#10B981",
+                color: isSpeaking ? "#F59E0B" : "#10B981",
+              }}
+            >
+              {isSpeaking ? <VolumeX size={14} /> : <Volume2 size={14} />}
+              {isSpeaking ? "Stop Briefing" : "AI Briefing"}
+            </button>
+          </div>
+
+          {/* Audio SFX Controls Section */}
+          <div className="p-3 rounded-xl border space-y-2.5" style={{ background: "#06070940", borderColor: borderCol }}>
+            <div className="flex items-center justify-between text-xs font-bold" style={{ color: textColor }}>
+              <span className="flex items-center gap-1.5">
+                {audioMuted ? <VolumeX size={14} className="text-rose-400" /> : <Volume2 size={14} className="text-emerald-400" />}
+                UI Sound Effects (SFX)
+              </span>
+              <button
+                onClick={() => toggleAudioMute()}
+                className="px-2.5 py-1 rounded-lg text-[10px] font-mono font-bold border transition-transform cursor-pointer hover:scale-105 active:scale-95"
+                style={{
+                  background: audioMuted ? "rgba(244, 63, 94, 0.15)" : "rgba(16, 185, 129, 0.15)",
+                  borderColor: audioMuted ? "#F43F5E" : "#10B981",
+                  color: audioMuted ? "#F43F5E" : "#10B981",
+                }}
+              >
+                {audioMuted ? "MUTED (Click to Unmute)" : "ACTIVE (Click to Mute)"}
+              </button>
             </div>
 
-            <div className="grid grid-cols-2 gap-2">
-              <button
-                onClick={toggleListen}
-                className="flex items-center justify-center gap-2 text-xs py-2.5 rounded-xl font-bold border transition-all"
-                style={{
-                  background: isListening ? "#FB718520" : `${accentColor}20`,
-                  borderColor: isListening ? "#FB7185" : accentColor,
-                  color: isListening ? "#FB7185" : accentColor,
-                }}
-              >
-                {isListening ? <MicOff size={14} /> : <Mic size={14} />}
-                {isListening ? "Listening..." : "Mic On"}
-              </button>
-
-              <button
-                onClick={isSpeaking ? stopSpeaking : playExecutiveBriefing}
-                className="flex items-center justify-center gap-2 text-xs py-2.5 rounded-xl font-bold border transition-all"
-                style={{
-                  background: isSpeaking ? "#F59E0B20" : "#10B98120",
-                  borderColor: isSpeaking ? "#F59E0B" : "#10B981",
-                  color: isSpeaking ? "#F59E0B" : "#10B981",
-                }}
-              >
-                {isSpeaking ? <VolumeX size={14} /> : <Volume2 size={14} />}
-                {isSpeaking ? "Mute Briefing" : "AI Briefing"}
-              </button>
+            {/* Volume Slider */}
+            <div className="space-y-1">
+              <div className="flex justify-between text-[11px] text-slate-400">
+                <span>SFX Volume</span>
+                <span className="font-mono">{Math.round(volume * 100)}%</span>
+              </div>
+              <input
+                type="range"
+                min={0}
+                max={1}
+                step={0.05}
+                value={volume}
+                disabled={audioMuted}
+                onChange={(e) => setAudioVolume(parseFloat(e.target.value))}
+                className="w-full accent-amber-400 cursor-pointer disabled:opacity-30"
+              />
             </div>
           </div>
         </div>

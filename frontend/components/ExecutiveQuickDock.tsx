@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Command,
@@ -14,7 +14,10 @@ import {
   ChevronUp,
   ChevronDown,
   Layers,
+  Volume2,
+  VolumeX,
 } from "lucide-react";
+import { isAudioMuted, toggleAudioMute } from "@/lib/WebAudioSFX";
 
 interface ExecutiveQuickDockProps {
   onOpenCommandPalette: () => void;
@@ -35,6 +38,16 @@ export default function ExecutiveQuickDock({
 }: ExecutiveQuickDockProps) {
   const [isExpanded, setIsExpanded] = useState(true);
   const [hoveredTool, setHoveredTool] = useState<string | null>(null);
+  const [audioMuted, setAudioMuted] = useState(false);
+
+  useEffect(() => {
+    setAudioMuted(isAudioMuted());
+    const handleAudioChange = (e: any) => {
+      setAudioMuted(e.detail?.muted ?? isAudioMuted());
+    };
+    window.addEventListener("fops-audio-state-changed", handleAudioChange);
+    return () => window.removeEventListener("fops-audio-state-changed", handleAudioChange);
+  }, []);
 
   const dockActions = [
     {
@@ -71,6 +84,16 @@ export default function ExecutiveQuickDock({
       icon: <Truck className="w-4 h-4 text-emerald-400" />,
       color: "#10B981",
       action: onOpenDispatch,
+    },
+    {
+      id: "audio-toggle",
+      label: audioMuted ? "Unmute Sound Effects (SFX)" : "Mute Sound Effects (SFX)",
+      icon: audioMuted ? <VolumeX className="w-4 h-4 text-rose-400" /> : <Volume2 className="w-4 h-4 text-emerald-400" />,
+      color: audioMuted ? "#FB7185" : "#10B981",
+      action: () => {
+        toggleAudioMute();
+        setAudioMuted(isAudioMuted());
+      },
     },
     {
       id: "tour",

@@ -36,7 +36,7 @@ import DigitalTwinSimulator from "./DigitalTwinSimulator";
 import RoleSwitcher, { ExecutiveRole } from "./RoleSwitcher";
 import AnomalyAlertBanner from "./AnomalyAlertBanner";
 import { LANGUAGES, SupportedLanguage, translateKey } from "../lib/MultiLangEngine";
-import { playTechChime } from "../lib/WebAudioSFX";
+import { isAudioMuted, toggleAudioMute, playTechChime } from "../lib/WebAudioSFX";
 import { CURRENCY_CONFIGS, CurrencyCode, formatCurrencyValue } from "../lib/CurrencyEngine";
 import SOPKnowledgeBot from "./SOPKnowledgeBot";
 import RealtimeNotificationToast from "./RealtimeNotificationToast";
@@ -45,7 +45,7 @@ import QRStockScannerModal from "./QRStockScannerModal";
 import CommandPaletteModal from "./CommandPaletteModal";
 import ExecutiveQuickDock from "./ExecutiveQuickDock";
 import AgentDashboardsView from "./AgentDashboardsView";
-import { BookOpen, Compass, QrCode } from "lucide-react";
+import { BookOpen, Compass, QrCode, Volume2, VolumeX, Bot, Sliders } from "lucide-react";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
 
@@ -1279,8 +1279,26 @@ export default function FranchiseOSDashboard({ initialModule = "dashboard" }: Fr
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
+  const [audioMuted, setAudioMutedState] = useState(false);
+
+  useEffect(() => {
+    setAudioMutedState(isAudioMuted());
+    const handleAudioChange = (e: any) => {
+      setAudioMutedState(e.detail?.muted ?? isAudioMuted());
+    };
+    window.addEventListener("fops-audio-state-changed", handleAudioChange);
+    return () => window.removeEventListener("fops-audio-state-changed", handleAudioChange);
+  }, []);
 
   const SEARCH_DESTINATIONS = [
+    { name: "Agent Dashboards (Executive Multi-Pillar Suite)", category: "Agent Dashboards", key: "agentDashboards", icon: "🤖" },
+    { name: "Agent Dashboard: 1. Outlet Performance", category: "Agent Dashboards", key: "agentDashboards", icon: "🏬" },
+    { name: "Agent Dashboard: 2. Inventory Intelligence", category: "Agent Dashboards", key: "agentDashboards", icon: "📦" },
+    { name: "Agent Dashboard: 3. Workforce & Roster", category: "Agent Dashboards", key: "agentDashboards", icon: "👥" },
+    { name: "Agent Dashboard: 4. Marketing Engine", category: "Agent Dashboards", key: "agentDashboards", icon: "📢" },
+    { name: "Agent Dashboard: 5. Audit & Compliance", category: "Agent Dashboards", key: "agentDashboards", icon: "📹" },
+    { name: "Agent Dashboard: 6. Executive Overview Radar", category: "Agent Dashboards", key: "agentDashboards", icon: "🧠" },
+    { name: "What-If AI Operational Scenario Simulator", category: "Agent Dashboards", key: "agentDashboards", icon: "🎛️" },
     { name: "Executive Dashboard Overview", category: "Module", key: "dashboard", icon: "📊" },
     { name: "Outlet Performance & Analytics", category: "Module", key: "outlet", icon: "🏬" },
     { name: "Inventory Telemetry & Reorders", category: "Module", key: "inventory", icon: "📦" },
@@ -1291,6 +1309,8 @@ export default function FranchiseOSDashboard({ initialModule = "dashboard" }: Fr
     { name: "Financial Reports & PDF Exports", category: "Module", key: "reporting", icon: "📄" },
     { name: "Live Notifications & Alerts", category: "Module", key: "notifications", icon: "🔔" },
     { name: "Enterprise AI Hub & Auto-PO", category: "Module", key: "enterprise", icon: "⚡" },
+    { name: "Audio Sound Effects (SFX) & Audio Controls", category: "Audio Control", key: "settings", icon: "🔊" },
+    { name: "AI Voice Assistant & Oral Briefing", category: "Audio Control", key: "intelligence", icon: "🎙️" },
     { name: "Settings & System Customizer", category: "Module", key: "settings", icon: "⚙️" },
     { name: "Nashik City Center Outlet", category: "Outlet", key: "outlet", icon: "📍" },
     { name: "Pune FC Road Outlet", category: "Outlet", key: "outlet", icon: "📍" },
@@ -2092,9 +2112,27 @@ function getPredictedRisks(auditList: any[]) {
             </button>
 
 
+            {/* Audio SFX Quick Toggle */}
+            <button
+              onClick={() => {
+                toggleAudioMute();
+                setAudioMutedState(isAudioMuted());
+              }}
+              className="flex items-center gap-1.5 text-xs px-3 py-2 rounded-lg border font-bold transition-all hover:scale-105 cursor-pointer shadow-xs"
+              style={{
+                background: audioMuted ? "rgba(244, 63, 94, 0.12)" : "rgba(16, 185, 129, 0.12)",
+                borderColor: audioMuted ? "rgba(244, 63, 94, 0.35)" : "rgba(16, 185, 129, 0.35)",
+                color: audioMuted ? "#F43F5E" : "#10B981",
+              }}
+              title={audioMuted ? "Sound Effects Muted (Click to Unmute)" : "Sound Effects Active (Click to Mute)"}
+            >
+              {audioMuted ? <VolumeX size={14} /> : <Volume2 size={14} />}
+              <span className="hidden xl:inline">{audioMuted ? "SFX Muted" : "SFX Active"}</span>
+            </button>
+
             <button
               onClick={() => setShowAskAI(true)}
-              className="flex items-center gap-2 text-sm px-3 py-2 rounded-lg border transition-colors"
+              className="flex items-center gap-2 text-sm px-3 py-2 rounded-lg border transition-colors cursor-pointer"
               style={{ borderColor: `${accent}4D`, color: accent }}
             >
               <Sparkles size={14} /> Ask AI
