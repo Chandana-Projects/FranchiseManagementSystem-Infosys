@@ -186,14 +186,14 @@ const SOP_LIBRARY_DATA = [
 
 const themes = {
   dark: {
-    bg: "transparent", panel: "rgba(13, 17, 26, 0.94)", card: "rgba(18, 24, 38, 0.92)", border: "rgba(203, 213, 225, 0.16)",
+    bg: "transparent", panel: "rgba(13, 18, 30, 0.72)", card: "rgba(15, 23, 42, 0.65)", border: "rgba(255, 255, 255, 0.12)",
     text: "#FFFBEB", textMuted: "#CBD5E1", textFaint: "#94A3B8", textOnAccent: "#060709",
-    gridLine: "rgba(203, 213, 225, 0.12)", inputBg: "rgba(8, 10, 15, 0.94)",
+    gridLine: "rgba(203, 213, 225, 0.12)", inputBg: "rgba(8, 12, 22, 0.75)",
   },
   light: {
-    bg: "#F4F6F8", panel: "#FFFFFF", card: "#FFFFFF", border: "#E2E8F0",
-    text: "#1E293B", textMuted: "#475569", textFaint: "#64748B", textOnAccent: "#FFFFFF",
-    gridLine: "#E2E8F0", inputBg: "#F1F5F9",
+    bg: "#F8FAFC", panel: "rgba(255, 255, 255, 0.85)", card: "rgba(255, 255, 255, 0.75)", border: "rgba(226, 232, 240, 0.85)",
+    text: "#0F172A", textMuted: "#334155", textFaint: "#64748B", textOnAccent: "#FFFFFF",
+    gridLine: "#E2E8F0", inputBg: "rgba(255, 255, 255, 0.90)",
   },
 };
 

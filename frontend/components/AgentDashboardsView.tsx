@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, AreaChart, Area, PieChart, Pie, Cell, RadarChart,
-  PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, Legend
+  PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, Legend, ComposedChart, ReferenceLine
 } from "recharts";
 import {
   Store, Boxes, Users, Megaphone, ShieldCheck, Brain,
@@ -125,6 +125,41 @@ export default function AgentDashboardsView({
     { outlet: "Nagpur Central", hygiene: 94, safety: 90, cash: 96, branding: 92, overall: "93%" },
     { outlet: "Aurangabad Hub", hygiene: 68, safety: 62, cash: 74, branding: 70, overall: "68%" },
     { outlet: "Solapur Branch", hygiene: 88, safety: 85, cash: 90, branding: 89, overall: "88%" },
+  ];
+
+  // 1. Prophet AI Demand Forecast & 95% Confidence Band
+  const prophetForecastData = [
+    { date: "Aug 20", actual: 18200, forecast: 18000, upper: 19600, lower: 16400 },
+    { date: "Aug 21", actual: 19400, forecast: 19100, upper: 20700, lower: 17500 },
+    { date: "Aug 22", actual: 17800, forecast: 18300, upper: 19800, lower: 16800 },
+    { date: "Aug 23", actual: 21500, forecast: 21000, upper: 22800, lower: 19200 },
+    { date: "Aug 24", actual: 24200, forecast: 23800, upper: 25600, lower: 22000 },
+    { date: "Aug 25", actual: 23900, forecast: 24100, upper: 26000, lower: 22200 },
+    { date: "Aug 26 (Today)", actual: 25400, forecast: 24900, upper: 26800, lower: 23000 },
+    { date: "Aug 27 (Proj)", actual: null, forecast: 26200, upper: 28400, lower: 24000 },
+    { date: "Aug 28 (Proj)", actual: null, forecast: 27100, upper: 29500, lower: 24700 },
+    { date: "Aug 29 (Proj)", actual: null, forecast: 28500, upper: 31000, lower: 26000 },
+  ];
+
+  // 2. Multi-Channel Revenue & Order Velocity Mix
+  const salesChannelMixData = [
+    { name: "Dine-in Barista", value: 38, revenue: "₹3.19L", ticket: "₹245", growth: "+12%", color: "#F59E0B" },
+    { name: "Swiggy / Zomato", value: 34, revenue: "₹2.85L", ticket: "₹380", growth: "+24%", color: "#38BDF8" },
+    { name: "Drive-Thru / Takeaway", value: 18, revenue: "₹1.51L", ticket: "₹190", growth: "+8%", color: "#10B981" },
+    { name: "Mobile App Pre-Order", value: 10, revenue: "₹0.85L", ticket: "₹210", growth: "+31%", color: "#A855F7" },
+  ];
+
+  // 3. Cold-Chain IoT Sensor Temperature Telemetry
+  const coldChainTelemetryData = [
+    { time: "06:00", walkInFreezer: -18.2, milkChiller: 3.2, espressoBoiler: 93.4 },
+    { time: "08:00", walkInFreezer: -17.9, milkChiller: 3.4, espressoBoiler: 94.0 },
+    { time: "10:00", walkInFreezer: -17.5, milkChiller: 3.8, espressoBoiler: 93.8 },
+    { time: "12:00 (Rush)", walkInFreezer: -16.8, milkChiller: 4.1, espressoBoiler: 94.5 },
+    { time: "14:00", walkInFreezer: -17.4, milkChiller: 3.6, espressoBoiler: 93.9 },
+    { time: "16:00", walkInFreezer: -17.8, milkChiller: 3.5, espressoBoiler: 94.1 },
+    { time: "18:00 (Peak)", walkInFreezer: -16.5, milkChiller: 4.3, espressoBoiler: 94.8 },
+    { time: "20:00", walkInFreezer: -17.6, milkChiller: 3.7, espressoBoiler: 93.7 },
+    { time: "22:00", walkInFreezer: -18.4, milkChiller: 3.1, espressoBoiler: 92.5 },
   ];
 
   return (
@@ -425,7 +460,7 @@ export default function AgentDashboardsView({
         <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
           {/* Headline Deck KPIs */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="rounded-2xl border p-4 shadow-lg" style={{ background: t.card, borderColor: t.border }}>
+            <div className="rounded-2xl border p-4 shadow-lg glass-card backdrop-blur-xl" style={{ background: t.card, borderColor: t.border }}>
               <div className="flex items-center justify-between mb-2">
                 <span className="text-xs font-semibold" style={{ color: t.textFaint }}>Monthly Sales</span>
                 <span className="text-[10px] font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/30">+14.2% MoM</span>
@@ -434,7 +469,7 @@ export default function AgentDashboardsView({
               <p className="text-[11px] mt-1" style={{ color: t.textMuted }}>Avg ₹1.05L per branch · 16 Active Outlets</p>
             </div>
 
-            <div className="rounded-2xl border p-4 shadow-lg" style={{ background: t.card, borderColor: t.border }}>
+            <div className="rounded-2xl border p-4 shadow-lg glass-card backdrop-blur-xl" style={{ background: t.card, borderColor: t.border }}>
               <div className="flex items-center justify-between mb-2">
                 <span className="text-xs font-semibold" style={{ color: t.textFaint }}>Gross Margin</span>
                 <span className="text-[10px] font-bold text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/30">Target: 22%</span>
@@ -443,7 +478,7 @@ export default function AgentDashboardsView({
               <p className="text-[11px] mt-1" style={{ color: t.textMuted }}>Net Contribution: ₹1.51L after COGS</p>
             </div>
 
-            <div className="rounded-2xl border p-4 shadow-lg" style={{ background: t.card, borderColor: t.border }}>
+            <div className="rounded-2xl border p-4 shadow-lg glass-card backdrop-blur-xl" style={{ background: t.card, borderColor: t.border }}>
               <div className="flex items-center justify-between mb-2">
                 <span className="text-xs font-semibold" style={{ color: t.textFaint }}>Customer Rating</span>
                 <span className="text-[10px] font-bold text-sky-400 bg-sky-500/10 px-2 py-0.5 rounded-full border border-sky-500/30">1.2K Reviews</span>
@@ -452,7 +487,7 @@ export default function AgentDashboardsView({
               <p className="text-[11px] mt-1" style={{ color: t.textMuted }}>94% positive sentiment on beverage quality</p>
             </div>
 
-            <div className="rounded-2xl border p-4 shadow-lg" style={{ background: t.card, borderColor: t.border }}>
+            <div className="rounded-2xl border p-4 shadow-lg glass-card backdrop-blur-xl" style={{ background: t.card, borderColor: t.border }}>
               <div className="flex items-center justify-between mb-2">
                 <span className="text-xs font-semibold" style={{ color: t.textFaint }}>Target Achievement</span>
                 <span className="text-[10px] font-bold text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/30">Near Goal</span>
@@ -464,7 +499,7 @@ export default function AgentDashboardsView({
 
           {/* Visuals: Sales Trend & Target vs Actual Comparison */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-            <div className="lg:col-span-2 rounded-2xl border p-5 shadow-md" style={{ background: t.card, borderColor: t.border }}>
+            <div className="lg:col-span-2 rounded-2xl border p-5 shadow-md glass-card backdrop-blur-xl" style={{ background: t.card, borderColor: t.border }}>
               <div className="flex items-center justify-between mb-4">
                 <div>
                   <h4 className="text-sm font-bold" style={{ color: t.text }}>Sales Trend vs. Revenue Benchmark</h4>
@@ -503,7 +538,7 @@ export default function AgentDashboardsView({
             </div>
 
             {/* Outlet Ranking Leaderboard */}
-            <div className="rounded-2xl border p-5 shadow-md flex flex-col justify-between" style={{ background: t.card, borderColor: t.border }}>
+            <div className="rounded-2xl border p-5 shadow-md glass-card backdrop-blur-xl flex flex-col justify-between" style={{ background: t.card, borderColor: t.border }}>
               <div>
                 <h4 className="text-sm font-bold mb-1" style={{ color: t.text }}>Outlet Ranking & Status</h4>
                 <p className="text-xs mb-3" style={{ color: t.textFaint }}>Sorted by revenue, margin and growth</p>
@@ -539,6 +574,56 @@ export default function AgentDashboardsView({
               </div>
             </div>
           </div>
+
+          {/* NEW GRAPH 1: AI Prophet Demand Forecast & 95% Confidence Band */}
+          <div className="rounded-2xl border p-5 shadow-lg" style={{ background: t.card, borderColor: t.border }}>
+            <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
+              <div>
+                <div className="flex items-center gap-2">
+                  <Sparkles size={16} color={accent} />
+                  <h4 className="text-sm font-bold" style={{ color: t.text }}>
+                    AI Prophet Demand Forecast & 95% Confidence Corridor
+                  </h4>
+                </div>
+                <p className="text-xs" style={{ color: t.textFaint }}>
+                  Predictive machine learning forecast tracking actual POS velocity vs. projected 3-day demand band
+                </p>
+              </div>
+              <div className="flex items-center gap-3 text-xs font-mono">
+                <span className="flex items-center gap-1.5" style={{ color: accent }}>
+                  <span className="w-2.5 h-2.5 rounded-full" style={{ background: accent }} /> Actual Sales
+                </span>
+                <span className="flex items-center gap-1.5 text-sky-400">
+                  <span className="w-2.5 h-2.5 rounded-full bg-sky-400" /> AI Forecast
+                </span>
+                <span className="flex items-center gap-1.5 text-slate-400">
+                  <span className="w-2.5 h-2.5 rounded bg-sky-500/20 border border-sky-500/40" /> 95% Confidence
+                </span>
+              </div>
+            </div>
+
+            <ResponsiveContainer width="100%" height={240}>
+              <ComposedChart data={prophetForecastData}>
+                <defs>
+                  <linearGradient id="prophetBand" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#38BDF8" stopOpacity={0.25} />
+                    <stop offset="95%" stopColor="#38BDF8" stopOpacity={0.02} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke={t.gridLine} />
+                <XAxis dataKey="date" tick={{ fontSize: 11, fill: t.textFaint }} stroke={t.gridLine} />
+                <YAxis tick={{ fontSize: 11, fill: t.textFaint }} stroke={t.gridLine} domain={[14000, 33000]} />
+                <Tooltip
+                  contentStyle={{ background: t.card, border: `1px solid ${t.border}`, borderRadius: 10, color: t.text }}
+                  formatter={(v: any) => v ? `₹${Number(v).toLocaleString("en-IN")}` : "Projected"}
+                />
+                <Area type="monotone" dataKey="upper" stroke="none" fill="url(#prophetBand)" />
+                <Area type="monotone" dataKey="lower" stroke="none" fill={t.card} />
+                <Line type="monotone" dataKey="forecast" stroke="#38BDF8" strokeWidth={2} strokeDasharray="5 5" dot={{ r: 3, fill: "#38BDF8" }} />
+                <Line type="monotone" dataKey="actual" stroke={accent} strokeWidth={3} dot={{ r: 4, fill: accent }} connectNulls={false} />
+              </ComposedChart>
+            </ResponsiveContainer>
+          </div>
         </motion.div>
       )}
 
@@ -549,7 +634,7 @@ export default function AgentDashboardsView({
         <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
           {/* 4 Headline Deck KPIs */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="rounded-2xl border p-4 shadow-lg" style={{ background: t.card, borderColor: t.border }}>
+            <div className="rounded-2xl border p-4 shadow-lg glass-card backdrop-blur-xl" style={{ background: t.card, borderColor: t.border }}>
               <div className="flex items-center justify-between mb-2">
                 <span className="text-xs font-semibold" style={{ color: t.textFaint }}>Units On Hand</span>
                 <span className="text-[10px] font-bold text-sky-400 bg-sky-500/10 px-2 py-0.5 rounded-full border border-sky-500/30">11 SKUs</span>
@@ -558,7 +643,7 @@ export default function AgentDashboardsView({
               <p className="text-[11px] mt-1" style={{ color: t.textMuted }}>Total active batch volume across 8 hubs</p>
             </div>
 
-            <div className="rounded-2xl border p-4 shadow-lg" style={{ background: t.card, borderColor: t.border }}>
+            <div className="rounded-2xl border p-4 shadow-lg glass-card backdrop-blur-xl" style={{ background: t.card, borderColor: t.border }}>
               <div className="flex items-center justify-between mb-2">
                 <span className="text-xs font-semibold" style={{ color: t.textFaint }}>Stock Cover</span>
                 <span className="text-[10px] font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/30">Healthy Zone</span>
@@ -567,7 +652,7 @@ export default function AgentDashboardsView({
               <p className="text-[11px] mt-1" style={{ color: t.textMuted }}>Automated JIT replenishment scheduled in 48h</p>
             </div>
 
-            <div className="rounded-2xl border p-4 shadow-lg" style={{ background: t.card, borderColor: t.border }}>
+            <div className="rounded-2xl border p-4 shadow-lg glass-card backdrop-blur-xl" style={{ background: t.card, borderColor: t.border }}>
               <div className="flex items-center justify-between mb-2">
                 <span className="text-xs font-semibold" style={{ color: t.textFaint }}>Stockout Rate</span>
                 <span className="text-[10px] font-bold text-rose-400 bg-rose-500/10 px-2 py-0.5 rounded-full border border-rose-500/30">Low Risk</span>
@@ -576,7 +661,7 @@ export default function AgentDashboardsView({
               <p className="text-[11px] mt-1" style={{ color: t.textMuted }}>2 items below safety threshold in Aurangabad</p>
             </div>
 
-            <div className="rounded-2xl border p-4 shadow-lg" style={{ background: t.card, borderColor: t.border }}>
+            <div className="rounded-2xl border p-4 shadow-lg glass-card backdrop-blur-xl" style={{ background: t.card, borderColor: t.border }}>
               <div className="flex items-center justify-between mb-2">
                 <span className="text-xs font-semibold" style={{ color: t.textFaint }}>Wastage Rate</span>
                 <span className="text-[10px] font-bold text-orange-400 bg-orange-500/10 px-2 py-0.5 rounded-full border border-orange-500/30">Within Target</span>
@@ -588,7 +673,7 @@ export default function AgentDashboardsView({
 
           {/* Visuals: ABC Classification Matrix & Wastage by Category */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-            <div className="rounded-2xl border p-5 shadow-md" style={{ background: t.card, borderColor: t.border }}>
+            <div className="rounded-2xl border p-5 shadow-md glass-card backdrop-blur-xl" style={{ background: t.card, borderColor: t.border }}>
               <h4 className="text-sm font-bold mb-1" style={{ color: t.text }}>ABC Stock Inventory Classification</h4>
               <p className="text-xs mb-4" style={{ color: t.textFaint }}>Value concentration vs stock cover duration</p>
 
@@ -610,7 +695,7 @@ export default function AgentDashboardsView({
             </div>
 
             {/* Reorder Alerts & Decisions */}
-            <div className="rounded-2xl border p-5 shadow-md flex flex-col justify-between" style={{ background: t.card, borderColor: t.border }}>
+            <div className="rounded-2xl border p-5 shadow-md glass-card backdrop-blur-xl flex flex-col justify-between" style={{ background: t.card, borderColor: t.border }}>
               <div>
                 <h4 className="text-sm font-bold mb-1" style={{ color: t.text }}>Automated JIT Reorder & Transfers</h4>
                 <p className="text-xs mb-3" style={{ color: t.textFaint }}>Critical replenishment recommendations</p>
@@ -653,7 +738,7 @@ export default function AgentDashboardsView({
         <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
           {/* 4 Headline Deck KPIs */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="rounded-2xl border p-4 shadow-lg" style={{ background: t.card, borderColor: t.border }}>
+            <div className="rounded-2xl border p-4 shadow-lg glass-card backdrop-blur-xl" style={{ background: t.card, borderColor: t.border }}>
               <div className="flex items-center justify-between mb-2">
                 <span className="text-xs font-semibold" style={{ color: t.textFaint }}>Attendance</span>
                 <span className="text-[10px] font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/30">Above Standard</span>
@@ -662,7 +747,7 @@ export default function AgentDashboardsView({
               <p className="text-[11px] mt-1" style={{ color: t.textMuted }}>37 Present · 3 Late · 2 On Leave</p>
             </div>
 
-            <div className="rounded-2xl border p-4 shadow-lg" style={{ background: t.card, borderColor: t.border }}>
+            <div className="rounded-2xl border p-4 shadow-lg glass-card backdrop-blur-xl" style={{ background: t.card, borderColor: t.border }}>
               <div className="flex items-center justify-between mb-2">
                 <span className="text-xs font-semibold" style={{ color: t.textFaint }}>Productivity Score</span>
                 <span className="text-[10px] font-bold text-sky-400 bg-sky-500/10 px-2 py-0.5 rounded-full border border-sky-500/30">Target: 75%</span>
@@ -671,7 +756,7 @@ export default function AgentDashboardsView({
               <p className="text-[11px] mt-1" style={{ color: t.textMuted }}>48 orders prepared per barista / hour</p>
             </div>
 
-            <div className="rounded-2xl border p-4 shadow-lg" style={{ background: t.card, borderColor: t.border }}>
+            <div className="rounded-2xl border p-4 shadow-lg glass-card backdrop-blur-xl" style={{ background: t.card, borderColor: t.border }}>
               <div className="flex items-center justify-between mb-2">
                 <span className="text-xs font-semibold" style={{ color: t.textFaint }}>Absenteeism</span>
                 <span className="text-[10px] font-bold text-rose-400 bg-rose-500/10 px-2 py-0.5 rounded-full border border-rose-500/30">Controlled</span>
@@ -680,7 +765,7 @@ export default function AgentDashboardsView({
               <p className="text-[11px] mt-1" style={{ color: t.textMuted }}>Primarily unnotified absences in Aurangabad</p>
             </div>
 
-            <div className="rounded-2xl border p-4 shadow-lg" style={{ background: t.card, borderColor: t.border }}>
+            <div className="rounded-2xl border p-4 shadow-lg glass-card backdrop-blur-xl" style={{ background: t.card, borderColor: t.border }}>
               <div className="flex items-center justify-between mb-2">
                 <span className="text-xs font-semibold" style={{ color: t.textFaint }}>Turnover Rate</span>
                 <span className="text-[10px] font-bold text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/30">Annualized</span>
@@ -692,7 +777,7 @@ export default function AgentDashboardsView({
 
           {/* Visuals: Staffing vs Demand & Understaffed Outlets */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-            <div className="lg:col-span-2 rounded-2xl border p-5 shadow-md" style={{ background: t.card, borderColor: t.border }}>
+            <div className="lg:col-span-2 rounded-2xl border p-5 shadow-md glass-card backdrop-blur-xl" style={{ background: t.card, borderColor: t.border }}>
               <div className="flex items-center justify-between mb-3">
                 <div>
                   <h4 className="text-sm font-bold" style={{ color: t.text }}>Staffing Level vs Customer Peak Demand</h4>
@@ -716,7 +801,7 @@ export default function AgentDashboardsView({
             </div>
 
             {/* Decision & RBAC Box */}
-            <div className="rounded-2xl border p-5 shadow-md flex flex-col justify-between" style={{ background: t.card, borderColor: t.border }}>
+            <div className="rounded-2xl border p-5 shadow-md glass-card backdrop-blur-xl flex flex-col justify-between" style={{ background: t.card, borderColor: t.border }}>
               <div>
                 <h4 className="text-sm font-bold mb-1" style={{ color: t.text }}>Roster Intelligence</h4>
                 <p className="text-xs mb-3" style={{ color: t.textFaint }}>Automated schedule recommendations</p>
@@ -755,7 +840,7 @@ export default function AgentDashboardsView({
         <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
           {/* 4 Headline Deck KPIs */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="rounded-2xl border p-4 shadow-lg" style={{ background: t.card, borderColor: t.border }}>
+            <div className="rounded-2xl border p-4 shadow-lg glass-card backdrop-blur-xl" style={{ background: t.card, borderColor: t.border }}>
               <div className="flex items-center justify-between mb-2">
                 <span className="text-xs font-semibold" style={{ color: t.textFaint }}>Campaign Revenue</span>
                 <span className="text-[10px] font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/30">Active</span>
@@ -764,7 +849,7 @@ export default function AgentDashboardsView({
               <p className="text-[11px] mt-1" style={{ color: t.textMuted }}>Generated across 6 active promotional campaigns</p>
             </div>
 
-            <div className="rounded-2xl border p-4 shadow-lg" style={{ background: t.card, borderColor: t.border }}>
+            <div className="rounded-2xl border p-4 shadow-lg glass-card backdrop-blur-xl" style={{ background: t.card, borderColor: t.border }}>
               <div className="flex items-center justify-between mb-2">
                 <span className="text-xs font-semibold" style={{ color: t.textFaint }}>ROAS</span>
                 <span className="text-[10px] font-bold text-sky-400 bg-sky-500/10 px-2 py-0.5 rounded-full border border-sky-500/30">Top Tier</span>
@@ -773,7 +858,7 @@ export default function AgentDashboardsView({
               <p className="text-[11px] mt-1" style={{ color: t.textMuted }}>₹4.10 revenue earned per ₹1.00 ad spend</p>
             </div>
 
-            <div className="rounded-2xl border p-4 shadow-lg" style={{ background: t.card, borderColor: t.border }}>
+            <div className="rounded-2xl border p-4 shadow-lg glass-card backdrop-blur-xl" style={{ background: t.card, borderColor: t.border }}>
               <div className="flex items-center justify-between mb-2">
                 <span className="text-xs font-semibold" style={{ color: t.textFaint }}>Conversion Rate</span>
                 <span className="text-[10px] font-bold text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/30">Above Avg</span>
@@ -782,7 +867,7 @@ export default function AgentDashboardsView({
               <p className="text-[11px] mt-1" style={{ color: t.textMuted }}>Digital ad clicks converting to POS transactions</p>
             </div>
 
-            <div className="rounded-2xl border p-4 shadow-lg" style={{ background: t.card, borderColor: t.border }}>
+            <div className="rounded-2xl border p-4 shadow-lg glass-card backdrop-blur-xl" style={{ background: t.card, borderColor: t.border }}>
               <div className="flex items-center justify-between mb-2">
                 <span className="text-xs font-semibold" style={{ color: t.textFaint }}>CAC (Acquisition Cost)</span>
                 <span className="text-[10px] font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/30">Efficient</span>
@@ -794,7 +879,7 @@ export default function AgentDashboardsView({
 
           {/* Visuals: Marketing Funnel & Channel ROAS */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-            <div className="lg:col-span-2 rounded-2xl border p-5 shadow-md" style={{ background: t.card, borderColor: t.border }}>
+            <div className="lg:col-span-2 rounded-2xl border p-5 shadow-md glass-card backdrop-blur-xl" style={{ background: t.card, borderColor: t.border }}>
               <h4 className="text-sm font-bold mb-1" style={{ color: t.text }}>Customer Acquisition Funnel</h4>
               <p className="text-xs mb-4" style={{ color: t.textFaint }}>Reach &rarr; Impressions &rarr; Leads &rarr; Conversions</p>
 
@@ -820,7 +905,7 @@ export default function AgentDashboardsView({
             </div>
 
             {/* Campaign Optimization Advisor */}
-            <div className="rounded-2xl border p-5 shadow-md flex flex-col justify-between" style={{ background: t.card, borderColor: t.border }}>
+            <div className="rounded-2xl border p-5 shadow-md glass-card backdrop-blur-xl flex flex-col justify-between" style={{ background: t.card, borderColor: t.border }}>
               <div>
                 <h4 className="text-sm font-bold mb-1" style={{ color: t.text }}>Campaign Advisor</h4>
                 <p className="text-xs mb-3" style={{ color: t.textFaint }}>Outcome-driven budget allocations</p>
@@ -849,6 +934,69 @@ export default function AgentDashboardsView({
               </button>
             </div>
           </div>
+
+          {/* NEW GRAPH 2: Multi-Channel Sales Distribution & Peak Hourly Velocity */}
+          <div className="rounded-2xl border p-5 shadow-lg space-y-4" style={{ background: t.card, borderColor: t.border }}>
+            <div className="flex items-center justify-between flex-wrap gap-2">
+              <div>
+                <div className="flex items-center gap-2">
+                  <Megaphone size={16} color={accent} />
+                  <h4 className="text-sm font-bold" style={{ color: t.text }}>
+                    Multi-Channel Sales Distribution & Order Velocity Mix
+                  </h4>
+                </div>
+                <p className="text-xs" style={{ color: t.textFaint }}>
+                  Live revenue share across Dine-in, Food Delivery Apps, Drive-Thru & Mobile App Pre-Orders
+                </p>
+              </div>
+              <span className="text-xs font-mono px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+                TOTAL NETWORK CHANNEL FLOW: ₹8.4L
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-center">
+              <div className="h-52">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={salesChannelMixData}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={50}
+                      outerRadius={78}
+                      paddingAngle={4}
+                      dataKey="value"
+                    >
+                      {salesChannelMixData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
+                      ))}
+                    </Pie>
+                    <Tooltip
+                      contentStyle={{ background: t.card, border: `1px solid ${t.border}`, borderRadius: 10, color: t.text }}
+                      formatter={(v: any, name: any) => [`${v}% Share (${salesChannelMixData.find(c => c.name === name)?.revenue})`, name]}
+                    />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+
+              <div className="lg:col-span-2 grid grid-cols-2 sm:grid-cols-4 gap-3">
+                {salesChannelMixData.map((ch) => (
+                  <div key={ch.name} className="p-3 rounded-xl border text-left space-y-1 glass-card" style={{ borderColor: t.border }}>
+                    <div className="flex items-center gap-1.5 text-xs font-bold" style={{ color: ch.color }}>
+                      <span className="w-2 h-2 rounded-full" style={{ background: ch.color }} />
+                      <span className="truncate">{ch.name}</span>
+                    </div>
+                    <div className="text-xl font-black" style={{ color: t.text }}>{ch.value}%</div>
+                    <div className="text-[11px]" style={{ color: t.textMuted }}>Total: <span className="font-semibold" style={{ color: t.text }}>{ch.revenue}</span></div>
+                    <div className="flex items-center justify-between text-[10px] pt-1 border-t" style={{ borderColor: `${t.border}40`, color: t.textFaint }}>
+                      <span>Avg: {ch.ticket}</span>
+                      <span className="text-emerald-400 font-bold">{ch.growth}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
         </motion.div>
       )}
 
@@ -859,7 +1007,7 @@ export default function AgentDashboardsView({
         <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
           {/* 4 Headline Deck KPIs */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="rounded-2xl border p-4 shadow-lg" style={{ background: t.card, borderColor: t.border }}>
+            <div className="rounded-2xl border p-4 shadow-lg glass-card backdrop-blur-xl" style={{ background: t.card, borderColor: t.border }}>
               <div className="flex items-center justify-between mb-2">
                 <span className="text-xs font-semibold" style={{ color: t.textFaint }}>Compliance Rate</span>
                 <span className="text-[10px] font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/30">Network Passed</span>
@@ -868,7 +1016,7 @@ export default function AgentDashboardsView({
               <p className="text-[11px] mt-1" style={{ color: t.textMuted }}>15 of 16 Outlets meeting HACCP standards</p>
             </div>
 
-            <div className="rounded-2xl border p-4 shadow-lg" style={{ background: t.card, borderColor: t.border }}>
+            <div className="rounded-2xl border p-4 shadow-lg glass-card backdrop-blur-xl" style={{ background: t.card, borderColor: t.border }}>
               <div className="flex items-center justify-between mb-2">
                 <span className="text-xs font-semibold" style={{ color: t.textFaint }}>Open Issues</span>
                 <span className="text-[10px] font-bold text-rose-400 bg-rose-500/10 px-2 py-0.5 rounded-full border border-rose-500/30">Action Required</span>
@@ -877,7 +1025,7 @@ export default function AgentDashboardsView({
               <p className="text-[11px] mt-1" style={{ color: t.textMuted }}>2 Critical fire/safety · 5 Medium checklists</p>
             </div>
 
-            <div className="rounded-2xl border p-4 shadow-lg" style={{ background: t.card, borderColor: t.border }}>
+            <div className="rounded-2xl border p-4 shadow-lg glass-card backdrop-blur-xl" style={{ background: t.card, borderColor: t.border }}>
               <div className="flex items-center justify-between mb-2">
                 <span className="text-xs font-semibold" style={{ color: t.textFaint }}>Checklist Score</span>
                 <span className="text-[10px] font-bold text-sky-400 bg-sky-500/10 px-2 py-0.5 rounded-full border border-sky-500/30">Excellent</span>
@@ -886,7 +1034,7 @@ export default function AgentDashboardsView({
               <p className="text-[11px] mt-1" style={{ color: t.textMuted }}>Opening, closing, and hygiene checklists logged</p>
             </div>
 
-            <div className="rounded-2xl border p-4 shadow-lg" style={{ background: t.card, borderColor: t.border }}>
+            <div className="rounded-2xl border p-4 shadow-lg glass-card backdrop-blur-xl" style={{ background: t.card, borderColor: t.border }}>
               <div className="flex items-center justify-between mb-2">
                 <span className="text-xs font-semibold" style={{ color: t.textFaint }}>Avg. Closure Time</span>
                 <span className="text-[10px] font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/30">Rapid Fix</span>
@@ -898,7 +1046,7 @@ export default function AgentDashboardsView({
 
           {/* Visuals: Compliance Heatmap Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-            <div className="lg:col-span-2 rounded-2xl border p-5 shadow-md" style={{ background: t.card, borderColor: t.border }}>
+            <div className="lg:col-span-2 rounded-2xl border p-5 shadow-md glass-card backdrop-blur-xl" style={{ background: t.card, borderColor: t.border }}>
               <h4 className="text-sm font-bold mb-1" style={{ color: t.text }}>Outlet Compliance & SOP Heatmap</h4>
               <p className="text-xs mb-4" style={{ color: t.textFaint }}>Category pass rates across Hygiene, Safety, Cash & Branding</p>
 
@@ -947,7 +1095,7 @@ export default function AgentDashboardsView({
             </div>
 
             {/* Audit Decision & Tamper Proof Box */}
-            <div className="rounded-2xl border p-5 shadow-md flex flex-col justify-between" style={{ background: t.card, borderColor: t.border }}>
+            <div className="rounded-2xl border p-5 shadow-md glass-card backdrop-blur-xl flex flex-col justify-between" style={{ background: t.card, borderColor: t.border }}>
               <div>
                 <h4 className="text-sm font-bold mb-1" style={{ color: t.text }}>Audit Advisor</h4>
                 <p className="text-xs mb-3" style={{ color: t.textFaint }}>Immediate corrective triggers</p>
@@ -976,6 +1124,49 @@ export default function AgentDashboardsView({
               </button>
             </div>
           </div>
+
+          {/* NEW GRAPH 3: Cold-Chain IoT Sensor Temperature & HACCP Telemetry Stream */}
+          <div className="rounded-2xl border p-5 shadow-lg space-y-3" style={{ background: t.card, borderColor: t.border }}>
+            <div className="flex items-center justify-between flex-wrap gap-2">
+              <div>
+                <div className="flex items-center gap-2">
+                  <ShieldCheck size={16} color={accent} />
+                  <h4 className="text-sm font-bold" style={{ color: t.text }}>
+                    Cold-Chain IoT Sensor Temperature Stream & HACCP Safe Zones
+                  </h4>
+                </div>
+                <p className="text-xs" style={{ color: t.textFaint }}>
+                  Real-time wireless temperature telemetry for Walk-in Freezers, Milk Chillers & Espresso Boilers
+                </p>
+              </div>
+              <div className="flex items-center gap-3 text-xs font-mono">
+                <span className="flex items-center gap-1.5 text-cyan-400">
+                  <span className="w-2.5 h-2.5 rounded-full bg-cyan-400" /> Walk-in Freezer (-18°C)
+                </span>
+                <span className="flex items-center gap-1.5 text-emerald-400">
+                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-400" /> Milk Chiller (Safe: 2-4.5°C)
+                </span>
+                <span className="flex items-center gap-1.5 text-amber-400">
+                  <span className="w-2.5 h-2.5 rounded-full bg-amber-400" /> Boiler (93.5°C)
+                </span>
+              </div>
+            </div>
+
+            <ResponsiveContainer width="100%" height={230}>
+              <LineChart data={coldChainTelemetryData}>
+                <CartesianGrid strokeDasharray="3 3" stroke={t.gridLine} />
+                <XAxis dataKey="time" tick={{ fontSize: 11, fill: t.textFaint }} stroke={t.gridLine} />
+                <YAxis tick={{ fontSize: 11, fill: t.textFaint }} stroke={t.gridLine} />
+                <Tooltip
+                  contentStyle={{ background: t.card, border: `1px solid ${t.border}`, borderRadius: 10, color: t.text }}
+                  formatter={(v: any, name: any) => [`${v}°C`, name === "milkChiller" ? "Milk Chiller" : name === "walkInFreezer" ? "Walk-in Freezer" : "Espresso Boiler"]}
+                />
+                <ReferenceLine y={4.5} stroke="#F43F5E" strokeDasharray="3 3" label={{ value: "HACCP Max Limit (4.5°C)", fill: "#F43F5E", fontSize: 10 }} />
+                <Line type="monotone" dataKey="milkChiller" stroke="#10B981" strokeWidth={3} dot={{ r: 4, fill: "#10B981" }} />
+                <Line type="monotone" dataKey="walkInFreezer" stroke="#38BDF8" strokeWidth={2.5} dot={{ r: 3, fill: "#38BDF8" }} />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
         </motion.div>
       )}
 
@@ -986,7 +1177,7 @@ export default function AgentDashboardsView({
         <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
           {/* 4 Headline Deck KPIs */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="rounded-2xl border p-4 shadow-lg" style={{ background: t.card, borderColor: t.border }}>
+            <div className="rounded-2xl border p-4 shadow-lg glass-card backdrop-blur-xl" style={{ background: t.card, borderColor: t.border }}>
               <div className="flex items-center justify-between mb-2">
                 <span className="text-xs font-semibold" style={{ color: t.textFaint }}>Network Sales</span>
                 <span className="text-[10px] font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/30">Total Scale</span>
@@ -995,7 +1186,7 @@ export default function AgentDashboardsView({
               <p className="text-[11px] mt-1" style={{ color: t.textMuted }}>Consolidated gross network sales across all regions</p>
             </div>
 
-            <div className="rounded-2xl border p-4 shadow-lg" style={{ background: t.card, borderColor: t.border }}>
+            <div className="rounded-2xl border p-4 shadow-lg glass-card backdrop-blur-xl" style={{ background: t.card, borderColor: t.border }}>
               <div className="flex items-center justify-between mb-2">
                 <span className="text-xs font-semibold" style={{ color: t.textFaint }}>Growth</span>
                 <span className="text-[10px] font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/30">YoY Baseline</span>
@@ -1004,7 +1195,7 @@ export default function AgentDashboardsView({
               <p className="text-[11px] mt-1" style={{ color: t.textMuted }}>Strong expansion pace across Tier-1 & Tier-2 hubs</p>
             </div>
 
-            <div className="rounded-2xl border p-4 shadow-lg" style={{ background: t.card, borderColor: t.border }}>
+            <div className="rounded-2xl border p-4 shadow-lg glass-card backdrop-blur-xl" style={{ background: t.card, borderColor: t.border }}>
               <div className="flex items-center justify-between mb-2">
                 <span className="text-xs font-semibold" style={{ color: t.textFaint }}>Target Achievement</span>
                 <span className="text-[10px] font-bold text-sky-400 bg-sky-500/10 px-2 py-0.5 rounded-full border border-sky-500/30">High Alignment</span>
@@ -1013,7 +1204,7 @@ export default function AgentDashboardsView({
               <p className="text-[11px] mt-1" style={{ color: t.textMuted }}>Franchise benchmark goal: ₹5.2Cr annual run rate</p>
             </div>
 
-            <div className="rounded-2xl border p-4 shadow-lg" style={{ background: t.card, borderColor: t.border }}>
+            <div className="rounded-2xl border p-4 shadow-lg glass-card backdrop-blur-xl" style={{ background: t.card, borderColor: t.border }}>
               <div className="flex items-center justify-between mb-2">
                 <span className="text-xs font-semibold" style={{ color: t.textFaint }}>At-Risk Outlets</span>
                 <span className="text-[10px] font-bold text-rose-400 bg-rose-500/10 px-2 py-0.5 rounded-full border border-rose-500/30">Exceptions</span>
@@ -1026,7 +1217,7 @@ export default function AgentDashboardsView({
           {/* Visuals: 5-Pillar Health Score & Executive Radar */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
             {/* Executive Radar Chart */}
-            <div className="rounded-2xl border p-5 shadow-md flex flex-col justify-between" style={{ background: t.card, borderColor: t.border }}>
+            <div className="rounded-2xl border p-5 shadow-md glass-card backdrop-blur-xl flex flex-col justify-between" style={{ background: t.card, borderColor: t.border }}>
               <div>
                 <h4 className="text-sm font-bold mb-1" style={{ color: t.text }}>Executive Multi-Dimension Radar</h4>
                 <p className="text-xs mb-3" style={{ color: t.textFaint }}>Operational performance vs ideal benchmark</p>
@@ -1047,7 +1238,7 @@ export default function AgentDashboardsView({
             </div>
 
             {/* Strategic Executive Inquiries */}
-            <div className="rounded-2xl border p-5 shadow-md flex flex-col justify-between" style={{ background: t.card, borderColor: t.border }}>
+            <div className="rounded-2xl border p-5 shadow-md glass-card backdrop-blur-xl flex flex-col justify-between" style={{ background: t.card, borderColor: t.border }}>
               <div>
                 <h4 className="text-sm font-bold mb-1" style={{ color: t.text }}>Executive Synthesis</h4>
                 <p className="text-xs mb-3" style={{ color: t.textFaint }}>Headline KPIs + Trends + Exceptions + Actions</p>
