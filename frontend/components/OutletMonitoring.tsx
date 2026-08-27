@@ -1408,7 +1408,7 @@ const avgClosureDays = 2.1;
     fetch(`${API_BASE_URL}/api/employees`, {
       headers: { Authorization: `Bearer ${localStorage.getItem("fops_token")}` },
     })
-      .then((res) => res.json())
+      .then((res) => (res.ok ? res.json() : null))
       .then((data) => setEmployees(Array.isArray(data) && data.length > 0 ? data : []))
       .catch(() => setEmployees([]))
       .finally(() => setStaffLoading(false));
@@ -1421,7 +1421,7 @@ const avgClosureDays = 2.1;
     if (token) headers["Authorization"] = `Bearer ${token}`;
 
     fetch(`${API_BASE_URL}/api/compliance`, { headers })
-      .then((res) => res.json())
+      .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
         if (Array.isArray(data) && data.length > 0) {
           setAudits(data);
@@ -1430,7 +1430,7 @@ const avgClosureDays = 2.1;
       .catch(() => {});
 
     fetch(`${API_BASE_URL}/api/compliance/operational-metrics`, { headers })
-      .then((res) => res.json())
+      .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
         if (Array.isArray(data) && data.length > 0) {
           setOpMetrics(data);
@@ -1787,7 +1787,7 @@ const filteredRecommendations = recommendations.filter((r) => recPriorityFilter 
     fetch(`${API_BASE_URL}/api/outlets`, {
       headers: { Authorization: `Bearer ${sessionStorage.getItem("fops_token")}` },
     })
-      .then((res) => res.json())
+      .then((res) => (res.ok ? res.json() : null))
       .then((data) => setOutlets(Array.isArray(data) ? data : []))
       .catch(() => setOutlets([]));
   }, [isLoggedIn]);
@@ -1805,8 +1805,8 @@ const filteredRecommendations = recommendations.filter((r) => recPriorityFilter 
     const authHeaders = { Authorization: `Bearer ${sessionStorage.getItem("fops_token")}` };
 
     Promise.all([
-      fetch(`${API_BASE_URL}/api/inventory?${params.toString()}`, { headers: authHeaders }).then((res) => res.json()),
-      fetch(`${API_BASE_URL}/api/inventory/summary`, { headers: authHeaders }).then((res) => res.json()),
+      fetch(`${API_BASE_URL}/api/inventory?${params.toString()}`, { headers: authHeaders }).then((res) => (res.ok ? res.json() : null)).catch(() => null),
+      fetch(`${API_BASE_URL}/api/inventory/summary`, { headers: authHeaders }).then((res) => (res.ok ? res.json() : null)).catch(() => null),
     ])
       .then(([items, summary]) => {
         const loadedItems = Array.isArray(items) && items.length > 0 ? items : FALLBACK_INVENTORY;
@@ -4322,8 +4322,9 @@ function getPredictedRisks(auditList: any[]) {
                               photo_name: aiPhotoName
                             })
                           })
-                          .then(res => res.json())
+                          .then(res => res.ok ? res.json() : null)
                           .then(data => {
+                            if (!data) throw new Error("Invalid response");
                             setAiPhotoResult(data);
                             setAiPhotoAnalyzing(false);
                             if (data.id) {
@@ -4985,8 +4986,9 @@ function getPredictedRisks(auditList: any[]) {
                                   photo_name: aiPhotoName
                                 })
                               })
-                              .then(res => res.json())
+                              .then(res => res.ok ? res.json() : null)
                               .then(data => {
+                                if (!data) throw new Error("Invalid response");
                                 setAiPhotoResult(data);
                                 setAiPhotoAnalyzing(false);
                                 if (data.id) {
@@ -5289,7 +5291,7 @@ function getPredictedRisks(auditList: any[]) {
                             spend_multiplier: simSpendMult
                           })
                         })
-                          .then(res => res.json())
+                          .then(res => res.ok ? res.json() : null)
                           .then(data => {
                             if (data && data.predicted_revenue) {
                               setSimResult(data);
@@ -6394,7 +6396,8 @@ function getPredictedRisks(auditList: any[]) {
                             headers: { "Content-Type": "application/json" },
                             body: JSON.stringify({ outlet_name: "Nashik City Center", item_name: poItem, quantity: poQty })
                           });
-                          const data = await res.json();
+                          const data = res.ok ? await res.json() : null;
+                          if (!data) throw new Error("Failed to dispatch");
                           setPoResult(data);
                           setTerminalLogs(prev => [`[${new Date().toLocaleTimeString()}] Auto-PO Dispatched: ${data.poNumber} (${data.supplier})`, ...prev]);
                         } catch {
@@ -6745,9 +6748,9 @@ function getPredictedRisks(auditList: any[]) {
                       onClick={() => {
                         setTerminalLogs(prev => [`[${new Date().toLocaleTimeString()}] ML: Triggering async model retraining...`, ...prev]);
                         fetch(`${API_BASE_URL}/api/agent/franchise-intelligence/train`, { method: "POST" })
-                          .then(res => res.json())
+                          .then(res => res.ok ? res.json() : null)
                           .then(data => {
-                            setTerminalLogs(prev => [`[${new Date().toLocaleTimeString()}] ML: ${data.message || "Model retraining triggered"}`, ...prev]);
+                            setTerminalLogs(prev => [`[${new Date().toLocaleTimeString()}] ML: ${(data && data.message) || "Model retraining triggered"}`, ...prev]);
                           })
                           .catch(() => {
                             // Fallback mock

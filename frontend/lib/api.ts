@@ -13,12 +13,19 @@ export async function fetchWithAuth(endpoint: string, options: RequestInit = {})
     headers,
   });
 
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData.error || errorData.message || `Request failed with status ${response.status}`);
+  const text = await response.text();
+  let data: any = {};
+  try {
+    data = text ? JSON.parse(text) : {};
+  } catch {
+    data = { message: text };
   }
 
-  return response.json();
+  if (!response.ok) {
+    throw new Error(data.error || data.message || `Request failed with status ${response.status}`);
+  }
+
+  return data;
 }
 
 export const api = {
