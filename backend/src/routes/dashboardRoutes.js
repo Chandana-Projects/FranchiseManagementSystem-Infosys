@@ -24,3 +24,7 @@ router.get(
     "/agent/:agent",
     dashboardController.getAgentDashboard
 );
+router.get(
+    "/analytics",
+    dashboardController.getDashboardAnalytics
+);

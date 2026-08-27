@@ -146,50 +146,160 @@ exports.getAgentDashboard = async (agent) => {
             throw new Error(`Unknown dashboard agent: ${agent}`);
     }
 };
-exports.getAgentDashboard = async (agent) => {
-    const agentName = agent.toLowerCase();
 
-    switch (agentName) {
-        case "inventory": {
-            const inventory =
-                await intelligenceService.getInventoryRiskSummary();
+exports.getDashboardAnalytics = async () => {
+    const sales =
+        await intelligenceService.getSalesPerformanceSummary();
 
-            return {
-                agent: "Inventory",
-                summary: {
-                    totalIssues: inventory.totalInventoryIssues,
-                    highRiskItems: inventory.highRiskItems,
-                    mediumRiskItems: inventory.mediumRiskItems,
-                    affectedOutlets: inventory.affectedOutlets
-                },
-                items: inventory.items || [],
-                generatedAt: new Date().toISOString()
-            };
+    const inventory =
+        await intelligenceService.getInventoryRiskSummary();
+
+    const criticalOutlets =
+        await intelligenceService.getCriticalOutlets();
+
+    const recommendations =
+        await intelligenceService.getRecommendationStats();
+
+    const outlets = sales.outlets || [];
+
+    // Revenue data for outlet-wise charts
+    const revenueByOutlet = outlets.map((outlet) => ({
+        outletId: outlet.outletId,
+        outletName: outlet.outletName,
+        revenue: outlet.currentRevenue,
+        predictedRevenue: outlet.predictedRevenue
+    }));
+
+    // Current vs predicted revenue
+    const revenueComparison = outlets.map((outlet) => ({
+        outletName: outlet.outletName,
+        currentRevenue: outlet.currentRevenue,
+        predictedRevenue: outlet.predictedRevenue,
+        difference:
+            outlet.predictedRevenue - outlet.currentRevenue
+    }));
+
+    // Growing vs declining
+    const growthDistribution = [
+        {
+            name: "Growing",
+            value: sales.growingOutlets
+        },
+        {
+            name: "Declining",
+            value: sales.decliningOutlets
         }
+    ];
 
-        case "sales": {
-            const sales =
-                await intelligenceService.getSalesPerformanceSummary();
-
-            return {
-                agent: "Sales",
-                summary: {
-                    totalOutlets: sales.totalOutlets,
-                    totalRevenue: sales.totalRevenue,
-                    averageRevenue: sales.averageRevenue,
-                    growingOutlets: sales.growingOutlets,
-                    decliningOutlets: sales.decliningOutlets
-                },
-                bestOutlet: sales.bestOutlet,
-                lowestOutlet: sales.lowestOutlet,
-                outlets: sales.outlets || [],
-                generatedAt: new Date().toISOString()
-            };
+    // Risk distribution
+    const riskDistribution = [
+        {
+            name: "Critical Outlets",
+            value: criticalOutlets.total
+        },
+        {
+            name: "High Risk Inventory",
+            value: inventory.highRiskItems
+        },
+        {
+            name: "Medium Risk Inventory",
+            value: inventory.mediumRiskItems
+        },
+        {
+            name: "Performance Issues",
+            value: recommendations.performanceIssues
         }
+    ];
 
-        default:
-            throw new Error(
-                `Unsupported agent: ${agent}`
-            );
-    }
+    // Highest revenue outlet
+    const topOutlets = [...outlets]
+        .sort((a, b) =>
+            b.currentRevenue - a.currentRevenue
+        )
+        .slice(0, 5);
+
+    return {
+        revenueByOutlet,
+
+        revenueComparison,
+
+        growthDistribution,
+
+        riskDistribution,
+
+        topOutlets,
+
+        statistics: {
+            totalRevenue: sales.totalRevenue,
+            averageRevenue: sales.averageRevenue,
+            totalOutlets: sales.totalOutlets,
+            growingOutlets: sales.growingOutlets,
+            decliningOutlets: sales.decliningOutlets,
+            criticalOutlets: criticalOutlets.total,
+            inventoryIssues: inventory.totalInventoryIssues,
+            highRiskInventory: inventory.highRiskItems
+        },
+
+        generatedAt: new Date().toISOString()
+    };
+};
+
+
+exports.generateDashboardReport = async () => {
+    const [
+        intelligence,
+        recommendations,
+        recommendationStats,
+        criticalOutlets,
+        inventoryRisk,
+        salesSummary
+    ] = await Promise.all([
+        intelligenceService.getFranchiseIntelligence(),
+        intelligenceService.getRecommendations(),
+        intelligenceService.getRecommendationStats(),
+        intelligenceService.getCriticalOutlets(),
+        intelligenceService.getInventoryRiskSummary(),
+        intelligenceService.getSalesPerformanceSummary()
+    ]);
+
+    return {
+        reportTitle: "Franchise Intelligence Dashboard Report",
+
+        generatedAt: new Date().toISOString(),
+
+        executiveSummary: {
+            overallHealth: intelligence.overallHealth,
+            totalOutlets: salesSummary.totalOutlets,
+            totalRevenue: salesSummary.totalRevenue,
+            averageRevenue: salesSummary.averageRevenue
+        },
+
+        salesPerformance: {
+            growingOutlets: salesSummary.growingOutlets,
+            decliningOutlets: salesSummary.decliningOutlets,
+            bestOutlet: salesSummary.bestOutlet,
+            lowestOutlet: salesSummary.lowestOutlet,
+            outlets: salesSummary.outlets
+        },
+
+        inventoryRisk: {
+            totalIssues: inventoryRisk.totalInventoryIssues,
+            highRiskItems: inventoryRisk.highRiskItems,
+            mediumRiskItems: inventoryRisk.mediumRiskItems,
+            affectedOutlets: inventoryRisk.affectedOutlets
+        },
+
+        recommendations: {
+            total: recommendationStats.totalRecommendations,
+            highPriority: recommendationStats.highPriority,
+            mediumPriority: recommendationStats.mediumPriority,
+            lowPriority: recommendationStats.lowPriority,
+            items: recommendations
+        },
+
+        criticalOutlets: {
+            total: criticalOutlets.total,
+            outlets: criticalOutlets.outlets
+        }
+    };
 };

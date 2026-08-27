@@ -48,3 +48,35 @@ exports.getAgentDashboard = async (req, res, next) => {
         next(err);
     }
 };
+exports.getDashboardAnalytics = async (req, res, next) => {
+    try {
+        const data =
+            await dashboardService.getDashboardAnalytics();
+
+        return res.status(200).json(data);
+    } catch (err) {
+        next(err);
+    }
+};
+const dashboardReportService =
+    require("../services/dashboardReportService");
+
+exports.generateDashboardReport = async (req, res, next) => {
+    try {
+        const report =
+            await dashboardReportService.generateDashboardReport();
+
+        res.status(200).json({
+            success: true,
+            data: report
+        });
+
+    } catch (error) {
+        console.error(
+            "[Dashboard Report] Error:",
+            error.message
+        );
+
+        next(error);
+    }
+};

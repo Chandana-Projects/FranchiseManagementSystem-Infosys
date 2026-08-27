@@ -3,6 +3,7 @@ require("dotenv").config();
 const app = require("./app");
 const posSimulator = require("./services/posSimulator");
 const prisma = require("./config/prisma");
+const dashboardRoutes = require("./routes/dashboardRoutes");
 
 const PORT = process.env.PORT || 5000;
 
