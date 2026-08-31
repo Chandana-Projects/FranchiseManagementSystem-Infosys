@@ -2497,8 +2497,8 @@ function getPredictedRisks(auditList: any[]) {
                     {/* Central HQ Hub Circle */}
                     <circle cx={200} cy={170} r={36} fill={accent} fillOpacity={0.2} stroke={accent} strokeWidth={2} />
                     <circle cx={200} cy={170} r={28} fill={accent} opacity={0.95} />
-                    <text x={200} y={166} textAnchor="middle" fontSize={11} fontWeight={800} fill="#090D16">PUNE HQ</text>
-                    <text x={200} y={178} textAnchor="middle" fontSize={9} fontWeight={600} fill="#090D16">HUB</text>
+                    <text x={200} y={166} textAnchor="middle" fontSize={11} fontWeight={500} fill="#090D16">PUNE HQ</text>
+                    <text x={200} y={178} textAnchor="middle" fontSize={9} fontWeight={400} fill="#090D16">HUB</text>
 
                     {/* Outlet Nodes */}
                     {networkNodes.map((n) => {
@@ -2513,8 +2513,8 @@ function getPredictedRisks(auditList: any[]) {
                           <circle cx={cx} cy={cy} r={r + 3} fill={color} opacity={0.2} />
                           {/* Main node circle */}
                           <circle cx={cx} cy={cy} r={r} fill={color} stroke={isDark ? "#0F172A" : "#FFFFFF"} strokeWidth={2} opacity={0.95} />
-                          {/* Label text - Solid crisp text */}
-                          <text x={cx} y={cy + 4} textAnchor="middle" fontSize={10} fontWeight={800} fill="#060709">
+                          {/* Label text - Regular weight text */}
+                          <text x={cx} y={cy + 4} textAnchor="middle" fontSize={10} fontWeight={400} fill="#060709">
                             {n.name.split(" ")[0]}
                           </text>
                         </g>
