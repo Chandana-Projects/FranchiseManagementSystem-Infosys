@@ -47,7 +47,11 @@ import ExecutiveQuickDock from "./ExecutiveQuickDock";
 import AgentDashboardsView from "./AgentDashboardsView";
 import PWAInstaller from "./PWAInstaller";
 import LiveTelemetryStream from "./LiveTelemetryStream";
-import { BookOpen, Compass, QrCode, Volume2, VolumeX, Bot, Sliders, Menu, X } from "lucide-react";
+import ShiftSchedulerModal from "./ShiftSchedulerModal";
+import RoyaltyCalculatorModal from "./RoyaltyCalculatorModal";
+import VendorScorecardModal from "./VendorScorecardModal";
+import MenuEngineeringMatrix from "./MenuEngineeringMatrix";
+import { BookOpen, Compass, QrCode, Volume2, VolumeX, Bot, Sliders, Menu, X, Calculator, Utensils } from "lucide-react";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
 
@@ -1346,6 +1350,10 @@ export default function FranchiseOSDashboard({ initialModule = "dashboard" }: Fr
   );
 
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+  const [isShiftSchedulerOpen, setIsShiftSchedulerOpen] = useState(false);
+  const [isRoyaltyCalcOpen, setIsRoyaltyCalcOpen] = useState(false);
+  const [isVendorScorecardOpen, setIsVendorScorecardOpen] = useState(false);
+  const [isMenuMatrixOpen, setIsMenuMatrixOpen] = useState(false);
   const [accent, setAccent] = useState("#F59E0B");
   const [glowEffect, setGlowEffect] = useState(true);
   const [blurDepth, setBlurDepth] = useState(8);
@@ -2212,6 +2220,43 @@ function getPredictedRisks(auditList: any[]) {
               style={{ background: "#06B6D420", borderColor: "#06B6D450", color: "#06B6D4" }}
             >
               <QrCode size={14} /> Scan QR
+            </button>
+
+            {/* Enterprise Business Module Launchers */}
+            <button
+              onClick={() => { playTechChime("nav"); setIsShiftSchedulerOpen(true); }}
+              className="flex items-center gap-1.5 text-xs px-3 py-2 rounded-lg border font-bold transition-all hover:scale-105"
+              style={{ background: "#F59E0B20", borderColor: "#F59E0B50", color: "#F59E0B" }}
+              title="AI Staff Roster & Shift Scheduler"
+            >
+              <Calendar size={14} /> Roster AI
+            </button>
+
+            <button
+              onClick={() => { playTechChime("nav"); setIsRoyaltyCalcOpen(true); }}
+              className="flex items-center gap-1.5 text-xs px-3 py-2 rounded-lg border font-bold transition-all hover:scale-105"
+              style={{ background: "#10B98120", borderColor: "#10B98150", color: "#10B981" }}
+              title="Royalty & ROI Calculator"
+            >
+              <Calculator size={14} /> Royalty ROI
+            </button>
+
+            <button
+              onClick={() => { playTechChime("nav"); setIsVendorScorecardOpen(true); }}
+              className="flex items-center gap-1.5 text-xs px-3 py-2 rounded-lg border font-bold transition-all hover:scale-105"
+              style={{ background: "#A855F720", borderColor: "#A855F750", color: "#A855F7" }}
+              title="Vendor SLA Scorecard"
+            >
+              <Truck size={14} /> Vendor SLA
+            </button>
+
+            <button
+              onClick={() => { playTechChime("nav"); setIsMenuMatrixOpen(true); }}
+              className="flex items-center gap-1.5 text-xs px-3 py-2 rounded-lg border font-bold transition-all hover:scale-105"
+              style={{ background: "#38BDF820", borderColor: "#38BDF850", color: "#38BDF8" }}
+              title="Menu Yield Engineering"
+            >
+              <Utensils size={14} /> Menu Yield
             </button>
 
 
@@ -7032,6 +7077,10 @@ function getPredictedRisks(auditList: any[]) {
         onOpenDispatch={() => setIsDispatchModalOpen(true)}
         onOpenTour={() => setIsDemoTourOpen(true)}
       />
+      <ShiftSchedulerModal isOpen={isShiftSchedulerOpen} onClose={() => setIsShiftSchedulerOpen(false)} t={t} accent={accent} />
+      <RoyaltyCalculatorModal isOpen={isRoyaltyCalcOpen} onClose={() => setIsRoyaltyCalcOpen(false)} t={t} accent={accent} />
+      <VendorScorecardModal isOpen={isVendorScorecardOpen} onClose={() => setIsVendorScorecardOpen(false)} t={t} accent={accent} />
+      <MenuEngineeringMatrix isOpen={isMenuMatrixOpen} onClose={() => setIsMenuMatrixOpen(false)} t={t} accent={accent} />
       <ExecutiveQuickDock
         onOpenCommandPalette={() => setIsCommandPaletteOpen(true)}
         onOpenQRScanner={() => setIsQRScannerOpen(true)}
