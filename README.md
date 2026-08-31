@@ -21,11 +21,11 @@ We are proud to present **OmniFranchise**, a collaborative enterprise solution e
 
 | Team Member | GitHub Profile | Role & Key Technical Focus | Commits Authored | Contribution % |
 | :--- | :--- | :--- | :---: | :---: |
-| 🧑‍💻 **Abhishek Pattnaik** | [@AbhishekPattnaik124](https://github.com/AbhishekPattnaik124) | **Full-Stack & ML Architect** — UI/UX Glassmorphic Design System, Executive Tools Launcher, Dual Typography Engine, FastAPI ML Microservice, PWA Push Engine & Real-Time Telemetry Stream | **82 Commits** | **61.2%** |
-| 👩‍💻 **Chandana S** | [@Chandana-Projects](https://github.com/Chandana-Projects) | **Full-Stack Lead & Project Admin** — Repository Owner, Express REST APIs, PostgreSQL Prisma Schemas, Authentication & Core Backend Integration | **27 Commits** | **20.1%** |
-| 👩‍💻 **Mamta** | [@mamta072703](https://github.com/mamta072703) | **Software Engineer & QA Lead** — Inventory Telemetry Analytics, Operational Compliance Audits, Quality Verification & Feature Testing | **25 Commits** | **18.7%** |
+| 🧑‍💻 **Abhishek Pattnaik** | [@AbhishekPattnaik124](https://github.com/AbhishekPattnaik124) | **Full-Stack & ML Architect** — UI/UX Glassmorphic Design System, Executive Tools Launcher, Live Digital Clock Widget, FastAPI ML Microservice, PWA Push Engine & Real-Time Telemetry Stream | **83 Commits** | **61.5%** |
+| 👩‍💻 **Chandana S** | [@Chandana-Projects](https://github.com/Chandana-Projects) | **Full-Stack Lead & Project Admin** — Repository Owner, Express REST APIs, PostgreSQL Prisma Schemas, Authentication & Core Backend Integration | **27 Commits** | **20.0%** |
+| 👩‍💻 **Mamta** | [@mamta072703](https://github.com/mamta072703) | **Software Engineer & QA Lead** — Inventory Telemetry Analytics, Operational Compliance Audits, Quality Verification & Feature Testing | **25 Commits** | **18.5%** |
 
-> 📊 **Total Repository History**: **134 Commits** across full-stack frontend, backend APIs, machine learning pipelines, and database schemas.
+> 📊 **Total Repository History**: **135 Commits** across full-stack frontend, backend APIs, machine learning pipelines, and database schemas.
 
 ---
 
