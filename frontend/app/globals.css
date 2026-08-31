@@ -45,14 +45,15 @@
 
 
 html {
-  font-size: 92%; /* Sleek compact executive typography scaling */
+  font-size: 100%; /* Balanced standard 16px baseline */
 }
 
 body {
   background-color: var(--dazzling-black);
   color: var(--white-cream);
   font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  font-size: 0.875rem;
+  font-size: 0.9375rem; /* 15px - clear, comfortable, perfectly balanced */
+  line-height: 1.5;
   margin: 0;
   padding: 0;
   overflow-x: hidden;
@@ -690,9 +691,9 @@ img, video, canvas, svg {
 
 /* 6. Mobile Small Screens (< 640px) */
 @media (max-width: 639px) {
-  h1 { font-size: clamp(1.25rem, 5vw, 1.95rem) !important; }
-  h2 { font-size: clamp(1.1rem, 4vw, 1.45rem) !important; }
-  h3 { font-size: clamp(0.95rem, 3.5vw, 1.2rem) !important; }
+  h1 { font-size: clamp(1.35rem, 5.5vw, 2.05rem) !important; }
+  h2 { font-size: clamp(1.15rem, 4.5vw, 1.55rem) !important; }
+  h3 { font-size: clamp(1.0rem, 3.8vw, 1.25rem) !important; }
 
   .glass-panel, .glass-card {
     padding: 12px !important;
