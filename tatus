@@ -1,0 +1,5 @@
+[33mbfc8677[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m fix: improve quick dock theme styling
+[33m4a43492[m fix: improve dashboard search bar theme styling
+[33m878860c[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m feat: add 3 interactive graphs (prophet forecast, multi-channel mix, iot telemetry) and enhance glassmorphism everywhere
+[33mfda3c83[m style: full dual-theme support with crystal clear visibility in both dark and light modes
+[33m8fdeced[m style: enhance glassmorphism contrast, card opacity, and backdrop separation
