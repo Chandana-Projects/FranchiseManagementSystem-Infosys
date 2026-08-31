@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Bell, Flame, ShieldAlert, ShoppingBag, Radio, X } from "lucide-react";
 import { playNotificationSFX } from "@/lib/WebAudioSFX";
 
@@ -15,7 +15,19 @@ export interface TelemetryEvent {
 
 export default function RealtimeNotificationToast() {
   const [activeToast, setActiveToast] = useState<TelemetryEvent | null>(null);
+  const [dismissing, setDismissing] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
+  const dismissTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Shared dismiss helper: fade out (700ms) then unmount (100ms) = 800ms total
+  const triggerDismiss = () => {
+    if (dismissTimerRef.current) clearTimeout(dismissTimerRef.current);
+    setDismissing(true);
+    dismissTimerRef.current = setTimeout(() => {
+      setActiveToast(null);
+      setDismissing(false);
+    }, 100);
+  };
 
   useEffect(() => {
     let eventSource: EventSource | null = null;
@@ -52,12 +64,19 @@ export default function RealtimeNotificationToast() {
     };
   }, []);
 
+  // Auto-dismiss: start fade at 700ms, fully unmount at 800ms
   useEffect(() => {
     if (activeToast) {
-      const timer = setTimeout(() => {
+      setDismissing(false);
+      const fadeTimer = setTimeout(() => setDismissing(true), 700);
+      const removeTimer = setTimeout(() => {
         setActiveToast(null);
-      }, 5500);
-      return () => clearTimeout(timer);
+        setDismissing(false);
+      }, 800);
+      return () => {
+        clearTimeout(fadeTimer);
+        clearTimeout(removeTimer);
+      };
     }
   }, [activeToast]);
 
@@ -95,7 +114,10 @@ export default function RealtimeNotificationToast() {
   const style = getSeverityStyles(activeToast.severity);
 
   return (
-    <div className="fixed top-20 right-6 z-50 max-w-sm w-full animate-in slide-in-from-top-4 duration-300">
+    <div
+      className="fixed top-20 right-6 z-50 max-w-sm w-full animate-in slide-in-from-top-4 duration-300 transition-opacity"
+      style={{ opacity: dismissing ? 0 : 1, transition: "opacity 100ms ease-out" }}
+    >
       <div className={`p-4 rounded-2xl border backdrop-blur-md shadow-2xl ${style.bg} flex items-start gap-3.5 relative overflow-hidden`}>
         {/* Glow accent */}
         <div className="absolute -right-8 -top-8 w-20 h-20 rounded-full bg-current opacity-10 blur-xl"></div>
@@ -120,7 +142,7 @@ export default function RealtimeNotificationToast() {
         </div>
 
         <button
-          onClick={() => setActiveToast(null)}
+          onClick={triggerDismiss}
           className="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800/60 transition-colors"
         >
           <X className="w-4 h-4" />

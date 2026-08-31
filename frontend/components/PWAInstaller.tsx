@@ -13,12 +13,34 @@ export default function PWAInstaller({ t }: PWAInstallerProps) {
   const [notificationPermission, setNotificationPermission] = useState<NotificationPermission>("default");
 
   useEffect(() => {
-    // Service Worker Registration
-    if ("serviceWorker" in navigator) {
+    if (!("serviceWorker" in navigator)) return;
+
+    const isDev = process.env.NODE_ENV === "development";
+
+    if (isDev) {
+      // ── Development: actively remove any previously installed SW + caches ──
+      // This is a one-time self-healing step so the user never needs to
+      // manually clear browser data when running locally.
+      navigator.serviceWorker.getRegistrations().then((registrations) => {
+        registrations.forEach((reg) => {
+          reg.unregister();
+          console.log("[PWA] Dev mode: unregistered SW →", reg.scope);
+        });
+      });
+      if ("caches" in window) {
+        caches.keys().then((keys) => {
+          keys.forEach((key) => {
+            caches.delete(key);
+            console.log("[PWA] Dev mode: deleted cache →", key);
+          });
+        });
+      }
+    } else {
+      // ── Production only: register the SW ──
       navigator.serviceWorker
         .register("/sw.js")
         .then((reg) => {
-          console.log("[PWA] Service Worker registered successfully:", reg.scope);
+          console.log("[PWA] Service Worker registered:", reg.scope);
         })
         .catch((err) => {
           console.warn("[PWA] Service Worker registration failed:", err);
