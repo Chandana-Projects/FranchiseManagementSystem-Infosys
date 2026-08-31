@@ -188,12 +188,12 @@ const themes = {
   dark: {
     bg: "transparent", panel: "rgba(13, 18, 30, 0.72)", card: "rgba(15, 23, 42, 0.65)", border: "rgba(255, 255, 255, 0.12)",
     text: "#FFFBEB", textMuted: "#CBD5E1", textFaint: "#94A3B8", textOnAccent: "#060709",
-    gridLine: "rgba(203, 213, 225, 0.12)", inputBg: "rgba(8, 12, 22, 0.75)",
+    gridLine: "rgba(203, 213, 225, 0.12)", inputBg: "#11151c",
   },
   light: {
     bg: "#F8FAFC", panel: "rgba(255, 255, 255, 0.85)", card: "rgba(255, 255, 255, 0.75)", border: "rgba(226, 232, 240, 0.85)",
     text: "#0F172A", textMuted: "#334155", textFaint: "#64748B", textOnAccent: "#FFFFFF",
-    gridLine: "#E2E8F0", inputBg: "rgba(255, 255, 255, 0.90)",
+    gridLine: "#E2E8F0", inputBg: "#ffffff",
   },
 };
 
@@ -2020,25 +2020,35 @@ function getPredictedRisks(auditList: any[]) {
         />
         <div className="border-b px-6 py-3 flex items-center justify-between gap-4 flex-wrap lg:flex-nowrap transition-colors duration-200" style={{ background: t.panel, borderColor: t.border }}>
           <div className="relative flex-1 min-w-[240px] max-w-xl">
-            <div className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm border focus-within:border-amber-400 transition-colors" style={{ background: t.inputBg, borderColor: t.border }}>
+            <div
+  className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm border focus-within:border-amber-400 transition-colors"
+  style={{
+    background: t.inputBg,
+    borderColor: t.border,
+  }}
+>
               <Search size={14} color={t.textFaint} />
               <input
-                type="text"
-                placeholder="Search modules, outlets, pages..."
-                value={headerSearchQuery}
-                onChange={(e) => setHeaderSearchQuery(e.target.value)}
-                onFocus={() => setHeaderSearchFocused(true)}
-                onBlur={() => setTimeout(() => setHeaderSearchFocused(false), 200)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" && filteredDestinations.length > 0) {
-                    setActive(filteredDestinations[0].key);
-                    setHeaderSearchQuery("");
-                    setHeaderSearchFocused(false);
-                  }
-                }}
-                className="w-full bg-transparent outline-none text-xs"
-                style={{ color: t.text }}
-              />
+  type="text"
+  placeholder="Search modules, outlets, pages..."
+  value={headerSearchQuery}
+  onChange={(e) => setHeaderSearchQuery(e.target.value)}
+  onFocus={() => setHeaderSearchFocused(true)}
+  onBlur={() => setTimeout(() => setHeaderSearchFocused(false), 200)}
+  onKeyDown={(e) => {
+    if (e.key === "Enter" && filteredDestinations.length > 0) {
+      setActive(filteredDestinations[0].key);
+      setHeaderSearchQuery("");
+      setHeaderSearchFocused(false);
+    }
+  }}
+  className="w-full outline-none text-xs bg-transparent"
+  style={{
+    backgroundColor: "transparent",
+    color: t.text,
+    caretColor: t.text
+  }}
+/>
               <button
                 type="button"
                 onClick={() => setIsCommandPaletteOpen(true)}
@@ -2699,8 +2709,8 @@ function getPredictedRisks(auditList: any[]) {
                   value={inventoryQuery}
                   onChange={(e) => setInventoryQuery(e.target.value)}
                   placeholder="Search item or SKU"
-                  className="ml-auto text-sm rounded-lg border px-3 py-1.5 outline-none"
-                  style={{ background: t.inputBg, borderColor: t.border, color: t.text, minWidth: 220 }}
+                  className="w-full bg-transparent outline-none placeholder:text-slate-400"
+                  style={{ background: t.inputBg, color: t.text, borderColor: t.border }}
                 />
               </div>
 
@@ -2851,13 +2861,20 @@ function getPredictedRisks(auditList: any[]) {
                         {role}
                       </button>
                     ))}
-                    <input
-                      value={staffQuery}
-                      onChange={(e) => setStaffQuery(e.target.value)}
-                      placeholder="Search employee or role..."
-                      className="ml-auto text-sm rounded-lg border px-3 py-1.5 outline-none"
-                      style={{ background: t.inputBg, borderColor: t.border, color: t.text, minWidth: 220 }}
-                    />
+                    <div
+                      className="flex items-center gap-2 rounded-lg border px-3 py-2"
+                      style={{
+                        background: t.inputBg,
+                        borderColor: t.border,
+                      }}
+                    >
+                      <input
+                        type="text"
+                        placeholder="Search employee or role..."
+                        className="w-full bg-transparent outline-none placeholder:text-slate-400"
+                        style={{ color: t.text }}
+                      />
+                    </div>
                   </div>
 
                   <div className="rounded-xl border overflow-hidden transition-colors duration-200" style={{ background: t.card, borderColor: t.border }}>
@@ -2921,7 +2938,7 @@ function getPredictedRisks(auditList: any[]) {
                       const Icon = k.icon;
                       return (
                         <div key={k.label} className="rounded-xl border p-4 transition-colors duration-200" style={{ background: t.card, borderColor: t.border }}>
-                          <div className="w-7 h-7 rounded-md flex items-center justify-center mb-3" style={{ background: `${accent}1A` }}>
+                          <div className="w-7 h-7 rounded-md flex items-center justify-center mb-3" style={{ background: `${accent}26` }}>
                             <Icon size={13} color={accent} />
                           </div>
                           <p className="text-lg font-semibold" style={{ color: t.text }}>{k.value}</p>
