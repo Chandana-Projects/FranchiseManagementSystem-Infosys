@@ -15,21 +15,58 @@
 
 ---
 
-## 👥 Infosys Project Team & Contributors
+## 👥 Infosys Project Team & Commit Contributions
 
 We are proud to present **OmniFranchise**, a collaborative enterprise solution engineered by our 3-member team:
 
-| Team Member | GitHub Profile | Role & Technical Contributions |
-| :--- | :--- | :--- |
-| 🧑‍💻 **Abhishek Pattnaik** | [@AbhishekPattnaik124](https://github.com/AbhishekPattnaik124) | **Full-Stack & ML Architect** — UI/UX Glassmorphic Design System, Dual Typography Engine, FastAPI ML Microservice, PWA Push Engine & Real-Time Telemetry |
-| 👩‍💻 **Chandana S** | [@Chandana-Projects](https://github.com/Chandana-Projects) | **Full-Stack Lead & Project Admin** — Repository Owner, Express REST APIs, PostgreSQL Prisma Schemas, Authentication & Core Backend Integration |
-| 👩‍💻 **Mamta** | [@mamta072703](https://github.com/mamta072703) | **Software Engineer & QA Lead** — Inventory Telemetry Analytics, Operational Compliance Audits, Quality Verification & Feature Testing |
+| Team Member | GitHub Profile | Role & Key Technical Focus | Commits Authored | Contribution % |
+| :--- | :--- | :--- | :---: | :---: |
+| 🧑‍💻 **Abhishek Pattnaik** | [@AbhishekPattnaik124](https://github.com/AbhishekPattnaik124) | **Full-Stack & ML Architect** — UI/UX Glassmorphic Design System, Dual Typography Engine, FastAPI ML Microservice, PWA Push Engine & Real-Time Telemetry Stream | **76 Commits** | **59.4%** |
+| 👩‍💻 **Chandana S** | [@Chandana-Projects](https://github.com/Chandana-Projects) | **Full-Stack Lead & Project Admin** — Repository Owner, Express REST APIs, PostgreSQL Prisma Schemas, Authentication & Core Backend Integration | **27 Commits** | **21.1%** |
+| 👩‍💻 **Mamta** | [@mamta072703](https://github.com/mamta072703) | **Software Engineer & QA Lead** — Inventory Telemetry Analytics, Operational Compliance Audits, Quality Verification & Feature Testing | **25 Commits** | **19.5%** |
 
-*Together, our team collaborated across 128+ commits to deliver a tier-1, production-ready enterprise franchise management system for Infosys.*
+> 📊 **Total Repository History**: **128 Commits** across full-stack frontend, backend APIs, machine learning pipelines, and database schemas.
 
 ---
 
-## 🏗️ System Architecture
+## 🔄 End-to-End Data Flow Diagram
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor User as 👤 Executive / Franchise Owner
+    participant Web as 💻 Next.js 16 Client Portal
+    participant PWA as 📱 PWA Service Worker (sw.js)
+    participant API as ⚙️ Express REST Backend (Port 5000)
+    participant ML as 🧠 FastAPI ML Service (Port 8000)
+    participant DB as 🗄️ PostgreSQL Database (Prisma)
+    participant SSE as ⚡ Real-Time WebSocket Telemetry Stream
+
+    %% Flow 1: User Action & Telemetry Stream
+    User->>Web: Interacts with Dashboard / Changes Region / Triggers Action
+    Web->>PWA: Cache Static Assets & Register Push Subscription
+    Web->>SSE: Subscribe to Live 60FPS WebSocket Telemetry Feed
+    SSE-->>Web: Push Live POS Orders, IoT Temperature Alerts & CCTV Audits
+
+    %% Flow 2: REST API & ML Prediction Loop
+    User->>Web: Request Sales Forecast / Auto-Roster / Dynamic Yield Pricing
+    Web->>API: HTTP REST Request (JWT Signed + Rate Limited)
+    API->>API: Sanitize Payload (XSS/Prototype Check) & Verify Auth
+    API->>ML: POST /ml/predict (Circuit Breaker Protected)
+    ML->>ML: Run Prophet / XGBoost / Isolation Forest Models
+    ML-->>API: Return Revenue Forecasts & Anomaly Confidence Scores
+
+    %% Flow 3: Database & Audit Logging
+    API->>DB: Execute Prisma Query / Mutation (PostgreSQL)
+    DB-->>API: Return Persisted Records
+    API->>API: Generate Cryptographic SHA-256 Audit Log Entry
+    API-->>Web: Return JSON Response with Mono Tabular Formatting
+    Web-->>User: Render Glassmorphic Visualizations & Push PWA Alert
+```
+
+---
+
+## 🏗️ Microservices System Architecture
 
 ```mermaid
 graph TD
