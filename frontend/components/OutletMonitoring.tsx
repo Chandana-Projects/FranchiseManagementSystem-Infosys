@@ -51,6 +51,7 @@ import ShiftSchedulerModal from "./ShiftSchedulerModal";
 import RoyaltyCalculatorModal from "./RoyaltyCalculatorModal";
 import VendorScorecardModal from "./VendorScorecardModal";
 import MenuEngineeringMatrix from "./MenuEngineeringMatrix";
+import DigitalClock from "./DigitalClock";
 import { BookOpen, Compass, QrCode, Volume2, VolumeX, Bot, Sliders, Menu, X, Calculator, Utensils, ChevronDown } from "lucide-react";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
@@ -2189,6 +2190,10 @@ function getPredictedRisks(auditList: any[]) {
                 theme={t}
               />
             </div>
+
+            {/* Real-Time Digital Clock & Date Widget */}
+            <DigitalClock theme={t} accentColor={accent} />
+
             {/* Unified Executive Tools & Module Launchers Dropdown */}
             <div className="relative shrink-0 z-30">
               <button
