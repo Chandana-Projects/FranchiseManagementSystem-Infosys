@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
@@ -679,15 +679,18 @@ const upcomingCampaigns = [
 
 function AppSplashLoader({ t, accent, label, onComplete }: { t: typeof themes.dark; accent: string; label: string; onComplete?: () => void }) {
   const [progress, setProgress] = useState(0);
-
+  // Store onComplete in a ref so the effect never needs it as a dependency
+  // (avoids the re-render loop caused by inline arrow function prop references)
+  const onCompleteRef = useRef(onComplete);
+  useEffect(() => { onCompleteRef.current = onComplete; });
 
   useEffect(() => {
     const timer = setInterval(() => {
       setProgress((prev) => {
         if (prev >= 100) {
           clearInterval(timer);
-          if (onComplete) {
-            setTimeout(onComplete, 200);
+          if (onCompleteRef.current) {
+            setTimeout(onCompleteRef.current, 200);
           }
           return 100;
         }
@@ -695,7 +698,8 @@ function AppSplashLoader({ t, accent, label, onComplete }: { t: typeof themes.da
       });
     }, 30);
     return () => clearInterval(timer);
-  }, [onComplete]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Empty deps — runs once on mount only
 
   return (
     <div className="w-full min-h-[850px] flex flex-col items-center justify-center font-sans relative overflow-hidden" style={{ background: "transparent", color: t.text }}>
@@ -1969,12 +1973,16 @@ function getPredictedRisks(auditList: any[]) {
   return risks;
 }
 
+  // Stable callbacks — defined once, not recreated on every render
+  const handleSplashComplete = useCallback(() => setCheckingAuth(false), []);
+  const handleLogin = useCallback(() => setIsLoggedIn(true), []);
+
   if (checkingAuth) {
-    return <AppSplashLoader t={t} accent={accent} label="Initializing OmniFranchise AI Network..." onComplete={() => setCheckingAuth(false)} />;
+    return <AppSplashLoader t={t} accent={accent} label="Initializing OmniFranchise AI Network..." onComplete={handleSplashComplete} />;
   }
 
   if (!isLoggedIn) {
-    return <LoginPage t={t} accent={accent} onLogin={() => setIsLoggedIn(true)} />;
+    return <LoginPage t={t} accent={accent} onLogin={handleLogin} />;
   }
 
   return (

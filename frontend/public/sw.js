@@ -1,24 +1,30 @@
-// OmniFranchise Enterprise Service Worker v1.0
-const CACHE_NAME = "omnifranchise-v1";
+// OmniFranchise Enterprise Service Worker v2.0
+const CACHE_NAME = "omnifranchise-v2";
 const STATIC_ASSETS = [
-  "/",
   "/manifest.json",
   "/logo.png"
 ];
 
-// Install Event
+// Install Event — cache static assets first, THEN skip waiting.
+// skipWaiting() is called AFTER the cache is primed so the SW is
+// ready before it takes over. Do NOT call it synchronously before
+// waitUntil() resolves — that causes Chrome to claim tabs mid-load
+// and trigger a visible page reload / video restart loop.
 self.addEventListener("install", (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
       return cache.addAll(STATIC_ASSETS).catch((err) => {
         console.warn("[SW] Cache addAll warning:", err);
       });
-    })
+    }).then(() => self.skipWaiting())
   );
-  self.skipWaiting();
 });
 
-// Activate Event
+// Activate Event — clean up old caches.
+// clients.claim() is intentionally REMOVED. Calling it here forces
+// Chrome to immediately reload every controlled tab when the SW
+// activates, which restarted the background video and prevented the
+// login screen from mounting. New tabs automatically use this SW.
 self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches.keys().then((keys) => {
@@ -27,7 +33,6 @@ self.addEventListener("activate", (event) => {
       );
     })
   );
-  self.clients.claim();
 });
 
 // Fetch Event - Stale while revalidate strategy
