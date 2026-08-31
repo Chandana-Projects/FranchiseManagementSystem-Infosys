@@ -1,10 +1,9 @@
 # 🏢 OmniFranchise — Enterprise Franchise Intelligence Network
 
-> **Infosys Internship Flagship Capstone Project**  
-> **Lead Engineer / Author**: Abhishek Pattnaik ([@AbhishekPattnaik124](https://github.com/AbhishekPattnaik124))  
-> **Repository**: [FranchiseManagementSystem](https://github.com/Chandana-Projects/FranchiseManagementSystem)
+> **Infosys Internship Team Capstone Project 2026**  
+> **Repository**: [Chandana-Projects/FranchiseManagementSystem](https://github.com/Chandana-Projects/FranchiseManagementSystem)
 
-[![Infosys Internship](https://img.shields.io/badge/Infosys-Flagship_Capstone-blue?logo=infosys)](https://www.infosys.com/)
+[![Infosys Internship](https://img.shields.io/badge/Infosys-Team_Capstone_Project-blue?logo=infosys)](https://www.infosys.com/)
 [![Next.js 16](https://img.shields.io/badge/Next.js-v16.2.11-black?logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-v5.0-3178C6?logo=typescript)](https://www.typescriptlang.org/)
 [![Node.js](https://img.shields.io/badge/Node.js-v20%2B-green?logo=node.js)](https://nodejs.org/)
@@ -12,7 +11,21 @@
 [![PWA Ready](https://img.shields.io/badge/PWA-Push_Notifications_Enabled-5A0FC8?logo=pwa)](https://web.dev/progressive-web-apps/)
 [![TypeScript Check](https://img.shields.io/badge/TypeCheck-0_Errors_Passing-success)](#-automated-testing--ci-guardrails)
 
-**OmniFranchise (FranchiseOpsAI)** is a production-grade, multi-tenant AI operations and franchise intelligence network platform. Designed for multi-outlet retail, F&B, and supply chain networks, it unifies real-time telemetry streams, predictive XGBoost sales forecasting, Leaflet GIS outlet maps, CCTV vision audits, dynamic menu yield engineering, automated staff shift rosters, and PWA push notifications into a single high-contrast glassmorphic executive portal.
+**OmniFranchise (FranchiseOpsAI)** is a production-grade, multi-tenant AI operations and franchise intelligence network platform built for the **Infosys Internship Program**. Designed for multi-outlet retail, F&B, and supply chain networks, it unifies real-time telemetry streams, predictive XGBoost sales forecasting, Leaflet GIS outlet maps, CCTV vision audits, dynamic menu yield engineering, automated staff shift rosters, and PWA push notifications into a single high-contrast glassmorphic executive portal.
+
+---
+
+## 👥 Infosys Project Team & Contributors
+
+We are proud to present **OmniFranchise**, a collaborative enterprise solution engineered by our 3-member team:
+
+| Team Member | GitHub Profile | Role & Technical Contributions |
+| :--- | :--- | :--- |
+| 🧑‍💻 **Abhishek Pattnaik** | [@AbhishekPattnaik124](https://github.com/AbhishekPattnaik124) | **Full-Stack & ML Architect** — UI/UX Glassmorphic Design System, Dual Typography Engine, FastAPI ML Microservice, PWA Push Engine & Real-Time Telemetry |
+| 👩‍💻 **Chandana S** | [@Chandana-Projects](https://github.com/Chandana-Projects) | **Full-Stack Lead & Project Admin** — Repository Owner, Express REST APIs, PostgreSQL Prisma Schemas, Authentication & Core Backend Integration |
+| 👩‍💻 **Mamta** | [@mamta072703](https://github.com/mamta072703) | **Software Engineer & QA Lead** — Inventory Telemetry Analytics, Operational Compliance Audits, Quality Verification & Feature Testing |
+
+*Together, our team collaborated across 128+ commits to deliver a tier-1, production-ready enterprise franchise management system for Infosys.*
 
 ---
 
@@ -158,8 +171,8 @@ npm test
 
 ---
 
-## 📜 Authors & Infosys Capstone Attribution
+## 📄 License & Compliance
 
-- **Lead Engineer & Project Architect**: **Abhishek Pattnaik** ([@AbhishekPattnaik124](https://github.com/AbhishekPattnaik124))
+- **Project Type**: Infosys Internship Capstone Project 2026
 - **Repository**: [Chandana-Projects/FranchiseManagementSystem](https://github.com/Chandana-Projects/FranchiseManagementSystem)
-- **Internship Program**: **Infosys Internship Capstone Project 2026**
+- **License**: MIT Enterprise License
