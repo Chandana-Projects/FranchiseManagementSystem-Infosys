@@ -93,16 +93,23 @@ export default function RealOutletMap({
 
       mapInstanceRef.current = map;
 
-      // Tile layer selection
+      // Tile layer selection with error fallback
       const tileUrl =
         tileStyle === "dark"
           ? "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
           : "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
 
-      L.tileLayer(tileUrl, {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-        maxZoom: 18,
+      const tileLayer = L.tileLayer(tileUrl, {
+        subdomains: "abcd",
+        maxZoom: 19,
+        attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
       }).addTo(map);
+
+      tileLayer.on("tileerror", () => {
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+          maxZoom: 19,
+        }).addTo(map);
+      });
 
       // Pin Color Map
       const colorMap = {
@@ -170,9 +177,6 @@ export default function RealOutletMap({
             <div style="font-size: 12px; color: #475569; margin-bottom: 4px;">📍 State: <strong>${loc.state}, ${loc.country}</strong></div>
             <div style="font-size: 12px; color: #475569; margin-bottom: 4px;">👤 Manager: <strong>${loc.manager}</strong></div>
             <div style="font-size: 12px; color: #475569; margin-bottom: 4px;">💰 MTD Revenue: <strong>${formatCurrencyValue(loc.revenue, activeCurrency)}</strong></div>
-            <div style="font-size: 11px; color: #64748B; margin-top: 6px; border-top: 1px solid #E2E8F0; padding-top: 4px;">
-              🏢 Active Outlets in City: <strong>${loc.storesCount}</strong><br/>
-              ${loc.id === "in-mh-pune" ? "🏢 <strong>Central Network HQ</strong>" : `📏 <strong>${distKm} km</strong> from Pune HQ`}
             </div>
           </div>
         `;
@@ -182,6 +186,19 @@ export default function RealOutletMap({
           setSelectedOutlet(loc);
         });
       });
+
+      // Fit bounds to active locations
+      if (activeLocations.length > 0) {
+        const bounds = L.latLngBounds(activeLocations.map((loc) => [loc.lat, loc.lng]));
+        map.fitBounds(bounds, { padding: [40, 40], maxZoom: 10 });
+      }
+
+      // Invalidate map size to prevent gray tiles or incomplete map rendering
+      setTimeout(() => {
+        if (mapInstanceRef.current) {
+          mapInstanceRef.current.invalidateSize();
+        }
+      }, 200);
 
       setMapLoaded(true);
     });

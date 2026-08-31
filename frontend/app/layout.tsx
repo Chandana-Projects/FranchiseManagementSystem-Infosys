@@ -1,5 +1,6 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import CookieConsentBanner from "../components/CookieConsentBanner";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -12,15 +13,19 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+  userScalable: true,
+  themeColor: "#090d16",
+};
+
 export const metadata: Metadata = {
   title: "OmniFranchise — Enterprise Franchise Intelligence Network",
   description: "Enterprise multi-outlet operations, dynamic yield pricing, CCTV vision audits, and automated stock telemetry platform.",
   manifest: "/manifest.json",
-  themeColor: "#090d16",
 };
-
-
-import CookieConsentBanner from "../components/CookieConsentBanner";
 
 export default function RootLayout({
   children,

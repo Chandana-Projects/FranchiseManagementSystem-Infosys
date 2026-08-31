@@ -44,10 +44,15 @@
 }
 
 
+html {
+  font-size: 92%; /* Sleek compact executive typography scaling */
+}
+
 body {
   background-color: var(--dazzling-black);
   color: var(--white-cream);
   font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 0.875rem;
   margin: 0;
   padding: 0;
   overflow-x: hidden;
@@ -120,9 +125,10 @@ body {
 
 /* ── Light Mode System (White Theme) ── */
 body.light-theme,
-html.light-theme {
+html.light-theme,
+.light-theme {
   background-color: #F8FAFC !important;
-  color: #0F172A !important;
+  color: #020617 !important;
 }
 
 .light-theme #bg-video {
@@ -138,62 +144,173 @@ html.light-theme {
 }
 
 .light-theme .glass-panel {
-  background: rgba(255, 255, 255, 0.85) !important;
+  background: rgba(255, 255, 255, 0.92) !important;
   backdrop-filter: blur(16px) saturate(190%) !important;
-  border: 1px solid rgba(226, 232, 240, 0.90) !important;
-  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.06), 0 4px 6px -2px rgba(0, 0, 0, 0.03) !important;
-  color: #0F172A !important;
+  border: 1px solid #CBD5E1 !important;
+  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.08), 0 4px 12px -2px rgba(0, 0, 0, 0.05) !important;
+  color: #020617 !important;
 }
 
 .light-theme .glass-card {
-  background: rgba(255, 255, 255, 0.75) !important;
+  background: rgba(255, 255, 255, 0.88) !important;
   backdrop-filter: blur(16px) saturate(190%) !important;
-  border: 1px solid rgba(255, 255, 255, 0.85) !important;
-  box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.06), inset 0 1px 1px 0 rgba(255, 255, 255, 0.9) !important;
-  color: #0F172A !important;
+  border: 1px solid #E2E8F0 !important;
+  box-shadow: 0 8px 24px -4px rgba(15, 23, 42, 0.08), inset 0 1px 1px 0 rgba(255, 255, 255, 0.9) !important;
+  color: #020617 !important;
 }
 
 .light-theme .glass-card:hover {
-  background: rgba(255, 255, 255, 0.88) !important;
-  border-color: #38BDF8 !important;
-  box-shadow: 0 14px 32px -4px rgba(56, 189, 248, 0.18), 0 0 16px -2px rgba(56, 189, 248, 0.12) !important;
+  background: rgba(255, 255, 255, 0.98) !important;
+  border-color: #0284C7 !important;
+  box-shadow: 0 14px 32px -4px rgba(2, 132, 199, 0.22), 0 0 16px -2px rgba(2, 132, 199, 0.15) !important;
 }
 
 .light-theme .glass-input {
-  background: rgba(255, 255, 255, 0.90) !important;
-  border: 1px solid #CBD5E1 !important;
-  color: #0F172A !important;
+  background: #FFFFFF !important;
+  border: 1.5px solid #94A3B8 !important;
+  color: #020617 !important;
+  font-weight: 600 !important;
 }
 
 .light-theme .glass-input:focus {
   border-color: #0284C7 !important;
-  box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15) !important;
+  box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.2) !important;
+}
+
+/* ── Light Mode Font Color, Boldness & Depth System ── */
+.light-theme h1,
+.light-theme h2,
+.light-theme h3,
+.light-theme h4,
+.light-theme h5,
+.light-theme h6 {
+  color: #020617 !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.015em;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
+}
+
+.light-theme p,
+.light-theme span,
+.light-theme label,
+.light-theme div,
+.light-theme td,
+.light-theme th,
+.light-theme button,
+.light-theme a {
+  color: #0F172A;
+}
+
+.light-theme .font-bold,
+.light-theme .font-extrabold {
+  color: #020617 !important;
+  font-weight: 800 !important;
+}
+
+.light-theme .font-semibold {
+  color: #0F172A !important;
+  font-weight: 700 !important;
+}
+
+.light-theme .font-medium {
+  color: #1E293B !important;
+  font-weight: 600 !important;
+}
+
+.light-theme .text-slate-400,
+.light-theme .text-slate-500,
+.light-theme .text-zinc-400,
+.light-theme .text-gray-400,
+.light-theme .text-gray-500,
+.light-theme .text-muted-foreground {
+  color: #334155 !important;
+  font-weight: 600 !important;
+}
+
+.light-theme .text-slate-300,
+.light-theme .text-slate-200,
+.light-theme .text-zinc-300,
+.light-theme .text-gray-300 {
+  color: #1E293B !important;
+  font-weight: 600 !important;
+}
+
+.light-theme .text-white,
+.light-theme .text-white\/90,
+.light-theme .text-white\/80,
+.light-theme .text-white\/70,
+.light-theme .text-slate-100 {
+  color: #020617 !important;
+  font-weight: 700 !important;
+}
+
+.light-theme .text-cyan-400,
+.light-theme .text-sky-400,
+.light-theme .text-blue-400 {
+  color: #0284C7 !important;
+  font-weight: 700 !important;
+}
+
+.light-theme .text-amber-400,
+.light-theme .text-yellow-400,
+.light-theme .text-amber-300 {
+  color: #B45309 !important;
+  font-weight: 700 !important;
+}
+
+.light-theme .text-emerald-400,
+.light-theme .text-green-400 {
+  color: #047857 !important;
+  font-weight: 700 !important;
+}
+
+.light-theme .text-purple-400,
+.light-theme .text-violet-400 {
+  color: #7C3AED !important;
+  font-weight: 700 !important;
+}
+
+.light-theme .text-rose-400,
+.light-theme .text-red-400 {
+  color: #BE123C !important;
+  font-weight: 700 !important;
 }
 
 .light-theme .badge-silver {
-  background: #F1F5F9 !important;
-  border: 1px solid #CBD5E1 !important;
-  color: #334155 !important;
+  background: #E2E8F0 !important;
+  border: 1px solid #94A3B8 !important;
+  color: #0F172A !important;
+  font-weight: 700 !important;
 }
 
 .light-theme .badge-gold {
   background: #FEF3C7 !important;
   border: 1px solid #F59E0B !important;
-  color: #B45309 !important;
+  color: #92400E !important;
+  font-weight: 700 !important;
 }
 
 .light-theme .badge-cyber {
   background: #E0F2FE !important;
-  border: 1px solid #38BDF8 !important;
-  color: #0369A1 !important;
+  border: 1px solid #0284C7 !important;
+  color: #075985 !important;
+  font-weight: 700 !important;
 }
 
 .light-theme .shimmer-text {
-  background: linear-gradient(90deg, #0F172A 0%, #B45309 30%, #0284C7 60%, #0F172A 100%) !important;
+  background: linear-gradient(90deg, #020617 0%, #B45309 35%, #0284C7 65%, #020617 100%) !important;
   background-size: 200% auto !important;
   color: transparent !important;
   -webkit-background-clip: text !important;
   background-clip: text !important;
+  font-weight: 800 !important;
+}
+
+.light-theme .metric-num,
+.light-theme .tabular-num {
+  font-weight: 700 !important;
+  color: #020617 !important;
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.9);
 }
 
 /* Keyframe Animations */
@@ -528,761 +645,94 @@ html.light-theme {
     flex-direction: column;
   }
 }
-/* =========================================================
-   LIGHT THEME - AGENT DASHBOARD VISIBILITY FIX
-   Add this at the END of global.css
-   ========================================================= */
 
-[data-theme="light"],
-.light-theme,
-body {
-    --bg-main: #f5f7fb;
-    --bg-card: #ffffff;
-    --bg-card-hover: #f8fafc;
-    --text-primary: #172033;
-    --text-secondary: #5b6475;
-    --text-muted: #7b8495;
-    --border-light: #dfe4ec;
-    --border-medium: #cbd3df;
-    --shadow-light: 0 4px 18px rgba(20, 30, 50, 0.08);
-}
-
-/* ---------- Main page ---------- */
-
-body {
-    background: #f5f7fb !important;
-    color: #172033 !important;
-}
-
-/* ---------- Headings ---------- */
-
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-    color: #172033 !important;
-}
-
-/* ---------- Normal text ---------- */
-
-p,
-span,
-label,
-small,
-div {
-    color: inherit;
-}
-
-/* ---------- Sidebar ---------- */
-
-/* =========================================================
-   SIDEBAR - LIGHT AND DARK MODE
-   ========================================================= */
-
-/* LIGHT MODE */
-[data-theme="light"] aside,
-[data-theme="light"] .sidebar,
-.light-theme aside,
-.light-theme .sidebar {
-    background: #ffffff !important;
-    color: #172033 !important;
-    border-right: 1px solid #dfe4ec !important;
-}
-
-[data-theme="light"] aside a,
-[data-theme="light"] .sidebar a,
-.light-theme aside a,
-.light-theme .sidebar a {
-    color: #3f4a5d !important;
-}
-
-/* DARK MODE */
-[data-theme="dark"] aside,
-[data-theme="dark"] .sidebar,
-.dark-theme aside,
-.dark-theme .sidebar {
-    background: #0b1120 !important;
-    color: #e5e7eb !important;
-    border-right: 1px solid #263044 !important;
-}
-
-[data-theme="dark"] aside a,
-[data-theme="dark"] .sidebar a,
-.dark-theme aside a,
-.dark-theme .sidebar a {
-    color: #cbd5e1 !important;
-}
-
-/* DARK MODE - agent/module names */
-[data-theme="dark"] aside a:hover,
-[data-theme="dark"] .sidebar a:hover,
-.dark-theme aside a:hover,
-.dark-theme .sidebar a:hover {
-    background: #172033 !important;
-    color: #ffffff !important;
-}
-
-/* DARK MODE - selected/active module */
-[data-theme="dark"] aside .active,
-[data-theme="dark"] .sidebar .active,
-.dark-theme aside .active,
-.dark-theme .sidebar .active {
-    background: #1d2638 !important;
-    color: #f2a900 !important;
-}
-
-/* ---------- Header / Navbar ---------- */
-
-header,
-.navbar,
-.topbar {
-    background: #ffffff !important;
-    color: #172033 !important;
-    border-bottom: 1px solid #dfe4ec !important;
-}
-
-header *,
-.navbar *,
-.topbar * {
-    color: #172033;
-}
-
-/* Search box */
-
-input,
-textarea,
-select {
-    background: #ffffff !important;
-    color: #172033 !important;
-    border: 1px solid #d5dce7 !important;
-}
-
-input::placeholder,
-textarea::placeholder {
-    color: #8a94a6 !important;
-}
-
-/* ---------- Main dashboard cards ---------- */
-
-.card,
-.dashboard-card,
-.metric-card,
-.stat-card,
-.panel,
-.dashboard-panel {
-    background: #ffffff !important;
-    color: #172033 !important;
-    border: 1px solid #e0e5ed !important;
-    box-shadow: 0 4px 18px rgba(20, 30, 50, 0.07) !important;
-}
-
-/* Card headings */
-
-.card h1,
-.card h2,
-.card h3,
-.card h4,
-.card h5,
-.card h6,
-.dashboard-card h1,
-.dashboard-card h2,
-.dashboard-card h3,
-.dashboard-card h4,
-.dashboard-card h5,
-.dashboard-card h6,
-.metric-card h1,
-.metric-card h2,
-.metric-card h3,
-.metric-card h4,
-.metric-card h5,
-.metric-card h6 {
-    color: #172033 !important;
-}
-
-/* Card descriptions */
-
-.card p,
-.dashboard-card p,
-.metric-card p,
-.stat-card p {
-    color: #647084 !important;
-}
-
-/* ---------- Agent tabs ---------- */
-
-.agent-card,
-.agent-tab,
-.agent-dashboard-card {
-    background: #ffffff !important;
-    color: #172033 !important;
-    border: 1px solid #dfe5ee !important;
-}
-
-.agent-card *,
-.agent-tab *,
-.agent-dashboard-card * {
-    color: inherit;
-}
-
-/* Selected agent */
-
-.agent-card.active,
-.agent-tab.active,
-.agent-dashboard-card.active {
-    background: #fff8e8 !important;
-    border: 2px solid #f2a900 !important;
-    color: #172033 !important;
-}
-
-/* Agent title */
-
-.agent-card .title,
-.agent-tab .title,
-.agent-dashboard-card .title {
-    color: #172033 !important;
-    font-weight: 700;
-}
-
-/* Agent description */
-
-.agent-card .description,
-.agent-tab .description,
-.agent-dashboard-card .description {
-    color: #687386 !important;
-}
-
-/* ---------- Metric values ---------- */
-
-.metric-value,
-.stat-value,
-.kpi-value {
-    color: #172033 !important;
-    font-weight: 700;
-}
-
-/* Keep important colored values */
-
-.text-green,
-.text-success,
-.success {
-    color: #00a878 !important;
-}
-
-.text-blue,
-.text-info,
-.info {
-    color: #009eea !important;
-}
-
-.text-orange,
-.text-warning,
-.warning {
-    color: #d88900 !important;
-}
-
-.text-red,
-.text-danger,
-.danger {
-    color: #e54861 !important;
-}
-
-/* ---------- Tables ---------- */
-
-table {
-    background: #ffffff !important;
-    color: #172033 !important;
-}
-
-th {
-    background: #f3f5f8 !important;
-    color: #374151 !important;
-    font-weight: 700;
-}
-
-td {
-    color: #4b5563 !important;
-    border-color: #e2e6ed !important;
-}
-
-tr:hover td {
-    background: #f8fafc !important;
-}
-
-/* ---------- Buttons ---------- */
-
-button {
-    color: #172033;
-}
-
-button:hover {
-    opacity: 0.95;
-}
-
-/* Primary button */
-
-.btn-primary,
-.primary-button {
-    background: #f2a900 !important;
-    color: #ffffff !important;
-    border-color: #f2a900 !important;
-}
-
-/* Secondary button */
-
-.btn-secondary,
-.secondary-button {
-    background: #ffffff !important;
-    color: #374151 !important;
-    border: 1px solid #d5dce7 !important;
-}
-
-/* ---------- Badges ---------- */
-
-.badge,
-.status-badge,
-.alert-badge {
-    font-weight: 600;
-}
-
-/* ---------- Chart area ---------- */
-
-.chart-container,
-.chart-card,
-.recharts-wrapper {
-    color: #374151 !important;
-}
-
-.recharts-cartesian-axis-tick-value {
-    fill: #647084 !important;
-}
+/* 📱 🌐 UNIVERSAL SCREEN SIZE RESPONSIVE SYSTEM (Mobile, Tablet, Desktop, Ultra-Wide 4K) */
 
-.recharts-cartesian-axis-label {
-    fill: #4b5563 !important;
+/* 1. Prevent Horizontal Overflow across all screen sizes */
+html, body {
+  max-width: 100vw;
+  overflow-x: hidden;
 }
 
-.recharts-legend-item-text {
-    color: #4b5563 !important;
+/* 2. Responsive Container & Auto Max Width */
+.container-responsive {
+  width: 100%;
+  max-width: 1920px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: clamp(12px, 3vw, 32px);
+  padding-right: clamp(12px, 3vw, 32px);
 }
 
-/* ---------- Live telemetry ---------- */
-
-.telemetry,
-.live-telemetry,
-.telemetry-bar {
-    background: #ffffff !important;
-    color: #374151 !important;
-    border: 1px solid #dfe5ee !important;
-}
-
-.telemetry *,
-.live-telemetry *,
-.telemetry-bar * {
-    color: inherit;
-}
-
-/* ---------- Alert banner ---------- */
-
-.alert-banner,
-.critical-alert {
-    background: #fff1f2 !important;
-    color: #9f1239 !important;
-    border: 1px solid #fecdd3 !important;
-}
-
-.alert-banner *,
-.critical-alert * {
-    color: inherit;
-}
-
-/* ---------- Right-side panels ---------- */
-
-.advisor-card,
-.intelligence-card,
-.recommendation-card,
-.roster-card {
-    background: #ffffff !important;
-    color: #172033 !important;
-    border: 1px solid #dfe5ee !important;
-}
-
-.advisor-card h3,
-.intelligence-card h3,
-.recommendation-card h3,
-.roster-card h3 {
-    color: #172033 !important;
-}
-
-.advisor-card p,
-.intelligence-card p,
-.recommendation-card p,
-.roster-card p {
-    color: #647084 !important;
-}
-
-/* ---------- Links ---------- */
-
-a {
-    color: #1769aa;
-}
-
-a:hover {
-    color: #0b4f85;
-}
-
-/* ---------- Icons ---------- */
-
-svg {
-    color: currentColor;
-}
-
-/* ---------- Remove dark transparent overlays in light mode ---------- */
-
-[data-theme="light"] .overlay,
-.light-theme .overlay {
-    background: transparent !important;
-}
-
-/* ---------- Prevent white text disappearing on light cards ---------- */
-
-[data-theme="light"] .text-white,
-.light-theme .text-white {
-    color: #172033 !important;
-}
-
-/* Keep white text on colored buttons */
-
-[data-theme="light"] button .text-white,
-.light-theme button .text-white {
-    color: #ffffff !important;
-}
-
-/* ---------- Scrollbar ---------- */
-
-::-webkit-scrollbar {
-    width: 8px;
-}
-
-::-webkit-scrollbar-track {
-    background: #f1f3f6;
-}
-
-::-webkit-scrollbar-thumb {
-    background: #c3cad5;
-    border-radius: 10px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: #aab3c1;
-}
-/* =========================================================
-   DARK MODE - SEARCH BAR
-   ========================================================= */
-
-[data-theme="dark"] input,
-[data-theme="dark"] textarea,
-.dark input,
-.dark textarea {
-    background-color: #0b1120 !important;
-    color: #e5e7eb !important;
-    border-color: #334155 !important;
-}
-
-[data-theme="dark"] input::placeholder,
-.dark input::placeholder {
-    color: #94a3b8 !important;
-}
-
-/* Search bar specifically */
-[data-theme="dark"] .search-bar,
-[data-theme="dark"] .searchBar,
-[data-theme="dark"] .search-container,
-.dark .search-bar,
-.dark .searchBar,
-.dark .search-container {
-    background: #0b1120 !important;
-    color: #e5e7eb !important;
-    border: 1px solid #334155 !important;
-}
-
-/* Search icon */
-[data-theme="dark"] .search-bar svg,
-[data-theme="dark"] .searchBar svg,
-.dark .search-bar svg,
-.dark .searchBar svg {
-    color: #94a3b8 !important;
-}
-
-/* Search text */
-[data-theme="dark"] .search-bar input,
-[data-theme="dark"] .searchBar input,
-.dark .search-bar input,
-.dark .searchBar input {
-    background: transparent !important;
-    color: #e5e7eb !important;
-    border: none !important;
-    outline: none !important;
-}
-
-/* Placeholder */
-[data-theme="dark"] .search-bar input::placeholder,
-[data-theme="dark"] .searchBar input::placeholder,
-.dark .search-bar input::placeholder,
-.dark .searchBar input::placeholder {
-    color: #94a3b8 !important;
-}
-/* =========================================================
-   LIGHT MODE - BOTTOM SEARCH / REPORTING BARS
-   ========================================================= */
-
-[data-theme="light"] .bottom-bar,
-[data-theme="light"] .search-panel,
-[data-theme="light"] .reporting-bar,
-[data-theme="light"] .report-bar,
-[data-theme="light"] .bottom-panel,
-.light-theme .bottom-bar,
-.light-theme .search-panel,
-.light-theme .reporting-bar,
-.light-theme .report-bar,
-.light-theme .bottom-panel {
-    background: #ffffff !important;
-    color: #172033 !important;
-    border-color: #dfe4ec !important;
-}
-
-/* Text inside bottom bars */
-[data-theme="light"] .bottom-bar *,
-[data-theme="light"] .search-panel *,
-[data-theme="light"] .reporting-bar *,
-[data-theme="light"] .report-bar *,
-[data-theme="light"] .bottom-panel *,
-.light-theme .bottom-bar *,
-.light-theme .search-panel *,
-.light-theme .reporting-bar *,
-.light-theme .report-bar *,
-.light-theme .bottom-panel * {
-    color: #172033 !important;
-}
-
-/* Inputs inside bottom bars */
-[data-theme="light"] .bottom-bar input,
-[data-theme="light"] .search-panel input,
-[data-theme="light"] .reporting-bar input,
-[data-theme="light"] .report-bar input,
-[data-theme="light"] .bottom-panel input,
-.light-theme .bottom-bar input,
-.light-theme .search-panel input,
-.light-theme .reporting-bar input,
-.light-theme .report-bar input,
-.light-theme .bottom-panel input {
-    background: #ffffff !important;
-    color: #172033 !important;
-    border: 1px solid #cbd5e1 !important;
-}
-
-/* Placeholder */
-[data-theme="light"] .bottom-bar input::placeholder,
-[data-theme="light"] .search-panel input::placeholder,
-[data-theme="light"] .reporting-bar input::placeholder,
-[data-theme="light"] .report-bar input::placeholder,
-[data-theme="light"] .bottom-panel input::placeholder {
-    color: #64748b !important;
-}
-/* =========================================================
-   THEME FIX - INPUTS, SEARCH BARS, SELECTS
-   ========================================================= */
-
-/* Light mode */
-:root {
-    --input-bg: #ffffff;
-    --input-text: #172033;
-    --input-border: #d5dce8;
-    --input-placeholder: #718096;
-
-    --floating-nav-bg: #ffffff;
-    --floating-nav-text: #172033;
-    --floating-nav-border: #d5dce8;
-}
-
-/* Dark mode */
-.dark,
-[data-theme="dark"],
-html.dark,
-body.dark {
-    --input-bg: #111827;
-    --input-text: #f1f5f9;
-    --input-border: #334155;
-    --input-placeholder: #94a3b8;
-
-    --floating-nav-bg: #111827;
-    --floating-nav-text: #f1f5f9;
-    --floating-nav-border: #334155;
-}
-
-
-/* =========================================================
-   ALL INPUT / SEARCH / SELECT ELEMENTS
-   ========================================================= */
-
-input,
-textarea,
-select {
-    background-color: var(--input-bg) !important;
-    color: var(--input-text) !important;
-    border-color: var(--input-border) !important;
-    color-scheme: light;
-}
-
-.dark input,
-.dark textarea,
-.dark select,
-[data-theme="dark"] input,
-[data-theme="dark"] textarea,
-[data-theme="dark"] select,
-html.dark input,
-html.dark textarea,
-html.dark select,
-body.dark input,
-body.dark textarea,
-body.dark select {
-    background-color: var(--input-bg) !important;
-    color: var(--input-text) !important;
-    border-color: var(--input-border) !important;
-    color-scheme: dark;
-}
-
-
-/* Placeholder text */
-input::placeholder,
-textarea::placeholder {
-    color: var(--input-placeholder) !important;
-    opacity: 1 !important;
-}
-
-
-/* Search input specifically */
-input[type="search"],
-input[placeholder*="Search"],
-input[placeholder*="search"] {
-    background-color: var(--input-bg) !important;
-    color: var(--input-text) !important;
-}
-
-
-/* Select dropdown */
-select option {
-    background-color: var(--input-bg);
-    color: var(--input-text);
+/* 3. Responsive Media Elements */
+img, video, canvas, svg {
+  max-width: 100%;
+  height: auto;
 }
-
-
-/* =========================================================
-   BOTTOM FLOATING NAVBAR
-   ========================================================= */
 
-/*
-   Apply this class to the small navbar at the bottom
-   containing the icons.
-*/
-
-.floating-bottom-nav,
-.bottom-floating-nav,
-.bottom-navbar,
-.floating-navbar {
-    background: var(--floating-nav-bg) !important;
-    color: var(--floating-nav-text) !important;
-    border: 1px solid var(--floating-nav-border) !important;
-
-    opacity: 1 !important;
-    filter: none !important;
-
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
-
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.18) !important;
+/* 4. Responsive Tables Container */
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
-
-
-/* Dark mode bottom navbar */
-.dark .floating-bottom-nav,
-.dark .bottom-floating-nav,
-.dark .bottom-navbar,
-.dark .floating-navbar,
-[data-theme="dark"] .floating-bottom-nav,
-[data-theme="dark"] .bottom-floating-nav,
-[data-theme="dark"] .bottom-navbar,
-[data-theme="dark"] .floating-navbar {
-    background: rgba(15, 23, 42, 0.95) !important;
-    color: #f8fafc !important;
-    border-color: #334155 !important;
 
-    opacity: 1 !important;
-    filter: none !important;
+.table-responsive table {
+  min-width: 600px;
 }
 
-
-/* Light mode bottom navbar */
-:not(.dark) .floating-bottom-nav,
-:not(.dark) .bottom-floating-nav,
-:not(.dark) .bottom-navbar,
-:not(.dark) .floating-navbar {
-    background: rgba(255, 255, 255, 0.95) !important;
-    color: #172033 !important;
-    border-color: #d5dce8 !important;
-
-    opacity: 1 !important;
-    filter: none !important;
+/* 5. Mobile & Touch Screen Optimizations (< 1024px) */
+@media (max-width: 1024px) {
+  button, input, select, textarea, a {
+    touch-action: manipulation;
+  }
 }
-
 
-/* =========================================================
-   BOTTOM NAV BUTTONS / ICONS
-   ========================================================= */
+/* 6. Mobile Small Screens (< 640px) */
+@media (max-width: 639px) {
+  h1 { font-size: clamp(1.25rem, 5vw, 1.95rem) !important; }
+  h2 { font-size: clamp(1.1rem, 4vw, 1.45rem) !important; }
+  h3 { font-size: clamp(0.95rem, 3.5vw, 1.2rem) !important; }
 
-.floating-bottom-nav button,
-.bottom-floating-nav button,
-.bottom-navbar button,
-.floating-navbar button {
-    opacity: 1 !important;
-    filter: none !important;
-}
+  .glass-panel, .glass-card {
+    padding: 12px !important;
+    border-radius: 12px !important;
+  }
 
+  .responsive-modal {
+    width: 96vw !important;
+    max-height: 92vh !important;
+    margin: 2vh auto !important;
+    padding: 14px !important;
+  }
 
-/* Dark mode buttons */
-.dark .floating-bottom-nav button,
-.dark .bottom-floating-nav button,
-.dark .bottom-navbar button,
-.dark .floating-navbar button {
-    color: #e2e8f0 !important;
+  .auto-grid-responsive {
+    grid-template-columns: 1fr !important;
+  }
 }
 
+/* 7. Tablets & Medium Screens (640px to 1023px) */
+@media (min-width: 640px) and (max-width: 1023px) {
+  .glass-panel, .glass-card {
+    padding: 16px !important;
+  }
 
-/* Light mode buttons */
-:not(.dark) .floating-bottom-nav button,
-:not(.dark) .bottom-floating-nav button,
-:not(.dark) .bottom-navbar button {
-    color: #334155 !important;
+  .auto-grid-responsive {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)) !important;
+  }
 }
-
 
-/* =========================================================
-   REMOVE FADED / DISABLED LOOK FROM NAV
-   ========================================================= */
+/* 8. Ultra-Wide Monitors & 4K Displays (>= 2560px) */
+@media (min-width: 2560px) {
+  body {
+    font-size: 18px;
+  }
 
-.floating-bottom-nav *,
-.bottom-floating-nav *,
-.bottom-navbar *,
-.floating-navbar * {
-    opacity: 1 !important;
-}
-/* Executive Quick Dock */
-:root {
-  --dock-bg: rgba(255, 255, 255, 0.92);
-  --dock-border: rgba(15, 23, 42, 0.15);
-}
+  .container-responsive {
+    max-width: 2400px;
+  }
 
-.dark {
-  --dock-bg: rgba(11, 13, 18, 0.90);
-  --dock-border: rgba(255, 255, 255, 0.12);
+  h1 { font-size: 3.5rem !important; }
+  h2 { font-size: 2.75rem !important; }
+  h3 { font-size: 2.25rem !important; }
 }

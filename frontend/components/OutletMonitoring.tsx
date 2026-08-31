@@ -45,7 +45,7 @@ import QRStockScannerModal from "./QRStockScannerModal";
 import CommandPaletteModal from "./CommandPaletteModal";
 import ExecutiveQuickDock from "./ExecutiveQuickDock";
 import AgentDashboardsView from "./AgentDashboardsView";
-import { BookOpen, Compass, QrCode, Volume2, VolumeX, Bot, Sliders } from "lucide-react";
+import { BookOpen, Compass, QrCode, Volume2, VolumeX, Bot, Sliders, Menu, X } from "lucide-react";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
 
@@ -188,12 +188,12 @@ const themes = {
   dark: {
     bg: "transparent", panel: "rgba(13, 18, 30, 0.72)", card: "rgba(15, 23, 42, 0.65)", border: "rgba(255, 255, 255, 0.12)",
     text: "#FFFBEB", textMuted: "#CBD5E1", textFaint: "#94A3B8", textOnAccent: "#060709",
-    gridLine: "rgba(203, 213, 225, 0.12)", inputBg: "#11151c",
+    gridLine: "rgba(203, 213, 225, 0.12)", inputBg: "rgba(8, 12, 22, 0.75)",
   },
   light: {
-    bg: "#F8FAFC", panel: "rgba(255, 255, 255, 0.85)", card: "rgba(255, 255, 255, 0.75)", border: "rgba(226, 232, 240, 0.85)",
-    text: "#0F172A", textMuted: "#334155", textFaint: "#64748B", textOnAccent: "#FFFFFF",
-    gridLine: "#E2E8F0", inputBg: "#ffffff",
+    bg: "#F8FAFC", panel: "rgba(255, 255, 255, 0.92)", card: "rgba(255, 255, 255, 0.88)", border: "#CBD5E1",
+    text: "#020617", textMuted: "#0F172A", textFaint: "#334155", textOnAccent: "#FFFFFF",
+    gridLine: "#CBD5E1", inputBg: "#FFFFFF",
   },
 };
 
@@ -370,7 +370,7 @@ const statusColorLight: Record<string, string> = {
   Watch: "bg-sky-100 text-sky-800 border-sky-300",
   Critical: "bg-amber-900/20 text-amber-900 border-amber-400",
 };
-const pinColor: Record<string, string> = { Healthy: "#F59E0B", Watch: "#38BDF8", Critical: "#B45309" };
+const pinColor: Record<string, string> = { Healthy: "#10B981", Watch: "#F59E0B", Critical: "#FB7185" };
 
 
 const FALLBACK_INVENTORY = [
@@ -1343,6 +1343,7 @@ export default function FranchiseOSDashboard({ initialModule = "dashboard" }: Fr
     !headerSearchQuery.trim() || d.name.toLowerCase().includes(headerSearchQuery.toLowerCase()) || d.category.toLowerCase().includes(headerSearchQuery.toLowerCase())
   );
 
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [accent, setAccent] = useState("#F59E0B");
   const [glowEffect, setGlowEffect] = useState(true);
   const [blurDepth, setBlurDepth] = useState(8);
@@ -1967,7 +1968,8 @@ function getPredictedRisks(auditList: any[]) {
 
   return (
     <div className="w-full min-h-[800px] flex font-sans transition-colors duration-200" style={{ background: t.bg, color: t.text }}>
-      <aside className="w-64 flex flex-col shrink-0 border-r transition-colors duration-200" style={{ background: t.panel, borderColor: t.border }}>
+      {/* Desktop Sidebar (lg and above) */}
+      <aside className="hidden lg:flex w-64 flex-col shrink-0 border-r transition-colors duration-200" style={{ background: t.panel, borderColor: t.border }}>
         <div className="px-5 py-5 flex items-center gap-2 border-b" style={{ borderColor: t.border }}>
           <img src="/logo.png" alt="OmniFranchise Logo" className="w-8 h-8 rounded-lg object-cover shadow-md shadow-teal-500/20 border border-teal-400/30" />
           <div>
@@ -2010,7 +2012,75 @@ function getPredictedRisks(auditList: any[]) {
         </div>
       </aside>
 
-      <main className="flex-1 overflow-y-auto">
+      {/* Mobile / Tablet Responsive Drawer Sidebar (< lg) */}
+      <AnimatePresence>
+        {isMobileSidebarOpen && (
+          <div className="fixed inset-0 z-50 flex lg:hidden">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/70 backdrop-blur-xs"
+              onClick={() => setIsMobileSidebarOpen(false)}
+            />
+            <motion.aside
+              initial={{ x: "-100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "-100%" }}
+              transition={{ type: "spring", stiffness: 300, damping: 30 }}
+              className="relative w-72 max-w-[85vw] h-full flex flex-col z-50 border-r shadow-2xl transition-colors duration-200"
+              style={{ background: t.panel, borderColor: t.border }}
+            >
+              <div className="px-5 py-4 flex items-center justify-between border-b" style={{ borderColor: t.border }}>
+                <div className="flex items-center gap-2">
+                  <img src="/logo.png" alt="OmniFranchise Logo" className="w-8 h-8 rounded-lg object-cover shadow-md shadow-teal-500/20 border border-teal-400/30" />
+                  <div>
+                    <p className="font-semibold text-sm leading-tight" style={{ color: t.text }}>OmniFranchise AI</p>
+                    <p className="text-[10px]" style={{ color: t.textFaint }}>Enterprise Intelligence Network</p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setIsMobileSidebarOpen(false)}
+                  className="p-1.5 rounded-lg hover:bg-white/10 transition-colors cursor-pointer"
+                  style={{ color: t.text }}
+                  title="Close Navigation"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+              <nav className="flex-1 overflow-y-auto py-3">
+                {modules.map((m) => {
+                  const Icon = m.icon;
+                  const isActive = active === m.id;
+                  return (
+                    <button
+                      key={m.id}
+                      onClick={() => {
+                        setActive(m.id);
+                        setIsMobileSidebarOpen(false);
+                      }}
+                      className="w-full flex items-center gap-3 px-5 py-3 text-sm text-left transition-all relative border-l-2 cursor-pointer"
+                      style={{
+                        borderColor: isActive ? accent : "transparent",
+                        background: isActive ? `${accent}1A` : "transparent",
+                        color: isActive ? t.text : t.textMuted,
+                      }}
+                    >
+                      <Icon size={18} color={isActive ? accent : t.textFaint} />
+                      <span className="font-medium">{m.label}</span>
+                    </button>
+                  );
+                })}
+              </nav>
+              <div className="px-5 py-4 border-t flex items-center gap-2 text-[11px]" style={{ borderColor: t.border, color: t.textFaint }}>
+                <span className="w-2 h-2 rounded-full bg-teal-400 animate-pulse" /> AI engine active
+              </div>
+            </motion.aside>
+          </div>
+        )}
+      </AnimatePresence>
+
+      <main className="flex-1 overflow-y-auto min-w-0">
         <AnomalyAlertBanner
           alert={activeAlertBanner}
           onClose={() => setActiveAlertBanner(null)}
@@ -2018,37 +2088,37 @@ function getPredictedRisks(auditList: any[]) {
           accentColor={accent}
           theme={t}
         />
-        <div className="border-b px-6 py-3 flex items-center justify-between gap-4 flex-wrap lg:flex-nowrap transition-colors duration-200" style={{ background: t.panel, borderColor: t.border }}>
-          <div className="relative flex-1 min-w-[240px] max-w-xl">
-            <div
-  className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm border focus-within:border-amber-400 transition-colors"
-  style={{
-    background: t.inputBg,
-    borderColor: t.border,
-  }}
->
+        <div className="border-b px-4 sm:px-6 py-3 flex items-center justify-between gap-3 flex-wrap lg:flex-nowrap transition-colors duration-200" style={{ background: t.panel, borderColor: t.border }}>
+          <div className="flex items-center gap-2 flex-1 min-w-0 max-w-xl">
+            {/* Hamburger Button for Mobile/Tablet (< lg) */}
+            <button
+              onClick={() => setIsMobileSidebarOpen(true)}
+              className="lg:hidden p-2 rounded-lg border transition-colors shrink-0 cursor-pointer hover:bg-white/5"
+              style={{ background: t.inputBg, borderColor: t.border, color: t.text }}
+              title="Open Navigation Menu"
+            >
+              <Menu size={18} />
+            </button>
+            <div className="relative flex-1 min-w-0">
+            <div className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm border focus-within:border-amber-400 transition-colors" style={{ background: t.inputBg, borderColor: t.border }}>
               <Search size={14} color={t.textFaint} />
               <input
-  type="text"
-  placeholder="Search modules, outlets, pages..."
-  value={headerSearchQuery}
-  onChange={(e) => setHeaderSearchQuery(e.target.value)}
-  onFocus={() => setHeaderSearchFocused(true)}
-  onBlur={() => setTimeout(() => setHeaderSearchFocused(false), 200)}
-  onKeyDown={(e) => {
-    if (e.key === "Enter" && filteredDestinations.length > 0) {
-      setActive(filteredDestinations[0].key);
-      setHeaderSearchQuery("");
-      setHeaderSearchFocused(false);
-    }
-  }}
-  className="w-full outline-none text-xs bg-transparent"
-  style={{
-    backgroundColor: "transparent",
-    color: t.text,
-    caretColor: t.text
-  }}
-/>
+                type="text"
+                placeholder="Search modules, outlets, pages..."
+                value={headerSearchQuery}
+                onChange={(e) => setHeaderSearchQuery(e.target.value)}
+                onFocus={() => setHeaderSearchFocused(true)}
+                onBlur={() => setTimeout(() => setHeaderSearchFocused(false), 200)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && filteredDestinations.length > 0) {
+                    setActive(filteredDestinations[0].key);
+                    setHeaderSearchQuery("");
+                    setHeaderSearchFocused(false);
+                  }
+                }}
+                className="w-full bg-transparent outline-none text-xs"
+                style={{ color: t.text }}
+              />
               <button
                 type="button"
                 onClick={() => setIsCommandPaletteOpen(true)}
@@ -2095,9 +2165,10 @@ function getPredictedRisks(auditList: any[]) {
               </div>
             )}
           </div>
+        </div>
 
-          {/* Header Action Controls */}
-          <div className="flex items-center gap-2 flex-wrap lg:flex-nowrap shrink-0">
+        {/* Header Action Controls */}
+          <div className="flex items-center gap-2 overflow-x-auto max-w-full pb-1 sm:pb-0 shrink-0">
             {/* Multi-Tier Role Switcher */}
             <RoleSwitcher
               activeRole={activeRole}
@@ -2389,38 +2460,73 @@ function getPredictedRisks(auditList: any[]) {
                 </div>
               </div>
 
-              <div className="rounded-xl border p-5 transition-colors duration-200" style={{ background: t.card, borderColor: t.border }}>
-                <p className="text-sm font-semibold mb-1" style={{ color: t.text }}>Franchise Network Map</p>
-                <p className="text-xs mb-4" style={{ color: t.textFaint }}>Every outlet connected to the franchise hub — bubble size shows revenue share</p>
-                <div className="w-full flex justify-center">
-                  <svg viewBox="0 0 400 340" className="w-full max-w-md">
+              <div className="rounded-xl border p-5 transition-colors duration-200 glass-card" style={{ background: t.card, borderColor: t.border }}>
+                <div className="flex items-center justify-between mb-3">
+                  <div>
+                    <p className="text-sm font-semibold mb-0.5" style={{ color: t.text }}>Franchise Network Topology Map</p>
+                    <p className="text-xs" style={{ color: t.textFaint }}>Live central hub connectivity & outlet revenue topology</p>
+                  </div>
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded-full border badge-silver">
+                    {networkNodes.length} Outlets Connected
+                  </span>
+                </div>
+                <div className="w-full flex justify-center py-2">
+                  <svg viewBox="0 0 400 340" className="w-full max-w-md overflow-visible">
+                    {/* Connecting lines from Central Hub */}
                     {networkNodes.map((n) => {
                       const rad = (n.angle * Math.PI) / 180;
                       const cx = 200 + 130 * Math.cos(rad);
                       const cy = 170 + 130 * Math.sin(rad);
-                      return <line key={`line-${n.name}`} x1={200} y1={170} x2={cx} y2={cy} stroke={t.gridLine} strokeWidth={1.5} />;
-                    })}
-                    <circle cx={200} cy={170} r={30} fill={accent} opacity={0.9} />
-                    <text x={200} y={174} textAnchor="middle" fontSize={10} fontWeight={600} fill={t.bg}>Hub</text>
-                    {networkNodes.map((n) => {
-                      const rad = (n.angle * Math.PI) / 180;
-                      const cx = 200 + 130 * Math.cos(rad);
-                      const cy = 170 + 130 * Math.sin(rad);
-                      const r = 14 + (n.revenue / 154000) * 22;
+                      const nodeColor = pinColor[n.status] || accent;
                       return (
-                        <g key={n.name}>
-                          <circle cx={cx} cy={cy} r={r} fill={pinColor[n.status]} opacity={0.85} />
-                          <text x={cx} y={cy + 4} textAnchor="middle" fontSize={9} fontWeight={600} fill={t.bg}>{n.name.split(" ")[0]}</text>
+                        <g key={`connection-${n.name}`}>
+                          <line
+                            x1={200}
+                            y1={170}
+                            x2={cx}
+                            y2={cy}
+                            stroke={nodeColor}
+                            strokeWidth={1.75}
+                            strokeOpacity={isDark ? 0.45 : 0.65}
+                            strokeDasharray="4 2"
+                          />
+                        </g>
+                      );
+                    })}
+
+                    {/* Central HQ Hub Circle */}
+                    <circle cx={200} cy={170} r={36} fill={accent} fillOpacity={0.2} stroke={accent} strokeWidth={2} />
+                    <circle cx={200} cy={170} r={28} fill={accent} opacity={0.95} />
+                    <text x={200} y={166} textAnchor="middle" fontSize={11} fontWeight={800} fill="#090D16">PUNE HQ</text>
+                    <text x={200} y={178} textAnchor="middle" fontSize={9} fontWeight={600} fill="#090D16">HUB</text>
+
+                    {/* Outlet Nodes */}
+                    {networkNodes.map((n) => {
+                      const rad = (n.angle * Math.PI) / 180;
+                      const cx = 200 + 130 * Math.cos(rad);
+                      const cy = 170 + 130 * Math.sin(rad);
+                      const r = 16 + (n.revenue / 154000) * 18;
+                      const color = pinColor[n.status] || accent;
+                      return (
+                        <g key={n.name} className="cursor-pointer transition-transform hover:scale-110">
+                          {/* Glow ring */}
+                          <circle cx={cx} cy={cy} r={r + 3} fill={color} opacity={0.2} />
+                          {/* Main node circle */}
+                          <circle cx={cx} cy={cy} r={r} fill={color} stroke={isDark ? "#0F172A" : "#FFFFFF"} strokeWidth={2} opacity={0.95} />
+                          {/* Label text - Solid crisp text */}
+                          <text x={cx} y={cy + 4} textAnchor="middle" fontSize={10} fontWeight={800} fill="#060709">
+                            {n.name.split(" ")[0]}
+                          </text>
                         </g>
                       );
                     })}
                   </svg>
                 </div>
-                <div className="flex items-center gap-4 mt-2 justify-center text-[11px]" style={{ color: t.textFaint }}>
+                <div className="flex items-center gap-4 mt-3 justify-center text-[11px]" style={{ color: t.textFaint }}>
                   {["Healthy", "Watch", "Critical"].map((s) => (
-                    <span key={s} className="flex items-center gap-1.5">
-                      <span className="w-2.5 h-2.5 rounded-full" style={{ background: pinColor[s] }} />
-                      {s}
+                    <span key={s} className="flex items-center gap-1.5 font-medium">
+                      <span className="w-2.5 h-2.5 rounded-full border border-black/20" style={{ background: pinColor[s] }} />
+                      <span style={{ color: t.textMuted }}>{s}</span>
                     </span>
                   ))}
                 </div>
@@ -2709,8 +2815,8 @@ function getPredictedRisks(auditList: any[]) {
                   value={inventoryQuery}
                   onChange={(e) => setInventoryQuery(e.target.value)}
                   placeholder="Search item or SKU"
-                  className="w-full bg-transparent outline-none placeholder:text-slate-400"
-                  style={{ background: t.inputBg, color: t.text, borderColor: t.border }}
+                  className="ml-auto text-sm rounded-lg border px-3 py-1.5 outline-none"
+                  style={{ background: t.inputBg, borderColor: t.border, color: t.text, minWidth: 220 }}
                 />
               </div>
 
@@ -2861,20 +2967,13 @@ function getPredictedRisks(auditList: any[]) {
                         {role}
                       </button>
                     ))}
-                    <div
-                      className="flex items-center gap-2 rounded-lg border px-3 py-2"
-                      style={{
-                        background: t.inputBg,
-                        borderColor: t.border,
-                      }}
-                    >
-                      <input
-                        type="text"
-                        placeholder="Search employee or role..."
-                        className="w-full bg-transparent outline-none placeholder:text-slate-400"
-                        style={{ color: t.text }}
-                      />
-                    </div>
+                    <input
+                      value={staffQuery}
+                      onChange={(e) => setStaffQuery(e.target.value)}
+                      placeholder="Search employee or role..."
+                      className="ml-auto text-sm rounded-lg border px-3 py-1.5 outline-none"
+                      style={{ background: t.inputBg, borderColor: t.border, color: t.text, minWidth: 220 }}
+                    />
                   </div>
 
                   <div className="rounded-xl border overflow-hidden transition-colors duration-200" style={{ background: t.card, borderColor: t.border }}>
@@ -2938,7 +3037,7 @@ function getPredictedRisks(auditList: any[]) {
                       const Icon = k.icon;
                       return (
                         <div key={k.label} className="rounded-xl border p-4 transition-colors duration-200" style={{ background: t.card, borderColor: t.border }}>
-                          <div className="w-7 h-7 rounded-md flex items-center justify-center mb-3" style={{ background: `${accent}26` }}>
+                          <div className="w-7 h-7 rounded-md flex items-center justify-center mb-3" style={{ background: `${accent}1A` }}>
                             <Icon size={13} color={accent} />
                           </div>
                           <p className="text-lg font-semibold" style={{ color: t.text }}>{k.value}</p>

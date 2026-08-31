@@ -132,11 +132,7 @@ export default function ExecutiveQuickDock({
       <motion.div
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        className="pointer-events-auto flex items-center gap-1.5 p-1.5 px-2 rounded-2xl border shadow-2xl backdrop-blur-xl ring-1 ring-amber-500/20 transition-colors duration-300"
-        style={{
-          background: "var(--dock-bg)",
-          borderColor: "var(--dock-border)",
-        }}
+        className="pointer-events-auto flex items-center gap-1.5 p-1.5 px-2 rounded-2xl bg-[#0B0D12]/85 border border-white/10 shadow-2xl backdrop-blur-xl ring-1 ring-amber-500/20"
       >
         <button
           onClick={() => setIsExpanded(!isExpanded)}
@@ -191,12 +187,3 @@ export default function ExecutiveQuickDock({
     </div>
   );
 }
-<motion.div
-  initial={{ y: 20, opacity: 0 }}
-  animate={{ y: 0, opacity: 1 }}
-  className="pointer-events-auto flex items-center gap-1.5 p-1.5 px-2 rounded-2xl border shadow-2xl backdrop-blur-xl ring-1 ring-amber-500/20 transition-colors duration-300"
-  style={{
-    background: "var(--dock-bg)",
-    borderColor: "var(--dock-border)",
-  }}
-></motion.div>
