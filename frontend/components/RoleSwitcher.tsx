@@ -32,10 +32,10 @@ export default function RoleSwitcher({
 
   return (
     <div
-      className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border text-xs shadow-sm transition-all shrink-0"
+      className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border text-xs shadow-sm transition-all shrink-0 whitespace-nowrap relative z-10"
       style={{ background: bgInput, borderColor: borderCol }}
     >
-      <ActiveIcon size={13} color={accentColor} />
+      <ActiveIcon size={13} color={accentColor} className="shrink-0" />
       <select
         value={activeRole}
         onChange={(e) => onChangeRole(e.target.value as ExecutiveRole)}

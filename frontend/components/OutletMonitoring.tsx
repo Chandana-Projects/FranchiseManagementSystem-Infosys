@@ -51,7 +51,7 @@ import ShiftSchedulerModal from "./ShiftSchedulerModal";
 import RoyaltyCalculatorModal from "./RoyaltyCalculatorModal";
 import VendorScorecardModal from "./VendorScorecardModal";
 import MenuEngineeringMatrix from "./MenuEngineeringMatrix";
-import { BookOpen, Compass, QrCode, Volume2, VolumeX, Bot, Sliders, Menu, X, Calculator, Utensils } from "lucide-react";
+import { BookOpen, Compass, QrCode, Volume2, VolumeX, Bot, Sliders, Menu, X, Calculator, Utensils, ChevronDown } from "lucide-react";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
 
@@ -1297,6 +1297,7 @@ export default function FranchiseOSDashboard({ initialModule = "dashboard" }: Fr
   const [isDemoTourOpen, setIsDemoTourOpen] = useState(false);
   const [isQRScannerOpen, setIsQRScannerOpen] = useState(false);
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
+  const [isQuickToolsOpen, setIsQuickToolsOpen] = useState(false);
   const [selectedCountry, setSelectedCountry] = useState("All");
   const [selectedState, setSelectedState] = useState("All");
   const [activeLang, setActiveLang] = useState<SupportedLanguage>("EN");
@@ -2098,8 +2099,8 @@ function getPredictedRisks(auditList: any[]) {
           accentColor={accent}
           theme={t}
         />
-        <div className="border-b px-4 sm:px-6 py-3 flex items-center justify-between gap-3 flex-wrap lg:flex-nowrap transition-colors duration-200" style={{ background: t.panel, borderColor: t.border }}>
-          <div className="flex items-center gap-2 flex-1 min-w-0 max-w-xl">
+        <div className="border-b px-4 sm:px-6 py-2.5 flex items-center justify-between gap-3 flex-nowrap relative z-30 transition-colors duration-200" style={{ background: t.panel, borderColor: t.border }}>
+          <div className="flex items-center gap-2 shrink-0 min-w-[200px] max-w-xs md:max-w-md">
             {/* Hamburger Button for Mobile/Tablet (< lg) */}
             <button
               onClick={() => setIsMobileSidebarOpen(true)}
@@ -2109,12 +2110,12 @@ function getPredictedRisks(auditList: any[]) {
             >
               <Menu size={18} />
             </button>
-            <div className="relative flex-1 min-w-0">
-            <div className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm border focus-within:border-amber-400 transition-colors" style={{ background: t.inputBg, borderColor: t.border }}>
-              <Search size={14} color={t.textFaint} />
+            <div className="relative flex-1 min-w-[160px] sm:min-w-[220px]">
+            <div className="flex items-center gap-2 rounded-lg px-3 py-1.5 text-sm border focus-within:border-amber-400 transition-colors overflow-hidden" style={{ background: t.inputBg, borderColor: t.border }}>
+              <Search size={14} color={t.textFaint} className="shrink-0" />
               <input
                 type="text"
-                placeholder="Search modules, outlets, pages..."
+                placeholder="Search modules, outlets..."
                 value={headerSearchQuery}
                 onChange={(e) => setHeaderSearchQuery(e.target.value)}
                 onFocus={() => setHeaderSearchFocused(true)}
@@ -2126,13 +2127,13 @@ function getPredictedRisks(auditList: any[]) {
                     setHeaderSearchFocused(false);
                   }
                 }}
-                className="w-full bg-transparent outline-none text-xs"
+                className="w-full min-w-0 bg-transparent outline-none text-xs"
                 style={{ color: t.text }}
               />
               <button
                 type="button"
                 onClick={() => setIsCommandPaletteOpen(true)}
-                className="hidden sm:inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-mono border border-slate-700 bg-slate-800/90 text-amber-400 hover:text-amber-300 hover:border-amber-400 transition-all cursor-pointer shadow-xs shrink-0"
+                className="hidden sm:inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-mono border border-slate-700 bg-slate-800/90 text-amber-400 hover:text-amber-300 hover:border-amber-400 transition-all cursor-pointer shadow-xs shrink-0 whitespace-nowrap"
                 title="Open Spotlight Command Palette (Ctrl+K or Cmd+K)"
               >
                 ⌘K
@@ -2178,87 +2179,203 @@ function getPredictedRisks(auditList: any[]) {
         </div>
 
         {/* Header Action Controls */}
-          <div className="flex items-center gap-2 overflow-x-auto max-w-full pb-1 sm:pb-0 shrink-0">
+          <div className="flex items-center gap-2 shrink-0 relative z-30 overflow-visible">
             {/* Multi-Tier Role Switcher */}
-            <RoleSwitcher
-              activeRole={activeRole}
-              onChangeRole={setActiveRole}
-              accentColor={accent}
-              theme={t}
-            />
-            {/* WhatsApp Supplier Dispatch Trigger */}
-            <button
-              onClick={() => setIsDispatchModalOpen(true)}
-              className="flex items-center gap-1.5 text-xs px-3 py-2 rounded-lg border font-semibold transition-all hover:scale-105"
-              style={{ background: "#25D36620", borderColor: "#25D36640", color: "#25D366" }}
-            >
-              <Truck size={14} /> Supplier PO Dispatch
-            </button>
+            <div className="shrink-0 relative z-10">
+              <RoleSwitcher
+                activeRole={activeRole}
+                onChangeRole={setActiveRole}
+                accentColor={accent}
+                theme={t}
+              />
+            </div>
+            {/* Unified Executive Tools & Module Launchers Dropdown */}
+            <div className="relative shrink-0 z-30">
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  playTechChime("nav");
+                  setIsQuickToolsOpen((prev) => !prev);
+                }}
+                className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border font-semibold transition-all hover:scale-105 cursor-pointer shadow-xs shrink-0 whitespace-nowrap"
+                style={{
+                  background: isQuickToolsOpen ? `${accent}25` : t.inputBg,
+                  borderColor: isQuickToolsOpen ? accent : t.border,
+                  color: isQuickToolsOpen ? accent : t.text,
+                }}
+                title="Executive Tools & Enterprise Launchers"
+              >
+                <Sparkles size={14} color={accent} className="shrink-0" />
+                <span className="font-bold">Executive Tools</span>
+                <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-amber-500/20 text-amber-400 font-mono font-bold">8</span>
+                <ChevronDown size={13} className={`transition-transform duration-200 shrink-0 ${isQuickToolsOpen ? "rotate-180" : ""}`} />
+              </button>
 
-            {/* Guided Tour Trigger */}
-            <button
-              onClick={() => { playTechChime("nav"); setIsDemoTourOpen(true); }}
-              className="flex items-center gap-1.5 text-xs px-3 py-2 rounded-lg border font-bold transition-all hover:scale-105"
-              style={{ background: "#F59E0B20", borderColor: "#F59E0B50", color: "#F59E0B" }}
-            >
-              <Compass size={14} /> Guided Tour
-            </button>
+              {/* Glassmorphic Dropdown Menu */}
+              {isQuickToolsOpen && (
+                <>
+                  <div
+                    className="fixed inset-0 z-40 bg-black/20"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setIsQuickToolsOpen(false);
+                    }}
+                  />
 
-            {/* RAG SOP AI Bot Trigger */}
-            <button
-              onClick={() => { playTechChime("nav"); setIsSOPBotOpen(true); }}
-              className="flex items-center gap-1.5 text-xs px-3 py-2 rounded-lg border font-bold transition-all hover:scale-105"
-              style={{ background: "#10B98120", borderColor: "#10B98150", color: "#10B981" }}
-            >
-              <BookOpen size={14} /> SOP Bot
-            </button>
+                  <div
+                    onClick={(e) => e.stopPropagation()}
+                    className="absolute right-0 top-full mt-2 w-80 sm:w-96 rounded-2xl border shadow-2xl z-50 overflow-hidden backdrop-blur-xl transition-all duration-200"
+                    style={{
+                      background: "#0F172A",
+                      borderColor: "rgba(245, 158, 11, 0.4)",
+                      boxShadow: "0 20px 50px rgba(0, 0, 0, 0.8), 0 0 30px rgba(245, 158, 11, 0.2)",
+                    }}
+                  >
+                    {/* Menu Header */}
+                    <div className="px-4 py-3 border-b flex items-center justify-between" style={{ borderColor: `${t.border}40`, background: "rgba(255, 255, 255, 0.03)" }}>
+                      <div className="flex items-center gap-2">
+                        <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
+                        <span className="text-xs font-bold uppercase tracking-wider text-amber-400 font-mono">
+                          Executive Tools & Launchers
+                        </span>
+                      </div>
+                      <span className="text-[10px] font-mono text-slate-400">8 Modules</span>
+                    </div>
 
-            {/* PWA Mobile QR Scanner Trigger */}
-            <button
-              onClick={() => { playTechChime("nav"); setIsQRScannerOpen(true); }}
-              className="flex items-center gap-1.5 text-xs px-3 py-2 rounded-lg border font-bold transition-all hover:scale-105"
-              style={{ background: "#06B6D420", borderColor: "#06B6D450", color: "#06B6D4" }}
-            >
-              <QrCode size={14} /> Scan QR
-            </button>
+                    {/* Tools Grid */}
+                    <div className="p-2.5 grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-96 overflow-y-auto">
+                      {/* Supplier PO Dispatch */}
+                      <button
+                        onClick={() => {
+                          setIsDispatchModalOpen(true);
+                          setIsQuickToolsOpen(false);
+                        }}
+                        className="flex items-start gap-2.5 p-2.5 rounded-xl border border-emerald-500/25 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 hover:border-emerald-500/50 transition-all cursor-pointer text-left group"
+                      >
+                        <Truck size={16} className="mt-0.5 shrink-0 text-emerald-400 group-hover:scale-110 transition-transform" />
+                        <div>
+                          <div className="text-xs font-bold text-emerald-300">Supplier PO Dispatch</div>
+                          <div className="text-[10px] text-emerald-400/80 leading-tight">WhatsApp / Email PO Claim</div>
+                        </div>
+                      </button>
 
-            {/* Enterprise Business Module Launchers */}
-            <button
-              onClick={() => { playTechChime("nav"); setIsShiftSchedulerOpen(true); }}
-              className="flex items-center gap-1.5 text-xs px-3 py-2 rounded-lg border font-bold transition-all hover:scale-105"
-              style={{ background: "#F59E0B20", borderColor: "#F59E0B50", color: "#F59E0B" }}
-              title="AI Staff Roster & Shift Scheduler"
-            >
-              <Calendar size={14} /> Roster AI
-            </button>
+                      {/* AI Staff Roster */}
+                      <button
+                        onClick={() => {
+                          playTechChime("nav");
+                          setIsShiftSchedulerOpen(true);
+                          setIsQuickToolsOpen(false);
+                        }}
+                        className="flex items-start gap-2.5 p-2.5 rounded-xl border border-amber-500/25 bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 hover:border-amber-500/50 transition-all cursor-pointer text-left group"
+                      >
+                        <Calendar size={16} className="mt-0.5 shrink-0 text-amber-400 group-hover:scale-110 transition-transform" />
+                        <div>
+                          <div className="text-xs font-bold text-amber-300">Roster AI</div>
+                          <div className="text-[10px] text-amber-400/80 leading-tight">AI Footfall Shift Roster</div>
+                        </div>
+                      </button>
 
-            <button
-              onClick={() => { playTechChime("nav"); setIsRoyaltyCalcOpen(true); }}
-              className="flex items-center gap-1.5 text-xs px-3 py-2 rounded-lg border font-bold transition-all hover:scale-105"
-              style={{ background: "#10B98120", borderColor: "#10B98150", color: "#10B981" }}
-              title="Royalty & ROI Calculator"
-            >
-              <Calculator size={14} /> Royalty ROI
-            </button>
+                      {/* Royalty ROI Calculator */}
+                      <button
+                        onClick={() => {
+                          playTechChime("nav");
+                          setIsRoyaltyCalcOpen(true);
+                          setIsQuickToolsOpen(false);
+                        }}
+                        className="flex items-start gap-2.5 p-2.5 rounded-xl border border-emerald-500/25 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 hover:border-emerald-500/50 transition-all cursor-pointer text-left group"
+                      >
+                        <Calculator size={16} className="mt-0.5 shrink-0 text-emerald-400 group-hover:scale-110 transition-transform" />
+                        <div>
+                          <div className="text-xs font-bold text-emerald-300">Royalty ROI</div>
+                          <div className="text-[10px] text-emerald-400/80 leading-tight">5% Royalty & Net Profit</div>
+                        </div>
+                      </button>
 
-            <button
-              onClick={() => { playTechChime("nav"); setIsVendorScorecardOpen(true); }}
-              className="flex items-center gap-1.5 text-xs px-3 py-2 rounded-lg border font-bold transition-all hover:scale-105"
-              style={{ background: "#A855F720", borderColor: "#A855F750", color: "#A855F7" }}
-              title="Vendor SLA Scorecard"
-            >
-              <Truck size={14} /> Vendor SLA
-            </button>
+                      {/* Vendor SLA Scorecard */}
+                      <button
+                        onClick={() => {
+                          playTechChime("nav");
+                          setIsVendorScorecardOpen(true);
+                          setIsQuickToolsOpen(false);
+                        }}
+                        className="flex items-start gap-2.5 p-2.5 rounded-xl border border-purple-500/25 bg-purple-500/10 hover:bg-purple-500/20 text-purple-300 hover:border-purple-500/50 transition-all cursor-pointer text-left group"
+                      >
+                        <Truck size={16} className="mt-0.5 shrink-0 text-purple-300 group-hover:scale-110 transition-transform" />
+                        <div>
+                          <div className="text-xs font-bold text-purple-200">Vendor SLA</div>
+                          <div className="text-[10px] text-purple-300/80 leading-tight">Supplier Delivery Ranking</div>
+                        </div>
+                      </button>
 
-            <button
-              onClick={() => { playTechChime("nav"); setIsMenuMatrixOpen(true); }}
-              className="flex items-center gap-1.5 text-xs px-3 py-2 rounded-lg border font-bold transition-all hover:scale-105"
-              style={{ background: "#38BDF820", borderColor: "#38BDF850", color: "#38BDF8" }}
-              title="Menu Yield Engineering"
-            >
-              <Utensils size={14} /> Menu Yield
-            </button>
+                      {/* Menu Yield Engineering */}
+                      <button
+                        onClick={() => {
+                          playTechChime("nav");
+                          setIsMenuMatrixOpen(true);
+                          setIsQuickToolsOpen(false);
+                        }}
+                        className="flex items-start gap-2.5 p-2.5 rounded-xl border border-sky-500/25 bg-sky-500/10 hover:bg-sky-500/20 text-sky-400 hover:border-sky-500/50 transition-all cursor-pointer text-left group"
+                      >
+                        <Utensils size={16} className="mt-0.5 shrink-0 text-sky-400 group-hover:scale-110 transition-transform" />
+                        <div>
+                          <div className="text-xs font-bold text-sky-300">Menu Yield</div>
+                          <div className="text-[10px] text-sky-400/80 leading-tight">BCG 4-Quadrant Matrix</div>
+                        </div>
+                      </button>
 
+                      {/* SOP Knowledge Bot */}
+                      <button
+                        onClick={() => {
+                          playTechChime("nav");
+                          setIsSOPBotOpen(true);
+                          setIsQuickToolsOpen(false);
+                        }}
+                        className="flex items-start gap-2.5 p-2.5 rounded-xl border border-teal-500/25 bg-teal-500/10 hover:bg-teal-500/20 text-teal-400 hover:border-teal-500/50 transition-all cursor-pointer text-left group"
+                      >
+                        <BookOpen size={16} className="mt-0.5 shrink-0 text-teal-400 group-hover:scale-110 transition-transform" />
+                        <div>
+                          <div className="text-xs font-bold text-teal-300">SOP Bot</div>
+                          <div className="text-[10px] text-teal-400/80 leading-tight">AI Compliance Manual</div>
+                        </div>
+                      </button>
+
+                      {/* Scan Stock QR Code */}
+                      <button
+                        onClick={() => {
+                          playTechChime("nav");
+                          setIsQRScannerOpen(true);
+                          setIsQuickToolsOpen(false);
+                        }}
+                        className="flex items-start gap-2.5 p-2.5 rounded-xl border border-cyan-500/25 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 hover:border-cyan-500/50 transition-all cursor-pointer text-left group"
+                      >
+                        <QrCode size={16} className="mt-0.5 shrink-0 text-cyan-400 group-hover:scale-110 transition-transform" />
+                        <div>
+                          <div className="text-xs font-bold text-cyan-300">Scan Stock QR</div>
+                          <div className="text-[10px] text-cyan-400/80 leading-tight">Mobile Camera Audit</div>
+                        </div>
+                      </button>
+
+                      {/* Guided Tour */}
+                      <button
+                        onClick={() => {
+                          playTechChime("nav");
+                          setIsDemoTourOpen(true);
+                          setIsQuickToolsOpen(false);
+                        }}
+                        className="flex items-start gap-2.5 p-2.5 rounded-xl border border-amber-500/25 bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 hover:border-amber-500/50 transition-all cursor-pointer text-left group"
+                      >
+                        <Compass size={16} className="mt-0.5 shrink-0 text-amber-400 group-hover:scale-110 transition-transform" />
+                        <div>
+                          <div className="text-xs font-bold text-amber-300">Guided Tour</div>
+                          <div className="text-[10px] text-amber-400/80 leading-tight">System Walkthrough</div>
+                        </div>
+                      </button>
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
 
             {/* Audio SFX Quick Toggle */}
             <button
@@ -2266,7 +2383,7 @@ function getPredictedRisks(auditList: any[]) {
                 toggleAudioMute();
                 setAudioMutedState(isAudioMuted());
               }}
-              className="flex items-center gap-1.5 text-xs px-3 py-2 rounded-lg border font-bold transition-all hover:scale-105 cursor-pointer shadow-xs"
+              className="flex items-center gap-1.5 text-xs px-2.5 py-1.5 rounded-lg border font-bold transition-all hover:scale-105 cursor-pointer shadow-xs shrink-0 whitespace-nowrap"
               style={{
                 background: audioMuted ? "rgba(244, 63, 94, 0.12)" : "rgba(16, 185, 129, 0.12)",
                 borderColor: audioMuted ? "rgba(244, 63, 94, 0.35)" : "rgba(16, 185, 129, 0.35)",
@@ -2274,32 +2391,34 @@ function getPredictedRisks(auditList: any[]) {
               }}
               title={audioMuted ? "Sound Effects Muted (Click to Unmute)" : "Sound Effects Active (Click to Mute)"}
             >
-              {audioMuted ? <VolumeX size={14} /> : <Volume2 size={14} />}
+              {audioMuted ? <VolumeX size={14} className="shrink-0" /> : <Volume2 size={14} className="shrink-0" />}
               <span className="hidden xl:inline">{audioMuted ? "SFX Muted" : "SFX Active"}</span>
             </button>
 
             {/* PWA App Installation & Push Notification Control */}
-            <PWAInstaller t={t} />
+            <div className="shrink-0 whitespace-nowrap">
+              <PWAInstaller t={t} />
+            </div>
 
             <button
               onClick={() => setShowAskAI(true)}
-              className="flex items-center gap-2 text-sm px-3 py-2 rounded-lg border transition-colors cursor-pointer"
+              className="flex items-center gap-2 text-xs px-2.5 py-1.5 rounded-lg border transition-colors cursor-pointer shrink-0 whitespace-nowrap"
               style={{ borderColor: `${accent}4D`, color: accent }}
             >
-              <Sparkles size={14} /> Ask AI
+              <Sparkles size={14} className="shrink-0" /> Ask AI
             </button>
             <button
               onClick={() => setIsDark(!isDark)}
-              className="flex items-center gap-1 text-xs px-3 py-2 rounded-lg border transition-colors"
+              className="flex items-center gap-1 text-xs px-2.5 py-1.5 rounded-lg border transition-colors shrink-0 whitespace-nowrap cursor-pointer"
               style={{ borderColor: t.border, color: t.textMuted }}
               aria-label="Toggle dark/light mode"
             >
-              {isDark ? <Sun size={14} /> : <Moon size={14} />}
+              {isDark ? <Sun size={14} className="shrink-0" /> : <Moon size={14} className="shrink-0" />}
               {isDark ? "Light" : "Dark"}
             </button>
             <button
               onClick={handleSignOut}
-              className="w-8 h-8 rounded-full bg-gradient-to-br from-rose-400 to-amber-400 flex items-center justify-center text-xs font-bold"
+              className="w-7 h-7 rounded-full bg-gradient-to-br from-rose-400 to-amber-400 flex items-center justify-center text-xs font-bold shrink-0 cursor-pointer"
               style={{ color: t.textOnAccent }}
               aria-label="Sign out"
             >
