@@ -3,8 +3,7 @@ const CACHE_NAME = "omnifranchise-v1";
 const STATIC_ASSETS = [
   "/",
   "/manifest.json",
-  "/logo.png",
-  "/globals.css"
+  "/logo.png"
 ];
 
 // Install Event

@@ -55,7 +55,9 @@ export default function RootLayout({
         />
         {/* Gradient colour overlay */}
         <div id="bg-overlay" />
-        {children}
+        <div className="relative z-10 flex-1 flex flex-col w-full min-h-screen">
+          {children}
+        </div>
         <CookieConsentBanner />
       </body>
 

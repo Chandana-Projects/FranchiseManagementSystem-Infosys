@@ -818,7 +818,7 @@ function LoginPage({
   }
 
   return (
-    <div className="w-full min-h-[800px] flex items-center justify-center font-sans" style={{ background: "transparent", color: t.text }}>
+    <div className="w-full min-h-screen flex items-center justify-center font-sans" style={{ background: "transparent", color: t.text }}>
       <div className="w-[380px]">
         <div className="flex items-center justify-center gap-3 mb-7">
           <img src="/logo.png" alt="OmniFranchise Logo" className="w-10 h-10 rounded-xl object-cover shadow-lg shadow-amber-500/40 border border-amber-400/40" />
@@ -1978,7 +1978,7 @@ function getPredictedRisks(auditList: any[]) {
   }
 
   return (
-    <div className="w-full min-h-[800px] flex font-sans transition-colors duration-200" style={{ background: t.bg, color: t.text }}>
+    <div className="w-full min-h-screen flex-1 flex font-sans transition-colors duration-200" style={{ background: t.bg, color: t.text }}>
       {/* Desktop Sidebar (lg and above) */}
       <aside className="hidden lg:flex w-64 flex-col shrink-0 border-r transition-colors duration-200" style={{ background: t.panel, borderColor: t.border }}>
         <div className="px-5 py-5 flex items-center gap-2 border-b" style={{ borderColor: t.border }}>
