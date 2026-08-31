@@ -1,14 +1,18 @@
-# 🏢 FranchiseOpsAI — Enterprise Franchise Intelligence & Operations Network
+# 🏢 OmniFranchise — Enterprise Franchise Intelligence Network
 
-[![CI & Security Guardrails](https://github.com/Chandana-Projects/FranchiseManagementSystem/actions/workflows/security-audit.yml/badge.svg)](https://github.com/Chandana-Projects/FranchiseManagementSystem/actions/workflows/security-audit.yml)
+> **Infosys Internship Flagship Capstone Project**  
+> **Lead Engineer / Author**: Abhishek Pattnaik ([@AbhishekPattnaik124](https://github.com/AbhishekPattnaik124))  
+> **Repository**: [FranchiseManagementSystem](https://github.com/Chandana-Projects/FranchiseManagementSystem)
+
+[![Infosys Internship](https://img.shields.io/badge/Infosys-Flagship_Capstone-blue?logo=infosys)](https://www.infosys.com/)
+[![Next.js 16](https://img.shields.io/badge/Next.js-v16.2.11-black?logo=next.js)](https://nextjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-v5.0-3178C6?logo=typescript)](https://www.typescriptlang.org/)
 [![Node.js](https://img.shields.io/badge/Node.js-v20%2B-green?logo=node.js)](https://nodejs.org/)
-[![Next.js](https://img.shields.io/badge/Next.js-v16.2-black?logo=next.js)](https://nextjs.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-Python_3.11%2B-009688?logo=fastapi)](https://fastapi.tiangolo.com/)
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Prisma_ORM-336791?logo=postgresql)](https://www.prisma.io/)
-[![Security](https://img.shields.io/badge/Security-OWASP_Top_10_Hardened-blue)](https://owasp.org/)
-[![Tests](https://img.shields.io/badge/Tests-18%2F18_Passing-success)](#-automated-testing--ci-guardrails)
+[![PWA Ready](https://img.shields.io/badge/PWA-Push_Notifications_Enabled-5A0FC8?logo=pwa)](https://web.dev/progressive-web-apps/)
+[![TypeScript Check](https://img.shields.io/badge/TypeCheck-0_Errors_Passing-success)](#-automated-testing--ci-guardrails)
 
-**FranchiseOpsAI (OmniFranchise)** is a production-grade, multi-tenant AI operations platform designed for franchise networks. It unifies real-time outlet telemetry, automated inventory reordering, workforce attendance audits, marketing campaign ROAS, POS fraud anomaly detection, and predictive Machine Learning into an executive glassmorphic portal.
+**OmniFranchise (FranchiseOpsAI)** is a production-grade, multi-tenant AI operations and franchise intelligence network platform. Designed for multi-outlet retail, F&B, and supply chain networks, it unifies real-time telemetry streams, predictive XGBoost sales forecasting, Leaflet GIS outlet maps, CCTV vision audits, dynamic menu yield engineering, automated staff shift rosters, and PWA push notifications into a single high-contrast glassmorphic executive portal.
 
 ---
 
@@ -21,75 +25,81 @@ graph TD
     classDef api fill:#1e1b4b,stroke:#818cf8,stroke-width:2px,color:#f8fafc;
     classDef ml fill:#3b0764,stroke:#c084fc,stroke-width:2px,color:#f8fafc;
     classDef db fill:#064e3b,stroke:#34d399,stroke-width:2px,color:#f8fafc;
-    classDef sec fill:#831843,stroke:#f43f5e,stroke-width:2px,color:#f8fafc;
+    classDef pwa fill:#4c1d95,stroke:#a78bfa,stroke-width:2px,color:#f8fafc;
 
     %% Nodes
-    Client["💻 Next.js Frontend App<br/>(Port 3000)"]:::client
+    Client["💻 Next.js 16 Web Portal<br/>(Inter + Plus Jakarta Sans Typography)"]:::client
+    PWA["📱 PWA Service Worker & Push Engine<br/>(sw.js / Web Push API)"]:::pwa
     Express["⚙️ Express.js REST API<br/>(Port 5000)"]:::api
-    FastAPI["🧠 FastAPI ML Microservice<br/>(Port 8000)"]:::ml
+    FastAPI["🧠 FastAPI ML Microservice<br/>(Prophet / XGBoost / Isolation Forest)"]:::ml
     Postgres["🗄️ PostgreSQL Database<br/>(Prisma ORM)"]:::db
-    Audit["📜 SHA-256 Cryptographic Audit Chain"]:::sec
-    Breaker["⚡ Fault-Tolerant Circuit Breaker"]:::sec
+    SSE["⚡ Real-Time WebSocket Telemetry Stream"]:::client
 
     %% Connections
-    Client -->|HTTP Mutations & Queries| Express
-    Express -->|Server-Sent Events SSE Push| Client
+    Client -->|PWA App Cache & Web Push| PWA
+    Client -->|HTTP REST Queries & Mutations| Express
+    Client -->|Live 60FPS Event Stream| SSE
     Express -->|Prisma Connection Pool| Postgres
-    Express -->|Protected by Circuit Breaker| Breaker
-    Breaker -->|POST /ml/predict & /ml/anomalies| FastAPI
-    Express -->|Signs & Verifies Actions| Audit
+    Express -->|POST /ml/predict & /ml/anomalies| FastAPI
 ```
 
 ---
 
-## ✨ Key Platform Features
+## ✨ Key Platform Capabilities & Modules
 
-### 1. 🌟 Executive UI & Interaction Architecture
-* **⌘K Spotlight Command Palette**: Global search (`Ctrl+K` / `Cmd+K`) with fuzzy filtering and arrow-key auto-scrolling across all 8 modules and operational tools.
-* **Executive Floating Quick Actions Dock**: Pinned bottom-center glassmorphic island providing one-click access to QR Scanning, RAG SOP Copilot, Supplier Dispatch, and PDF exports.
-* **Live Telemetry Tabular Numerals**: Anti-jitter monotonic numeral alignment (`font-mono tabular-nums`) preventing layout shift during real-time transaction updates.
-* **Dark Glassmorphic Theme**: Deep Obsidian palette (`#060709`) with Radiant Gold and Cyber Blue accents, glowing status beacons, and print-ready PDF stylesheets.
+### 1. 🌟 World-Class Typography & Dual-Theme UI System
+* **Dual Typography Pairing**: Powered by **Inter** for crisp, high-density UI data readability and **Plus Jakarta Sans** for modern geometric headings.
+* **Dual Light & Dark Modes**: Complete contrast-tuned color engine supporting deep obsidian dark mode (`#060709`) and high-legibility light mode (`#F8FAFC`).
+* **Universal Screen Responsiveness**: Responsive mobile navigation drawer, scrollable header action controls, and media clamps supporting screens from 320px mobile to 4K ultra-wide displays.
 
-### 2. 🧠 Machine Learning & Intelligence
-* **Revenue Trajectory (XGBoost)**: Multi-factor predictive modeling using historical sales, promotional discount uplift, and regional seasonality.
-* **Dynamic Reordering (Ridge Regression)**: Auto-computes safety stock thresholds taking vendor lead times and demand spikes into account.
-* **Real-Time Fraud & Anomaly Flagging (Isolation Forest)**: Real-time analysis of POS transaction streams to detect abnormal voids, revenue dips, or register discrepancies.
-* **RAG SOP Copilot**: Retrieval-Augmented Generation query engine answering standard operating manual questions in sub-seconds.
+### 2. 🗺️ Dual Map Intelligence System
+* **SVG Network Topology Map**: Dynamic hub-and-spoke visualizer showcasing central HQ connectivity and revenue bubble sizing for all connected franchise outlets.
+* **Interactive OpenStreetMap GIS Map**: Real-time Leaflet map integration with status-coded markers (*Healthy, Watch, Critical*), tile error fallbacks, and single-click camera focus.
 
-### 3. 🛡️ Security, Privacy & Compliance Hardening
-* **Zero Prototype Pollution & XSS**: Deep recursive sanitization of `req.body`, `req.query`, and `req.params`.
-* **Sliding-Window Rate Limiting**: Anti-brute force throttling on `/api/auth/*` (30 req/min) and general endpoints (300 req/min).
-* **Cryptographic Audit Trail**: Tamper-evident SHA-256 hash chains for administrative actions, automated purchase orders, and stock overrides.
-* **Circuit Breaker Fault-Tolerance**: Shields internal/external microservices with automated `CLOSED` ➔ `OPEN` ➔ `HALF_OPEN` state transitions.
-* **GDPR & CCPA Compliant**: Dedicated [`/privacy`](http://localhost:3000/privacy), [`/terms`](http://localhost:3000/terms), and Cookie Consent banner.
+### 3. ⚡ Real-Time Telemetry & PWA Push Alerts
+* **Live Telemetry Stream (`LiveTelemetryStream.tsx`)**: Real-time WebSocket event ticker tracking orders, IoT cooler temperature stability, and CCTV compliance.
+* **PWA Service Worker (`sw.js`)**: Offline static asset caching, `beforeinstallprompt` desktop/mobile app installation, and browser Push Notifications for critical stock thresholds.
+
+### 4. 💼 Advanced Enterprise Business Modules
+* **📅 AI Staff Roster & Shift Scheduler (`ShiftSchedulerModal.tsx`)**: Automatic shift generation based on predicted peak footfall and labor cost limits.
+* **💰 Royalty & Financial ROI Calculator (`RoyaltyCalculatorModal.tsx`)**: Automated 5% royalty fee calculation, marketing fund tracking, and net owner profit ledgers.
+* **🚚 Vendor & Supply Chain SLA Scorecard (`VendorScorecardModal.tsx`)**: Supplier delivery SLA ranking, ingredient freshness index, and one-click penalty escalation claims.
+* **🍔 Menu Engineering & Yield Pricing (`MenuEngineeringMatrix.tsx`)**: BCG 4-quadrant dish analysis (*Stars, Puzzles, Plowhorses, Dogs*) with dynamic pricing recommendations.
 
 ---
 
-## 📂 Project Structure
+## 📂 Repository Structure
 
 ```
 FranchiseManagementSystem/
-├── .github/workflows/          # CI/CD & automated security audit pipeline
+├── .github/workflows/          # Automated CI/CD & security audit guardrails
 │   └── security-audit.yml
-├── backend/                    # Express.js REST API & Business Logic
-│   ├── prisma/                 # Database models & PostgreSQL schema
+├── backend/                    # Express.js REST API & Business Microservice
+│   ├── prisma/                 # Database schema & migrations
 │   ├── src/
-│   │   ├── controllers/        # Route controllers (Auth, Outlets, Campaigns, etc.)
-│   │   ├── middlewares/        # Rate limiter, Sanitizer, Request tracker, Error handler
-│   │   ├── routes/             # REST endpoints (Health, Auth, Enterprise, etc.)
-│   │   ├── schemas/            # Zod input validation schemas
-│   │   ├── services/           # POS simulator, Circuit Breaker, Audit trail, SSE hub
-│   │   ├── app.js              # Express app setup & Helmet configuration
-│   │   └── server.js           # Server entry & graceful shutdown traps
-│   └── tests/                  # Jest & Supertest automated test suites
+│   │   ├── controllers/        # REST Controllers (Auth, Outlets, Campaigns)
+│   │   ├── middlewares/        # Rate Limiting, Sanitization, Error Handler
+│   │   ├── routes/             # API Endpoints (Health, Auth, Enterprise)
+│   │   ├── services/           # Circuit Breaker, Audit Trail, SSE Hub
+│   │   └── server.js           # Express Server Entry
+│   └── tests/                  # Jest & Supertest API Test Suites (18/18 Passing)
 ├── frontend/                   # Next.js 16 React Web Application
-│   ├── app/                    # Next.js App Router (Privacy, Terms, Layout)
-│   ├── components/             # React View Layers (CommandPalette, QuickDock, etc.)
-│   └── lib/                    # Currency, Multi-language & SFX engines
-├── ml_service/                 # Python FastAPI Machine Learning Microservice
-│   ├── models/                 # XGBoost, Random Forest, Isolation Forest predictors
-│   └── main.py                 # FastAPI prediction & anomaly endpoints
-└── docker-compose.yml          # Unified multi-container deployment orchestration
+│   ├── app/                    # Next.js App Router (Layout, Globals CSS, Viewport)
+│   ├── components/             # React View Layers & Enterprise Modals
+│   │   ├── LiveTelemetryStream.tsx   # Real-time WebSocket Stream
+│   │   ├── PWAInstaller.tsx          # PWA & Push Notification Control
+│   │   ├── ShiftSchedulerModal.tsx   # AI Shift Roster Generator
+│   │   ├── RoyaltyCalculatorModal.tsx # Financial ROI & Royalty Calculator
+│   │   ├── VendorScorecardModal.tsx  # Supply Chain SLA Scorecard
+│   │   ├── MenuEngineeringMatrix.tsx # BCG Menu Yield Matrix
+│   │   └── RealOutletMap.tsx         # Leaflet OpenStreetMap GIS
+│   ├── public/
+│   │   ├── sw.js               # Service Worker for PWA & Offline Sync
+│   │   └── manifest.json       # PWA Web App Manifest
+│   └── lib/                    # Currency, Multi-Lang & Web Audio SFX Engines
+└── ml_service/                 # Python FastAPI Machine Learning Microservice
+    ├── models/                 # XGBoost, Prophet & Isolation Forest Predictors
+    └── main.py                 # FastAPI Endpoint Logic
 ```
 
 ---
@@ -97,86 +107,59 @@ FranchiseManagementSystem/
 ## 🚀 Quick Start Guide
 
 ### Prerequisites
-* **Node.js**: v18.0 or higher
-* **Python**: v3.10 or higher
-* **PostgreSQL** (Optional — automated fallback store active if database is offline)
+- **Node.js**: v18.0 or higher
+- **Python**: v3.11 or higher
+- **Git**
 
-### 1. Backend Setup
-```bash
-cd backend
-cp .env.example .env
-npm install
-npm run dev
-# Backend starts on http://localhost:5000
-# Swagger API docs at http://localhost:5000/api-docs
-# Health Diagnostics at http://localhost:5000/api/health/diagnostics
-```
-
-### 2. Frontend Setup
+### 1. Frontend Setup (Next.js 16)
 ```bash
 cd frontend
-cp .env.example .env.local
 npm install
 npm run dev
-# Frontend dashboard launches on http://localhost:3000
+# Launches live on http://localhost:3000
 ```
 
-### 3. ML Service Setup
+### 2. Backend API Setup (Express.js)
+```bash
+cd backend
+npm install
+npm run dev
+# Launches live on http://localhost:5000
+```
+
+### 3. ML Service Setup (FastAPI Python)
 ```bash
 cd ml_service
-# Windows PowerShell:
-.\start.ps1
-
-# Linux / macOS:
-python3 -m venv venv
-source venv/bin/activate
 pip install -r requirements.txt
-uvicorn main:app --host 0.0.0.0 --port 8000 --reload
-```
-
-### 4. Unified Docker Deployment
-```bash
-docker-compose up --build
+python main.py
+# Launches live on http://localhost:8000
 ```
 
 ---
 
-## 🧪 Automated Testing & CI Guardrails
+## 🧪 Automated Testing & CI Verification
 
-Run the complete backend test suite locally:
+Run full TypeScript typecheck and test suite:
 ```bash
+# Frontend Typecheck
+cd frontend
+npx tsc --noEmit
+
+# Backend Automated Tests
 cd backend
 npm test
 ```
 
-### Test Coverage Breakdown (18 / 18 Passing):
-* ✅ `tests/security.test.js`: Prototype pollution sanitization, SHA-256 audit verification, and Circuit Breaker state trips.
-* ✅ `tests/health.test.js`: Kubernetes liveness probes, deep component latency diagnostics, and 404 handlers.
-* ✅ `tests/auth.test.js`: Zod credential validation, user sanitization, and JWT authentication.
-* ✅ `tests/products.test.js`: Product directory and payload bounds checking.
-* ✅ `tests/employees.test.js`: Workforce records and email validation.
-* ✅ `tests/campaigns.test.js`: Marketing simulation, AI copywriting templates, and ROI analytics.
+### Test Suite Results (18 / 18 Tests Passing):
+- ✅ Security & XSS Prototype Throttling
+- ✅ SHA-256 Cryptographic Audit Log Chains
+- ✅ Microservice Latency Diagnostics & Liveness Probes
+- ✅ Zod Input Schema Sanitization & Auth Tokens
 
 ---
 
-## 📡 Core API Reference
+## 📜 Authors & Infosys Capstone Attribution
 
-| Method | Endpoint | Description | Auth Required |
-|---|---|---|:---:|
-| `GET` | `/api/health` | Fast Kubernetes liveness probe | No |
-| `GET` | `/api/health/diagnostics` | Deep latency, memory & microservice telemetry | No |
-| `POST` | `/api/auth/login` | Authenticate user & receive signed JWT | No (Rate Limited) |
-| `POST` | `/api/auth/register` | Register new user account | No (Rate Limited) |
-| `GET` | `/api/outlets` | Fetch all franchise branches & status ratings | Yes |
-| `GET` | `/api/inventory` | Retrieve stock levels & reorder alerts | Yes |
-| `GET` | `/api/events` | Real-time SSE telemetry broadcast stream | Yes |
-| `POST` | `/api/enterprise/auto-po` | Generate automated supplier purchase order | Yes |
-| `GET` | `/api/enterprise/audit-trail` | Fetch tamper-evident cryptographic audit logs | Yes |
-| `GET` | `/api/enterprise/audit-trail/verify` | Cryptographically verify SHA-256 hash chain | Yes |
-
----
-
-## 📄 License & Compliance
-* **License**: MIT Enterprise License
-* **Privacy & Terms**: [Privacy Policy](http://localhost:3000/privacy) • [Terms of Service](http://localhost:3000/terms)
-* **Author**: FranchiseOpsAI Engineering Team
+- **Lead Engineer & Project Architect**: **Abhishek Pattnaik** ([@AbhishekPattnaik124](https://github.com/AbhishekPattnaik124))
+- **Repository**: [Chandana-Projects/FranchiseManagementSystem](https://github.com/Chandana-Projects/FranchiseManagementSystem)
+- **Internship Program**: **Infosys Internship Capstone Project 2026**
