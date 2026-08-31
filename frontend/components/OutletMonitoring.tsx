@@ -45,6 +45,8 @@ import QRStockScannerModal from "./QRStockScannerModal";
 import CommandPaletteModal from "./CommandPaletteModal";
 import ExecutiveQuickDock from "./ExecutiveQuickDock";
 import AgentDashboardsView from "./AgentDashboardsView";
+import PWAInstaller from "./PWAInstaller";
+import LiveTelemetryStream from "./LiveTelemetryStream";
 import { BookOpen, Compass, QrCode, Volume2, VolumeX, Bot, Sliders, Menu, X } from "lucide-react";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
@@ -2231,6 +2233,9 @@ function getPredictedRisks(auditList: any[]) {
               <span className="hidden xl:inline">{audioMuted ? "SFX Muted" : "SFX Active"}</span>
             </button>
 
+            {/* PWA App Installation & Push Notification Control */}
+            <PWAInstaller t={t} />
+
             <button
               onClick={() => setShowAskAI(true)}
               className="flex items-center gap-2 text-sm px-3 py-2 rounded-lg border transition-colors cursor-pointer"
@@ -2459,6 +2464,9 @@ function getPredictedRisks(auditList: any[]) {
                   <span>More</span>
                 </div>
               </div>
+
+              {/* Real-Time WebSocket Telemetry Event Stream */}
+              <LiveTelemetryStream t={t} />
 
               <div className="rounded-xl border p-5 transition-colors duration-200 glass-card" style={{ background: t.card, borderColor: t.border }}>
                 <div className="flex items-center justify-between mb-3">
