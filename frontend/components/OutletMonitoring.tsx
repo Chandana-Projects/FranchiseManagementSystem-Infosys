@@ -15,11 +15,12 @@ import {
   Image, FileSearch, MessageSquare,
   ClipboardList, Wrench, FileCheck2, Repeat,
   Activity, AlertOctagon, Grid3x3, Timer, PenTool,
-  Camera, CheckCircle2, UploadCloud, FileText, Check, ChevronRight,
+  Camera, CheckCircle2, UploadCloud, FileText, Check, ChevronRight, ChevronDown,
   Gauge, TrendingUpDown, ListChecks, Layers,
   Rocket,
   ArrowRight, Database,
-  Filter, BarChart2
+  Filter, BarChart2,
+  BookOpen, Compass, QrCode, Volume2, VolumeX, Bot, Sliders, Menu, X, Calculator, Utensils
 } from "lucide-react";
 
 import AuditComplianceSummary from "./AuditComplianceSummary";
@@ -52,7 +53,6 @@ import RoyaltyCalculatorModal from "./RoyaltyCalculatorModal";
 import VendorScorecardModal from "./VendorScorecardModal";
 import MenuEngineeringMatrix from "./MenuEngineeringMatrix";
 import DigitalClock from "./DigitalClock";
-import { BookOpen, Compass, QrCode, Volume2, VolumeX, Bot, Sliders, Menu, X, Calculator, Utensils, ChevronDown } from "lucide-react";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
 
