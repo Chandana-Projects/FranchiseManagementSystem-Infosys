@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, Plus_Jakarta_Sans, Geist_Mono } from "next/font/google";
 import CookieConsentBanner from "../components/CookieConsentBanner";
+import ErrorBoundary from "../components/ErrorBoundary";
 import "./globals.css";
 
 const inter = Inter({
@@ -94,7 +95,9 @@ export default function RootLayout({
         {/* Gradient colour overlay */}
         <div id="bg-overlay" />
         <div className="relative z-10 flex-1 flex flex-col w-full min-h-screen">
-          {children}
+          <ErrorBoundary>
+            {children}
+          </ErrorBoundary>
         </div>
         <CookieConsentBanner />
       </body>
