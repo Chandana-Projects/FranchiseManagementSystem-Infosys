@@ -27,9 +27,47 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "OmniFranchise — Enterprise Franchise Intelligence Network",
-  description: "Enterprise multi-outlet operations, dynamic yield pricing, CCTV vision audits, and automated stock telemetry platform.",
+  title: {
+    default: "OmniFranchise — Enterprise Franchise Intelligence Network",
+    template: "%s | OmniFranchise AI",
+  },
+  description: "Enterprise multi-outlet operations, predictive XGBoost sales forecasting, CCTV vision audits, and automated stock telemetry platform.",
+  keywords: ["Franchise Management", "Multi-Outlet Operations", "FastAPI ML", "Next.js 16", "Enterprise Retail", "Supply Chain Intelligence", "HACCP Food Safety"],
+  authors: [{ name: "Abhishek Pattnaik", url: "https://github.com/AbhishekPattnaik124" }],
+  creator: "Abhishek Pattnaik",
+  publisher: "OmniFranchise Systems",
   manifest: "/manifest.json",
+  icons: {
+    icon: "/logo.png",
+    apple: "/logo.png",
+  },
+  openGraph: {
+    title: "OmniFranchise — Enterprise Franchise Intelligence Network",
+    description: "Multi-tenant AI operations and franchise intelligence network platform built with Next.js 16, Express, and FastAPI.",
+    url: "https://github.com/Chandana-Projects/FranchiseManagementSystem",
+    siteName: "OmniFranchise AI",
+    images: [
+      {
+        url: "/logo.png",
+        width: 512,
+        height: 512,
+        alt: "OmniFranchise Enterprise Intelligence Platform",
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "OmniFranchise — Enterprise Franchise Intelligence Network",
+    description: "Production-grade AI operations and franchise intelligence network for multi-outlet retail & F&B.",
+    images: ["/logo.png"],
+    creator: "@AbhishekPattnaik",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function RootLayout({
