@@ -51,6 +51,8 @@ import ShiftSchedulerModal from "./ShiftSchedulerModal";
 import RoyaltyCalculatorModal from "./RoyaltyCalculatorModal";
 import VendorScorecardModal from "./VendorScorecardModal";
 import MenuEngineeringMatrix from "./MenuEngineeringMatrix";
+import SSENotificationControl from "./SSENotificationControl";
+import AdvancedAnalyticsStudio from "./AdvancedAnalyticsStudio";
 import { BookOpen, Compass, QrCode, Volume2, VolumeX, Bot, Sliders, Menu, X, Calculator, Utensils, ChevronDown } from "lucide-react";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
@@ -395,6 +397,7 @@ const FALLBACK_INVENTORY = [
 
 const modules = [
   { id: "dashboard", label: "Dashboard", icon: LayoutGrid },
+  { id: "analytics", label: "Visual Analytics & Graphs", icon: BarChart3 },
   { id: "agentDashboards", label: "Agent Dashboards", icon: Grid3x3 },
   { id: "outlet", label: "Outlet Performance Agent", icon: Store },
   { id: "inventory", label: "Inventory Agent", icon: Boxes },
@@ -1095,6 +1098,7 @@ export default function FranchiseOSDashboard({ initialModule = "dashboard" }: Fr
     if (typeof window !== "undefined") {
       const routeMap: Record<string, string> = {
         dashboard: "/",
+        analytics: "/analytics",
         agentDashboards: "/agent-dashboards",
         outlet: "/outlet",
         inventory: "/inventory",
@@ -1118,6 +1122,7 @@ export default function FranchiseOSDashboard({ initialModule = "dashboard" }: Fr
     if (typeof window === "undefined") return;
     const pathMap: Record<string, string> = {
       "/": "dashboard",
+      "/analytics": "analytics",
       "/agent-dashboards": "agentDashboards",
       "/outlet": "outlet",
       "/inventory": "inventory",
@@ -2408,6 +2413,11 @@ function getPredictedRisks(auditList: any[]) {
               <PWAInstaller t={t} />
             </div>
 
+            {/* SSE Live Alert On/Off and Cooldown Control */}
+            <div className="shrink-0 whitespace-nowrap">
+              <SSENotificationControl compact t={t} accent={accent} />
+            </div>
+
             <button
               onClick={() => setShowAskAI(true)}
               className="flex items-center gap-2 text-xs px-2.5 py-1.5 rounded-lg border transition-colors cursor-pointer shrink-0 whitespace-nowrap"
@@ -2465,6 +2475,11 @@ function getPredictedRisks(auditList: any[]) {
 
               <LeaderboardCard accentColor={accent} theme={t} />
               <DigitalTwinSimulator accentColor={accent} theme={t} />
+
+              {/* Comprehensive Multi-Graph Analytics Studio */}
+              <div className="pt-2">
+                <AdvancedAnalyticsStudio t={t} accent={accent} isDark={isDark} />
+              </div>
 
               <div className="flex items-center gap-2 flex-wrap no-print">
                 <span className="text-xs mr-1 font-semibold" style={{ color: t.textFaint }}>Export Dashboard Data:</span>
@@ -2712,6 +2727,24 @@ function getPredictedRisks(auditList: any[]) {
                 </div>
               </div>
             </div>
+          ) : active === "analytics" ? (
+            <AdvancedAnalyticsStudio t={t} accent={accent} isDark={isDark} />
+          ) : active === "agentDashboards" ? (
+            <AgentDashboardsView
+              t={t}
+              accent={accent}
+              isDark={isDark}
+              inventorySummary={inventorySummary}
+              inventoryItems={inventoryItems}
+              outletPerformance={dynamicOutletPerformance}
+              audits={audits}
+              attendanceLog={attendanceLog}
+              marketingCampaigns={marketingCampaigns}
+              revenueTrendByOutlet={revenueTrendByOutlet}
+              healthComponents={healthComponents}
+              predictedRisks={predictedRisks}
+              onNavigateTab={(tab) => setActive(tab)}
+            />
           ) : active === "outlet" ? (
             <div className="space-y-6">
               {underperformingOutlets.length > 0 && (
@@ -6345,6 +6378,9 @@ function getPredictedRisks(auditList: any[]) {
                 </div>
               </div>
 
+              {/* Visual Analytics Graphs in Reports View */}
+              <AdvancedAnalyticsStudio t={t} accent={accent} isDark={isDark} />
+
               <div className="flex flex-wrap items-center justify-between gap-4 border-b pb-3" style={{ borderColor: t.border }}>
                 <div className="flex gap-2">
                   {[
@@ -6564,6 +6600,9 @@ function getPredictedRisks(auditList: any[]) {
                   </button>
                 </div>
               </div>
+
+              {/* SSE Live Notifications Settings & Frequency Control */}
+              <SSENotificationControl t={t} accent={accent} />
 
               <div className="rounded-xl border p-4" style={{ background: t.card, borderColor: t.border }}>
                 <div className="flex items-center justify-between mb-3">

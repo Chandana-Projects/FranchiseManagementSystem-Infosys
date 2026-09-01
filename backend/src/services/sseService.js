@@ -51,13 +51,15 @@ const TELEMETRY_EVENTS = [
 ];
 
 let eventIndex = 0;
+// Default telemetry broadcast interval set to 15 minutes (15 * 60 * 1000 ms) to prevent high-frequency alerts
+const TELEMETRY_INTERVAL_MS = parseInt(process.env.SSE_TELEMETRY_INTERVAL_MS || String(15 * 60 * 1000), 10);
 const timer = setInterval(() => {
   if (clients.length > 0) {
     const event = TELEMETRY_EVENTS[eventIndex % TELEMETRY_EVENTS.length];
     broadcast(event.type, event);
     eventIndex++;
   }
-}, 7000);
+}, TELEMETRY_INTERVAL_MS);
 if (timer && timer.unref) {
   timer.unref();
 }
