@@ -61,7 +61,12 @@ import AuditAgentCharts from "./agent-charts/AuditAgentCharts";
 import IntelligenceAgentCharts from "./agent-charts/IntelligenceAgentCharts";
 import ReportsCharts from "./agent-charts/ReportsCharts";
 import DigitalWorldClock from "./DigitalWorldClock";
-import { BookOpen, Compass, QrCode, Volume2, VolumeX, Bot, Sliders, Menu, X, Calculator, Utensils, ChevronDown } from "lucide-react";
+import OutletComparisonModal from "./OutletComparisonModal";
+import WarRoomPresentationMode from "./WarRoomPresentationMode";
+import KeyboardShortcutsModal from "./KeyboardShortcutsModal";
+import ExecutiveExportStudioModal from "./ExecutiveExportStudioModal";
+import MarginSensitivityMatrixModal from "./MarginSensitivityMatrixModal";
+import { BookOpen, Compass, QrCode, Volume2, VolumeX, Bot, Sliders, Menu, X, Calculator, Utensils, ChevronDown, Swords, Cpu, Keyboard, FileSpreadsheet } from "lucide-react";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
 
@@ -1369,6 +1374,11 @@ export default function FranchiseOSDashboard({ initialModule = "dashboard" }: Fr
   const [isRoyaltyCalcOpen, setIsRoyaltyCalcOpen] = useState(false);
   const [isVendorScorecardOpen, setIsVendorScorecardOpen] = useState(false);
   const [isMenuMatrixOpen, setIsMenuMatrixOpen] = useState(false);
+  const [isOutletComparisonOpen, setIsOutletComparisonOpen] = useState(false);
+  const [isWarRoomOpen, setIsWarRoomOpen] = useState(false);
+  const [isShortcutsOpen, setIsShortcutsOpen] = useState(false);
+  const [isExportStudioOpen, setIsExportStudioOpen] = useState(false);
+  const [isSensitivityMatrixOpen, setIsSensitivityMatrixOpen] = useState(false);
   const [accent, setAccent] = useState("#F59E0B");
   const [glowEffect, setGlowEffect] = useState(true);
   const [blurDepth, setBlurDepth] = useState(8);
@@ -1480,6 +1490,42 @@ const avgClosureDays = 2.1;
       })
       .catch(() => {});
   }, [active]);
+
+  // Global Keyboard Shortcuts Listener
+  useEffect(() => {
+    const handleGlobalKeyDown = (e: KeyboardEvent) => {
+      const activeTag = (document.activeElement?.tagName || "").toLowerCase();
+      if (activeTag === "input" || activeTag === "textarea" || activeTag === "select") return;
+
+      if (e.key === "?" || (e.shiftKey && e.key === "/")) {
+        e.preventDefault();
+        setIsShortcutsOpen((prev) => !prev);
+      } else if (e.key === "w" || e.key === "W") {
+        if (!e.ctrlKey && !e.metaKey) {
+          setIsWarRoomOpen((prev) => !prev);
+        }
+      } else if (e.key === "c" || e.key === "C") {
+        if (!e.ctrlKey && !e.metaKey) {
+          setIsOutletComparisonOpen((prev) => !prev);
+        }
+      } else if (e.key === "1") {
+        setActive("dashboard");
+      } else if (e.key === "2") {
+        setActive("outlet");
+      } else if (e.key === "3") {
+        setActive("inventory");
+      } else if (e.key === "4") {
+        setActive("staff");
+      } else if (e.key === "5") {
+        setActive("marketing");
+      } else if (e.key === "6") {
+        setActive("audit");
+      }
+    };
+
+    window.addEventListener("keydown", handleGlobalKeyDown);
+    return () => window.removeEventListener("keydown", handleGlobalKeyDown);
+  }, []);
 
   const t = isDark ? themes.dark : themes.light;
   const statusColor = isDark ? statusColorDark : statusColorLight;
@@ -2226,7 +2272,7 @@ function getPredictedRisks(auditList: any[]) {
               >
                 <Sparkles size={13} color={accent} className="shrink-0" />
                 <span className="font-bold hidden md:inline">Tools</span>
-                <span className="text-[9px] px-1 py-0.2 rounded-full bg-amber-500/20 text-amber-400 font-mono font-bold">8</span>
+                <span className="text-[9px] px-1 py-0.2 rounded-full bg-amber-500/20 text-amber-400 font-mono font-bold">13</span>
                 <ChevronDown size={11} className={`transition-transform duration-200 shrink-0 ${isQuickToolsOpen ? "rotate-180" : ""}`} />
               </button>
 
@@ -2371,6 +2417,86 @@ function getPredictedRisks(auditList: any[]) {
                         <div>
                           <div className="text-xs font-bold text-cyan-300">Scan Stock QR</div>
                           <div className="text-[10px] text-cyan-400/80 leading-tight">Mobile Camera Audit</div>
+                        </div>
+                      </button>
+
+                      {/* Multi-Store Comparison Arena */}
+                      <button
+                        onClick={() => {
+                          playTechChime("nav");
+                          setIsOutletComparisonOpen(true);
+                          setIsQuickToolsOpen(false);
+                        }}
+                        className="flex items-start gap-2.5 p-2.5 rounded-xl border border-blue-500/25 bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 hover:border-blue-500/50 transition-all cursor-pointer text-left group"
+                      >
+                        <Swords size={16} className="mt-0.5 shrink-0 text-blue-400 group-hover:scale-110 transition-transform" />
+                        <div>
+                          <div className="text-xs font-bold text-blue-300">Outlet Arena</div>
+                          <div className="text-[10px] text-blue-400/80 leading-tight">Compare 3 Stores Side-by-Side</div>
+                        </div>
+                      </button>
+
+                      {/* Executive War Room Mode */}
+                      <button
+                        onClick={() => {
+                          playTechChime("nav");
+                          setIsWarRoomOpen(true);
+                          setIsQuickToolsOpen(false);
+                        }}
+                        className="flex items-start gap-2.5 p-2.5 rounded-xl border border-teal-500/25 bg-teal-500/10 hover:bg-teal-500/20 text-teal-300 hover:border-teal-500/50 transition-all cursor-pointer text-left group"
+                      >
+                        <Cpu size={16} className="mt-0.5 shrink-0 text-teal-300 group-hover:scale-110 transition-transform" />
+                        <div>
+                          <div className="text-xs font-bold text-teal-200">War Room Mode</div>
+                          <div className="text-[10px] text-teal-300/80 leading-tight">Fullscreen Kiosk Briefing</div>
+                        </div>
+                      </button>
+
+                      {/* Profit Margin Sensitivity Matrix */}
+                      <button
+                        onClick={() => {
+                          playTechChime("nav");
+                          setIsSensitivityMatrixOpen(true);
+                          setIsQuickToolsOpen(false);
+                        }}
+                        className="flex items-start gap-2.5 p-2.5 rounded-xl border border-amber-500/25 bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 hover:border-amber-500/50 transition-all cursor-pointer text-left group"
+                      >
+                        <Percent size={16} className="mt-0.5 shrink-0 text-amber-400 group-hover:scale-110 transition-transform" />
+                        <div>
+                          <div className="text-xs font-bold text-amber-300">Sensitivity Matrix</div>
+                          <div className="text-[10px] text-amber-400/80 leading-tight">Profit Waterfall Simulator</div>
+                        </div>
+                      </button>
+
+                      {/* Executive Export Studio */}
+                      <button
+                        onClick={() => {
+                          playTechChime("nav");
+                          setIsExportStudioOpen(true);
+                          setIsQuickToolsOpen(false);
+                        }}
+                        className="flex items-start gap-2.5 p-2.5 rounded-xl border border-indigo-500/25 bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-300 hover:border-indigo-500/50 transition-all cursor-pointer text-left group"
+                      >
+                        <FileSpreadsheet size={16} className="mt-0.5 shrink-0 text-indigo-300 group-hover:scale-110 transition-transform" />
+                        <div>
+                          <div className="text-xs font-bold text-indigo-200">Export Studio</div>
+                          <div className="text-[10px] text-indigo-300/80 leading-tight">Branded PDF Briefing Report</div>
+                        </div>
+                      </button>
+
+                      {/* Keyboard Shortcuts HUD */}
+                      <button
+                        onClick={() => {
+                          playTechChime("nav");
+                          setIsShortcutsOpen(true);
+                          setIsQuickToolsOpen(false);
+                        }}
+                        className="flex items-start gap-2.5 p-2.5 rounded-xl border border-slate-700 bg-slate-800/80 hover:bg-slate-800 text-slate-300 hover:border-slate-500 transition-all cursor-pointer text-left group"
+                      >
+                        <Keyboard size={16} className="mt-0.5 shrink-0 text-slate-400 group-hover:scale-110 transition-transform" />
+                        <div>
+                          <div className="text-xs font-bold text-slate-200">Shortcuts HUD</div>
+                          <div className="text-[10px] text-slate-400 leading-tight">Press '?' for Hotkeys</div>
                         </div>
                       </button>
 
@@ -7277,6 +7403,11 @@ function getPredictedRisks(auditList: any[]) {
       <RoyaltyCalculatorModal isOpen={isRoyaltyCalcOpen} onClose={() => setIsRoyaltyCalcOpen(false)} t={t} accent={accent} />
       <VendorScorecardModal isOpen={isVendorScorecardOpen} onClose={() => setIsVendorScorecardOpen(false)} t={t} accent={accent} />
       <MenuEngineeringMatrix isOpen={isMenuMatrixOpen} onClose={() => setIsMenuMatrixOpen(false)} t={t} accent={accent} />
+      <OutletComparisonModal isOpen={isOutletComparisonOpen} onClose={() => setIsOutletComparisonOpen(false)} t={t} accent={accent} isDark={isDark} />
+      <WarRoomPresentationMode isOpen={isWarRoomOpen} onClose={() => setIsWarRoomOpen(false)} accent={accent} />
+      <KeyboardShortcutsModal isOpen={isShortcutsOpen} onClose={() => setIsShortcutsOpen(false)} isDark={isDark} />
+      <ExecutiveExportStudioModal isOpen={isExportStudioOpen} onClose={() => setIsExportStudioOpen(false)} isDark={isDark} />
+      <MarginSensitivityMatrixModal isOpen={isSensitivityMatrixOpen} onClose={() => setIsSensitivityMatrixOpen(false)} t={t} accent={accent} isDark={isDark} />
       <ExecutiveQuickDock
         onOpenCommandPalette={() => setIsCommandPaletteOpen(true)}
         onOpenQRScanner={() => setIsQRScannerOpen(true)}
