@@ -21,11 +21,11 @@ We are proud to present **OmniFranchise**, a collaborative enterprise solution e
 
 | Team Member | GitHub Profile | Role & Key Technical Focus | Commits Authored | Contribution % |
 | :--- | :--- | :--- | :---: | :---: |
-| 🧑‍💻 **Abhishek Pattnaik** | [@AbhishekPattnaik124](https://github.com/AbhishekPattnaik124) | **Full-Stack & ML Architect** — UI/UX Glassmorphic Design System, FastAPI ML Microservice, War Room Kiosk Mode, Outlet Comparison Arena, Margin Sensitivity Matrix, PDF Export Studio, Keyboard HUD & Domain Charts | **93 Commits** | **64.1%** |
-| 👩‍💻 **Chandana S** | [@Chandana-Projects](https://github.com/Chandana-Projects) | **Full-Stack Lead & Project Admin** — Repository Owner, Express REST APIs, PostgreSQL Prisma Schemas, Authentication & Core Backend Integration | **27 Commits** | **18.6%** |
-| 👩‍💻 **Mamta Choudhary** | [@mamta072703](https://github.com/mamta072703) | **Software Engineer & QA Lead** — Inventory Telemetry Analytics, Operational Compliance Audits, Quality Verification & Feature Testing | **25 Commits** | **17.3%** |
+| 🧑‍💻 **Abhishek Pattnaik** | [@AbhishekPattnaik124](https://github.com/AbhishekPattnaik124) | **Full-Stack & ML Architect** — UI/UX Glassmorphic Design System, FastAPI ML Microservice, War Room Kiosk Mode, Outlet Comparison Arena, Margin Sensitivity Matrix, PDF Export Studio, 2-Min Pitch Guide & Domain Charts | **95 Commits** | **64.6%** |
+| 👩‍💻 **Chandana S** | [@Chandana-Projects](https://github.com/Chandana-Projects) | **Full-Stack Lead & Project Admin** — Repository Owner, Express REST APIs, PostgreSQL Prisma Schemas, Authentication & Core Backend Integration | **27 Commits** | **18.4%** |
+| 👩‍💻 **Mamta Choudhary** | [@mamta072703](https://github.com/mamta072703) | **Software Engineer & QA Lead** — Inventory Telemetry Analytics, Operational Compliance Audits, Quality Verification & Feature Testing | **25 Commits** | **17.0%** |
 
-> 📊 **Total Repository History**: **145 Commits** across full-stack frontend, backend APIs, machine learning pipelines, and database schemas.
+> 📊 **Total Repository History**: **147 Commits** across full-stack frontend, backend APIs, machine learning pipelines, and database schemas.
 
 ---
 
@@ -120,17 +120,21 @@ graph TD
 * **Fullscreen Ambient Kiosk**: High-contrast projection view for boardroom presentations with auto-cycling carousel slides (Financial Run Rate, Kitchen Flow, and AI Sentinel Directives).
 * **Live Telemetry & Controls**: Pause/resume cycling, manual slide switching, and live hub status monitor.
 
-### 3. ⌨️ Keyboard Shortcuts Cheat Sheet HUD (`KeyboardShortcutsModal.tsx`)
+### 3. 🎬 2-Minute Evaluator & Live Pitch Guide (`LiveDemoGuideModal.tsx`)
+* **Structured Demo Acts**: Instant presenter script covering Executive KPIs, ML Forecasting, Multi-Store Arena, and CCTV Compliance.
+* **1-Click Reset**: Restores pristine baseline numbers for flawless demo scenarios.
+
+### 4. ⌨️ Keyboard Shortcuts Cheat Sheet HUD (`KeyboardShortcutsModal.tsx`)
 * **Power User Hotkeys**: Press `?` anywhere to launch the gaming/IDE cheat sheet (`⌘K` Command Palette, `1-6` Agent Switching, `W` War Room, `C` Comparison Arena, `D` Dark/Light).
 
-### 4. 🖨️ Executive Export & Branded Report Studio (`ExecutiveExportStudioModal.tsx`)
+### 5. 🖨️ Executive Export & Branded Report Studio (`ExecutiveExportStudioModal.tsx`)
 * **Enterprise PDF & Print Preview**: High-resolution branded letterhead reports with cryptographic SHA-256 verification seals, customizable financial strips, and tabular ledgers.
 
-### 5. 📊 Profit Waterfall & Margin Sensitivity Matrix (`MarginSensitivityMatrixModal.tsx`)
+### 6. 📊 Profit Waterfall & Margin Sensitivity Matrix (`MarginSensitivityMatrixModal.tsx`)
 * **Interactive Sandbox Sliders**: Drag sliders for Promotional Discounts, Ingredient Inflation, Staff Wage Hikes, and Footfall Multipliers.
 * **Dynamic Profit Waterfall**: Real-time Recharts bar visualization illustrating gross revenue erosion down to net operating EBITDA.
 
-### 6. 🕒 Live Real-World Digital Clock & World Timezones (`DigitalWorldClock.tsx`)
+### 7. 🕒 Live Real-World Digital Clock & World Timezones (`DigitalWorldClock.tsx`)
 * **1-Second Live Sync**: Second-by-second ticking digital clock with live pulsing green beacon, full calendar dates (**Day, Date, Month, Year**), and multi-timezone hub support.
 
 ---
@@ -154,6 +158,8 @@ FranchiseManagementSystem/
 │   ├── app/                    # Next.js App Router (Layout, Globals CSS, Viewport)
 │   ├── components/             # React View Layers & Enterprise Modals
 │   │   ├── agent-charts/       # Specialized Domain Chart Components
+│   │   ├── LiveDemoGuideModal.tsx # 2-Minute Presenter Pitch Guide
+│   │   ├── ShimmerSkeleton.tsx # Smooth Transition Skeleton Loaders
 │   │   ├── OutletComparisonModal.tsx # Multi-Store Comparison Arena
 │   │   ├── WarRoomPresentationMode.tsx # Boardroom Kiosk Mode
 │   │   ├── KeyboardShortcutsModal.tsx # Keyboard Shortcuts HUD

@@ -66,7 +66,8 @@ import WarRoomPresentationMode from "./WarRoomPresentationMode";
 import KeyboardShortcutsModal from "./KeyboardShortcutsModal";
 import ExecutiveExportStudioModal from "./ExecutiveExportStudioModal";
 import MarginSensitivityMatrixModal from "./MarginSensitivityMatrixModal";
-import { BookOpen, Compass, QrCode, Volume2, VolumeX, Bot, Sliders, Menu, X, Calculator, Utensils, ChevronDown, Swords, Cpu, Keyboard, FileSpreadsheet } from "lucide-react";
+import LiveDemoGuideModal from "./LiveDemoGuideModal";
+import { BookOpen, Compass, QrCode, Volume2, VolumeX, Bot, Sliders, Menu, X, Calculator, Utensils, ChevronDown, Swords, Cpu, Keyboard, FileSpreadsheet, PlayCircle } from "lucide-react";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
 
@@ -1379,6 +1380,7 @@ export default function FranchiseOSDashboard({ initialModule = "dashboard" }: Fr
   const [isShortcutsOpen, setIsShortcutsOpen] = useState(false);
   const [isExportStudioOpen, setIsExportStudioOpen] = useState(false);
   const [isSensitivityMatrixOpen, setIsSensitivityMatrixOpen] = useState(false);
+  const [isDemoGuideOpen, setIsDemoGuideOpen] = useState(false);
   const [accent, setAccent] = useState("#F59E0B");
   const [glowEffect, setGlowEffect] = useState(true);
   const [blurDepth, setBlurDepth] = useState(8);
@@ -2272,7 +2274,7 @@ function getPredictedRisks(auditList: any[]) {
               >
                 <Sparkles size={13} color={accent} className="shrink-0" />
                 <span className="font-bold hidden md:inline">Tools</span>
-                <span className="text-[9px] px-1 py-0.2 rounded-full bg-amber-500/20 text-amber-400 font-mono font-bold">13</span>
+                <span className="text-[9px] px-1 py-0.2 rounded-full bg-amber-500/20 text-amber-400 font-mono font-bold">14</span>
                 <ChevronDown size={11} className={`transition-transform duration-200 shrink-0 ${isQuickToolsOpen ? "rotate-180" : ""}`} />
               </button>
 
@@ -2497,6 +2499,22 @@ function getPredictedRisks(auditList: any[]) {
                         <div>
                           <div className="text-xs font-bold text-slate-200">Shortcuts HUD</div>
                           <div className="text-[10px] text-slate-400 leading-tight">Press '?' for Hotkeys</div>
+                        </div>
+                      </button>
+
+                      {/* Live Demo Pitch Guide */}
+                      <button
+                        onClick={() => {
+                          playTechChime("nav");
+                          setIsDemoGuideOpen(true);
+                          setIsQuickToolsOpen(false);
+                        }}
+                        className="flex items-start gap-2.5 p-2.5 rounded-xl border border-emerald-500/25 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 hover:border-emerald-500/50 transition-all cursor-pointer text-left group"
+                      >
+                        <PlayCircle size={16} className="mt-0.5 shrink-0 text-emerald-400 group-hover:scale-110 transition-transform" />
+                        <div>
+                          <div className="text-xs font-bold text-emerald-200">2-Min Pitch Guide</div>
+                          <div className="text-[10px] text-emerald-400/80 leading-tight">Evaluator Demo Script</div>
                         </div>
                       </button>
 
@@ -7408,6 +7426,7 @@ function getPredictedRisks(auditList: any[]) {
       <KeyboardShortcutsModal isOpen={isShortcutsOpen} onClose={() => setIsShortcutsOpen(false)} isDark={isDark} />
       <ExecutiveExportStudioModal isOpen={isExportStudioOpen} onClose={() => setIsExportStudioOpen(false)} isDark={isDark} />
       <MarginSensitivityMatrixModal isOpen={isSensitivityMatrixOpen} onClose={() => setIsSensitivityMatrixOpen(false)} t={t} accent={accent} isDark={isDark} />
+      <LiveDemoGuideModal isOpen={isDemoGuideOpen} onClose={() => setIsDemoGuideOpen(false)} onNavigate={(k) => setActive(k)} isDark={isDark} />
       <ExecutiveQuickDock
         onOpenCommandPalette={() => setIsCommandPaletteOpen(true)}
         onOpenQRScanner={() => setIsQRScannerOpen(true)}
