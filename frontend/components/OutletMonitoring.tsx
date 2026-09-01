@@ -52,7 +52,15 @@ import RoyaltyCalculatorModal from "./RoyaltyCalculatorModal";
 import VendorScorecardModal from "./VendorScorecardModal";
 import MenuEngineeringMatrix from "./MenuEngineeringMatrix";
 import SSENotificationControl from "./SSENotificationControl";
-import AdvancedAnalyticsStudio from "./AdvancedAnalyticsStudio";
+import DashboardCharts from "./agent-charts/DashboardCharts";
+import OutletAgentCharts from "./agent-charts/OutletAgentCharts";
+import InventoryAgentCharts from "./agent-charts/InventoryAgentCharts";
+import StaffAgentCharts from "./agent-charts/StaffAgentCharts";
+import MarketingAgentCharts from "./agent-charts/MarketingAgentCharts";
+import AuditAgentCharts from "./agent-charts/AuditAgentCharts";
+import IntelligenceAgentCharts from "./agent-charts/IntelligenceAgentCharts";
+import ReportsCharts from "./agent-charts/ReportsCharts";
+import DigitalWorldClock from "./DigitalWorldClock";
 import { BookOpen, Compass, QrCode, Volume2, VolumeX, Bot, Sliders, Menu, X, Calculator, Utensils, ChevronDown } from "lucide-react";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
@@ -397,7 +405,6 @@ const FALLBACK_INVENTORY = [
 
 const modules = [
   { id: "dashboard", label: "Dashboard", icon: LayoutGrid },
-  { id: "analytics", label: "Visual Analytics & Graphs", icon: BarChart3 },
   { id: "agentDashboards", label: "Agent Dashboards", icon: Grid3x3 },
   { id: "outlet", label: "Outlet Performance Agent", icon: Store },
   { id: "inventory", label: "Inventory Agent", icon: Boxes },
@@ -1098,7 +1105,6 @@ export default function FranchiseOSDashboard({ initialModule = "dashboard" }: Fr
     if (typeof window !== "undefined") {
       const routeMap: Record<string, string> = {
         dashboard: "/",
-        analytics: "/analytics",
         agentDashboards: "/agent-dashboards",
         outlet: "/outlet",
         inventory: "/inventory",
@@ -1122,7 +1128,6 @@ export default function FranchiseOSDashboard({ initialModule = "dashboard" }: Fr
     if (typeof window === "undefined") return;
     const pathMap: Record<string, string> = {
       "/": "dashboard",
-      "/analytics": "analytics",
       "/agent-dashboards": "agentDashboards",
       "/outlet": "outlet",
       "/inventory": "inventory",
@@ -2390,6 +2395,11 @@ function getPredictedRisks(auditList: any[]) {
               )}
             </div>
 
+            {/* Live Real-World Digital Clock & Timezone Monitor */}
+            <div className="shrink-0 whitespace-nowrap">
+              <DigitalWorldClock t={t} accent={accent} isDark={isDark} />
+            </div>
+
             {/* Audio SFX Quick Toggle */}
             <button
               onClick={() => {
@@ -2476,9 +2486,9 @@ function getPredictedRisks(auditList: any[]) {
               <LeaderboardCard accentColor={accent} theme={t} />
               <DigitalTwinSimulator accentColor={accent} theme={t} />
 
-              {/* Comprehensive Multi-Graph Analytics Studio */}
+              {/* Executive Financial & OKR Dashboard Charts */}
               <div className="pt-2">
-                <AdvancedAnalyticsStudio t={t} accent={accent} isDark={isDark} />
+                <DashboardCharts t={t} accent={accent} isDark={isDark} />
               </div>
 
               <div className="flex items-center gap-2 flex-wrap no-print">
@@ -2727,8 +2737,6 @@ function getPredictedRisks(auditList: any[]) {
                 </div>
               </div>
             </div>
-          ) : active === "analytics" ? (
-            <AdvancedAnalyticsStudio t={t} accent={accent} isDark={isDark} />
           ) : active === "agentDashboards" ? (
             <AgentDashboardsView
               t={t}
@@ -2885,6 +2893,9 @@ function getPredictedRisks(auditList: any[]) {
                 </div>
               )}
 
+              {/* Outlet Performance Multidimensional Analytics Charts */}
+              <OutletAgentCharts t={t} accent={accent} isDark={isDark} />
+
               <div className="rounded-xl border overflow-hidden transition-colors duration-200" style={{ background: t.card, borderColor: t.border }}>
                 <p className="text-sm font-semibold px-5 pt-5 pb-1 flex items-center gap-2" style={{ color: t.text }}><Store size={15} color={accent} /> Outlet Sales &amp; Performance ({dynamicOutletPerformance.length} Outlets)</p>
                 <table className="w-full text-sm mt-3">
@@ -3001,6 +3012,9 @@ function getPredictedRisks(auditList: any[]) {
                   ))}
                 </div>
               </div>
+
+              {/* Inventory Intelligence & Wastage Analytics Charts */}
+              <InventoryAgentCharts t={t} accent={accent} isDark={isDark} />
 
               <div className="flex flex-wrap items-center gap-2">
                 <button
@@ -3164,6 +3178,9 @@ function getPredictedRisks(auditList: any[]) {
                       );
                     })}
                   </div>
+
+                  {/* Staff Workforce & Attendance Analytics Charts */}
+                  <StaffAgentCharts t={t} accent={accent} isDark={isDark} />
 
                   <div className="flex items-center gap-2 flex-wrap">
                     {["All", "Manager", "Supervisor", "Barista", "Cashier"].map((role) => (
@@ -3533,6 +3550,9 @@ function getPredictedRisks(auditList: any[]) {
                   );
                 })}
               </div>
+
+              {/* Marketing Analytics & Campaign ROI Charts */}
+              <MarketingAgentCharts t={t} accent={accent} isDark={isDark} />
 
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
                 <div className="rounded-xl border p-5 transition-colors duration-200" style={{ background: t.card, borderColor: t.border }}>
@@ -4273,6 +4293,9 @@ function getPredictedRisks(auditList: any[]) {
     </div>
   </div>
 )}
+
+                  {/* Audit & Compliance Analytics Charts */}
+                  <AuditAgentCharts t={t} accent={accent} isDark={isDark} />
 
                   {/* Audit History Table with Search & Filter */}
                   <div className="rounded-xl border overflow-hidden shadow-sm" style={{ background: t.card, borderColor: t.border }}>
@@ -5714,6 +5737,9 @@ function getPredictedRisks(auditList: any[]) {
                 </div>
               </div>
 
+              {/* Franchise AI & Predictive Intelligence Analytics Charts */}
+              <IntelligenceAgentCharts t={t} accent={accent} isDark={isDark} />
+
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <div className="rounded-xl border p-5" style={{ background: t.card, borderColor: t.border }}>
                   <div className="flex items-center justify-between mb-4">
@@ -6378,8 +6404,8 @@ function getPredictedRisks(auditList: any[]) {
                 </div>
               </div>
 
-              {/* Visual Analytics Graphs in Reports View */}
-              <AdvancedAnalyticsStudio t={t} accent={accent} isDark={isDark} />
+              {/* Financial & Settlement Visual Reports */}
+              <ReportsCharts t={t} accent={accent} isDark={isDark} />
 
               <div className="flex flex-wrap items-center justify-between gap-4 border-b pb-3" style={{ borderColor: t.border }}>
                 <div className="flex gap-2">
