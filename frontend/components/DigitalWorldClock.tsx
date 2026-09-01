@@ -94,7 +94,7 @@ export default function DigitalWorldClock({
       {/* Clock Badge Trigger */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2.5 px-3 py-1.5 rounded-xl border backdrop-blur-md transition-all hover:scale-[1.02] cursor-pointer shadow-xs whitespace-nowrap text-left group"
+        className="flex items-center gap-1.5 sm:gap-2 px-2 sm:px-2.5 py-1 rounded-xl border backdrop-blur-md transition-all hover:scale-[1.02] cursor-pointer shadow-xs whitespace-nowrap text-left group"
         style={{
           background: isDark
             ? "linear-gradient(135deg, rgba(15, 23, 42, 0.85) 0%, rgba(13, 148, 136, 0.08) 100%)"
@@ -106,7 +106,7 @@ export default function DigitalWorldClock({
         {/* Live Pulsing Dot */}
         <div className="relative flex items-center justify-center shrink-0">
           <span
-            className="w-2 h-2 rounded-full transition-opacity duration-300"
+            className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full transition-opacity duration-300"
             style={{
               background: tick ? "#10B981" : "#0D9488",
               boxShadow: tick ? "0 0 8px #10B981" : "0 0 3px #0D9488",
@@ -116,17 +116,17 @@ export default function DigitalWorldClock({
 
         {/* Time and Date Display */}
         <div className="flex flex-col">
-          <div className="flex items-center gap-1.5 font-mono font-black text-xs tracking-tight text-white">
+          <div className="flex items-center gap-1 font-mono font-black text-xs tracking-tight text-white">
             <span className="text-teal-400 group-hover:text-teal-300 transition-colors">
               {timeString}
             </span>
-            <span className="text-[10px] font-sans font-semibold px-1 py-0.2 rounded bg-teal-500/20 text-teal-300 border border-teal-500/30">
+            <span className="hidden xl:inline-block text-[9px] font-sans font-semibold px-1 py-0.2 rounded bg-teal-500/20 text-teal-300 border border-teal-500/30">
               {selectedCity.name.split(" ")[0]}
             </span>
           </div>
 
-          <div className="flex items-center gap-1 text-[10px] text-slate-400 font-medium">
-            <Calendar size={10} className="text-slate-400 shrink-0" />
+          <div className="hidden lg:flex items-center gap-1 text-[9px] text-slate-400 font-medium leading-none">
+            <Calendar size={9} className="text-slate-400 shrink-0" />
             <span>
               {weekday}, {day} {month} <span className="font-bold text-slate-300">{year}</span>
             </span>
@@ -134,7 +134,7 @@ export default function DigitalWorldClock({
         </div>
 
         <ChevronDown
-          size={12}
+          size={11}
           className={`text-slate-400 transition-transform duration-200 shrink-0 ${isOpen ? "rotate-180 text-teal-400" : ""}`}
         />
       </button>

@@ -2117,23 +2117,23 @@ function getPredictedRisks(auditList: any[]) {
           accentColor={accent}
           theme={t}
         />
-        <div className="border-b px-4 sm:px-6 py-2.5 flex items-center justify-between gap-3 flex-nowrap relative z-30 transition-colors duration-200" style={{ background: t.panel, borderColor: t.border }}>
-          <div className="flex items-center gap-2 shrink-0 min-w-[200px] max-w-xs md:max-w-md">
+        <div className="border-b px-3 sm:px-5 py-2 flex items-center justify-between gap-2 sm:gap-3 flex-nowrap relative z-30 transition-colors duration-200" style={{ background: t.panel, borderColor: t.border }}>
+          <div className="flex items-center gap-2 shrink-0 min-w-[130px] max-w-[180px] sm:max-w-xs md:max-w-sm">
             {/* Hamburger Button for Mobile/Tablet (< lg) */}
             <button
               onClick={() => setIsMobileSidebarOpen(true)}
-              className="lg:hidden p-2 rounded-lg border transition-colors shrink-0 cursor-pointer hover:bg-white/5"
+              className="lg:hidden p-1.5 rounded-lg border transition-colors shrink-0 cursor-pointer hover:bg-white/5"
               style={{ background: t.inputBg, borderColor: t.border, color: t.text }}
               title="Open Navigation Menu"
             >
-              <Menu size={18} />
+              <Menu size={16} />
             </button>
-            <div className="relative flex-1 min-w-[160px] sm:min-w-[220px]">
-            <div className="flex items-center gap-2 rounded-lg px-3 py-1.5 text-sm border focus-within:border-amber-400 transition-colors overflow-hidden" style={{ background: t.inputBg, borderColor: t.border }}>
-              <Search size={14} color={t.textFaint} className="shrink-0" />
+            <div className="relative flex-1 min-w-[120px] sm:min-w-[180px]">
+            <div className="flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs border focus-within:border-amber-400 transition-colors overflow-hidden" style={{ background: t.inputBg, borderColor: t.border }}>
+              <Search size={13} color={t.textFaint} className="shrink-0" />
               <input
                 type="text"
-                placeholder="Search modules, outlets..."
+                placeholder="Search..."
                 value={headerSearchQuery}
                 onChange={(e) => setHeaderSearchQuery(e.target.value)}
                 onFocus={() => setHeaderSearchFocused(true)}
@@ -2151,7 +2151,7 @@ function getPredictedRisks(auditList: any[]) {
               <button
                 type="button"
                 onClick={() => setIsCommandPaletteOpen(true)}
-                className="hidden sm:inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-mono border border-slate-700 bg-slate-800/90 text-amber-400 hover:text-amber-300 hover:border-amber-400 transition-all cursor-pointer shadow-xs shrink-0 whitespace-nowrap"
+                className="hidden md:inline-flex items-center gap-1 px-1 py-0.5 rounded text-[9px] font-mono border border-slate-700 bg-slate-800/90 text-amber-400 hover:text-amber-300 hover:border-amber-400 transition-all cursor-pointer shadow-xs shrink-0 whitespace-nowrap"
                 title="Open Spotlight Command Palette (Ctrl+K or Cmd+K)"
               >
                 ⌘K
@@ -2197,7 +2197,7 @@ function getPredictedRisks(auditList: any[]) {
         </div>
 
         {/* Header Action Controls */}
-          <div className="flex items-center gap-2 shrink-0 relative z-30 overflow-visible">
+          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0 relative z-30 overflow-visible">
             {/* Multi-Tier Role Switcher */}
             <div className="shrink-0 relative z-10">
               <RoleSwitcher
@@ -2216,7 +2216,7 @@ function getPredictedRisks(auditList: any[]) {
                   playTechChime("nav");
                   setIsQuickToolsOpen((prev) => !prev);
                 }}
-                className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border font-semibold transition-all hover:scale-105 cursor-pointer shadow-xs shrink-0 whitespace-nowrap"
+                className="flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-lg border font-semibold transition-all hover:scale-105 cursor-pointer shadow-xs shrink-0 whitespace-nowrap"
                 style={{
                   background: isQuickToolsOpen ? `${accent}25` : t.inputBg,
                   borderColor: isQuickToolsOpen ? accent : t.border,
@@ -2224,10 +2224,10 @@ function getPredictedRisks(auditList: any[]) {
                 }}
                 title="Executive Tools & Enterprise Launchers"
               >
-                <Sparkles size={14} color={accent} className="shrink-0" />
-                <span className="font-bold">Executive Tools</span>
-                <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-amber-500/20 text-amber-400 font-mono font-bold">8</span>
-                <ChevronDown size={13} className={`transition-transform duration-200 shrink-0 ${isQuickToolsOpen ? "rotate-180" : ""}`} />
+                <Sparkles size={13} color={accent} className="shrink-0" />
+                <span className="font-bold hidden md:inline">Tools</span>
+                <span className="text-[9px] px-1 py-0.2 rounded-full bg-amber-500/20 text-amber-400 font-mono font-bold">8</span>
+                <ChevronDown size={11} className={`transition-transform duration-200 shrink-0 ${isQuickToolsOpen ? "rotate-180" : ""}`} />
               </button>
 
               {/* Glassmorphic Dropdown Menu */}
@@ -2406,7 +2406,7 @@ function getPredictedRisks(auditList: any[]) {
                 toggleAudioMute();
                 setAudioMutedState(isAudioMuted());
               }}
-              className="flex items-center gap-1.5 text-xs px-2.5 py-1.5 rounded-lg border font-bold transition-all hover:scale-105 cursor-pointer shadow-xs shrink-0 whitespace-nowrap"
+              className="flex items-center gap-1.5 text-xs px-2 py-1 rounded-lg border font-bold transition-all hover:scale-105 cursor-pointer shadow-xs shrink-0 whitespace-nowrap"
               style={{
                 background: audioMuted ? "rgba(244, 63, 94, 0.12)" : "rgba(16, 185, 129, 0.12)",
                 borderColor: audioMuted ? "rgba(244, 63, 94, 0.35)" : "rgba(16, 185, 129, 0.35)",
@@ -2414,8 +2414,8 @@ function getPredictedRisks(auditList: any[]) {
               }}
               title={audioMuted ? "Sound Effects Muted (Click to Unmute)" : "Sound Effects Active (Click to Mute)"}
             >
-              {audioMuted ? <VolumeX size={14} className="shrink-0" /> : <Volume2 size={14} className="shrink-0" />}
-              <span className="hidden xl:inline">{audioMuted ? "SFX Muted" : "SFX Active"}</span>
+              {audioMuted ? <VolumeX size={13} className="shrink-0" /> : <Volume2 size={13} className="shrink-0" />}
+              <span className="hidden 2xl:inline">{audioMuted ? "SFX Muted" : "SFX Active"}</span>
             </button>
 
             {/* PWA App Installation & Push Notification Control */}
@@ -2430,25 +2430,29 @@ function getPredictedRisks(auditList: any[]) {
 
             <button
               onClick={() => setShowAskAI(true)}
-              className="flex items-center gap-2 text-xs px-2.5 py-1.5 rounded-lg border transition-colors cursor-pointer shrink-0 whitespace-nowrap"
+              className="flex items-center gap-1.5 text-xs px-2 py-1 rounded-lg border transition-colors cursor-pointer shrink-0 whitespace-nowrap"
               style={{ borderColor: `${accent}4D`, color: accent }}
+              title="Ask AI Copilot"
             >
-              <Sparkles size={14} className="shrink-0" /> Ask AI
+              <Sparkles size={13} className="shrink-0" />
+              <span className="hidden sm:inline">Ask AI</span>
             </button>
             <button
               onClick={() => setIsDark(!isDark)}
-              className="flex items-center gap-1 text-xs px-2.5 py-1.5 rounded-lg border transition-colors shrink-0 whitespace-nowrap cursor-pointer"
+              className="flex items-center gap-1 text-xs px-2 py-1 rounded-lg border transition-colors shrink-0 whitespace-nowrap cursor-pointer"
               style={{ borderColor: t.border, color: t.textMuted }}
               aria-label="Toggle dark/light mode"
+              title={isDark ? "Switch to Light Mode" : "Switch to Dark Mode"}
             >
-              {isDark ? <Sun size={14} className="shrink-0" /> : <Moon size={14} className="shrink-0" />}
-              {isDark ? "Light" : "Dark"}
+              {isDark ? <Sun size={13} className="shrink-0" /> : <Moon size={13} className="shrink-0" />}
+              <span className="hidden sm:inline">{isDark ? "Light" : "Dark"}</span>
             </button>
             <button
               onClick={handleSignOut}
-              className="w-7 h-7 rounded-full bg-gradient-to-br from-rose-400 to-amber-400 flex items-center justify-center text-xs font-bold shrink-0 cursor-pointer"
+              className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-gradient-to-br from-rose-400 to-amber-400 flex items-center justify-center text-xs font-bold shrink-0 cursor-pointer shadow-sm hover:scale-105 transition-transform"
               style={{ color: t.textOnAccent }}
               aria-label="Sign out"
+              title="Sign Out"
             >
               M
             </button>

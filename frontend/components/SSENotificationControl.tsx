@@ -82,7 +82,7 @@ export default function SSENotificationControl({
       <div className="relative inline-block">
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="flex items-center gap-1.5 text-xs px-2.5 py-1.5 rounded-lg border font-bold transition-all hover:scale-105 cursor-pointer shadow-xs whitespace-nowrap"
+          className="flex items-center gap-1.5 text-xs px-2 py-1 rounded-lg border font-bold transition-all hover:scale-105 cursor-pointer shadow-xs whitespace-nowrap"
           style={{
             background: settings.enabled ? "rgba(13, 148, 136, 0.12)" : "rgba(100, 116, 139, 0.12)",
             borderColor: settings.enabled ? "rgba(13, 148, 136, 0.4)" : "rgba(100, 116, 139, 0.3)",
@@ -91,12 +91,15 @@ export default function SSENotificationControl({
           title={settings.enabled ? `SSE Alerts ON (${settings.intervalMinutes}m gap)` : "SSE Alerts OFF (Click to configure)"}
         >
           {settings.enabled ? (
-            <Bell size={14} className="shrink-0 animate-pulse text-teal-400" />
+            <Bell size={13} className="shrink-0 animate-pulse text-teal-400" />
           ) : (
-            <BellOff size={14} className="shrink-0 text-slate-400" />
+            <BellOff size={13} className="shrink-0 text-slate-400" />
           )}
-          <span className="hidden xl:inline">
+          <span className="hidden 2xl:inline">
             {settings.enabled ? `SSE Alerts: ON (${settings.intervalMinutes}m)` : "SSE Alerts: OFF"}
+          </span>
+          <span className="hidden lg:inline 2xl:hidden">
+            {settings.enabled ? `SSE: ON` : `SSE: OFF`}
           </span>
         </button>
 
