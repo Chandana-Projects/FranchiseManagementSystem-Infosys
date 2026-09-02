@@ -7633,11 +7633,11 @@ function getPredictedRisks(auditList: any[]) {
       </AnimatePresence>
 
       <VoiceAssistant onNavigate={(key) => setActive(key)} accentColor={accent} theme={t} />
-      <SupplierDispatchModal isOpen={isDispatchModalOpen} onClose={() => setIsDispatchModalOpen(false)} accentColor={accent} theme={t} />
+      {isDispatchModalOpen && <SupplierDispatchModal isOpen={isDispatchModalOpen} onClose={() => setIsDispatchModalOpen(false)} accentColor={accent} theme={t} />}
       <RealtimeNotificationToast />
-      <SOPKnowledgeBot isOpen={isSOPBotOpen} onClose={() => setIsSOPBotOpen(false)} />
-      <DemoTour isOpen={isDemoTourOpen} onClose={() => setIsDemoTourOpen(false)} />
-      <QRStockScannerModal isOpen={isQRScannerOpen} onClose={() => setIsQRScannerOpen(false)} />
+      {isSOPBotOpen && <SOPKnowledgeBot isOpen={isSOPBotOpen} onClose={() => setIsSOPBotOpen(false)} />}
+      {isDemoTourOpen && <DemoTour isOpen={isDemoTourOpen} onClose={() => setIsDemoTourOpen(false)} />}
+      {isQRScannerOpen && <QRStockScannerModal isOpen={isQRScannerOpen} onClose={() => setIsQRScannerOpen(false)} />}
       <CommandPaletteModal
         isOpen={isCommandPaletteOpen}
         onClose={() => setIsCommandPaletteOpen(false)}
@@ -7655,24 +7655,24 @@ function getPredictedRisks(auditList: any[]) {
         onOpenEquipmentMaint={() => setIsEquipmentMaintOpen(true)}
         onOpenStatutoryCompliance={() => setIsStatutoryComplianceOpen(true)}
       />
-      <ShiftSchedulerModal isOpen={isShiftSchedulerOpen} onClose={() => setIsShiftSchedulerOpen(false)} t={t} accent={accent} />
-      <RoyaltyCalculatorModal isOpen={isRoyaltyCalcOpen} onClose={() => setIsRoyaltyCalcOpen(false)} t={t} accent={accent} />
-      <VendorScorecardModal isOpen={isVendorScorecardOpen} onClose={() => setIsVendorScorecardOpen(false)} t={t} accent={accent} />
-      <MenuEngineeringMatrix isOpen={isMenuMatrixOpen} onClose={() => setIsMenuMatrixOpen(false)} t={t} accent={accent} />
-      <OutletComparisonModal isOpen={isOutletComparisonOpen} onClose={() => setIsOutletComparisonOpen(false)} t={t} accent={accent} isDark={isDark} />
-      <WarRoomPresentationMode isOpen={isWarRoomOpen} onClose={() => setIsWarRoomOpen(false)} accent={accent} />
-      <KeyboardShortcutsModal isOpen={isShortcutsOpen} onClose={() => setIsShortcutsOpen(false)} isDark={isDark} />
-      <ExecutiveExportStudioModal isOpen={isExportStudioOpen} onClose={() => setIsExportStudioOpen(false)} isDark={isDark} />
-      <MarginSensitivityMatrixModal isOpen={isSensitivityMatrixOpen} onClose={() => setIsSensitivityMatrixOpen(false)} t={t} accent={accent} isDark={isDark} />
-      <LiveDemoGuideModal isOpen={isDemoGuideOpen} onClose={() => setIsDemoGuideOpen(false)} onNavigate={(k) => setActive(k)} isDark={isDark} />
-      <CCTVVisionSentinelModal isOpen={isCCTVSentinelOpen} onClose={() => setIsCCTVSentinelOpen(false)} t={t} accent={accent} isDark={isDark} />
-      <StoreExpansionSimulatorModal isOpen={isStoreExpansionOpen} onClose={() => setIsStoreExpansionOpen(false)} t={t} accent={accent} isDark={isDark} />
-      <CustomerSentimentStudioModal isOpen={isCustomerSentimentOpen} onClose={() => setIsCustomerSentimentOpen(false)} t={t} accent={accent} isDark={isDark} />
-      <RecipeVarianceEngineModal isOpen={isRecipeVarianceOpen} onClose={() => setIsRecipeVarianceOpen(false)} t={t} accent={accent} isDark={isDark} />
-      <RoyaltyEvasionAuditorModal isOpen={isRoyaltyEvasionOpen} onClose={() => setIsRoyaltyEvasionOpen(false)} t={t} accent={accent} isDark={isDark} />
-      <AggregatorReconciliationModal isOpen={isAggregatorReconOpen} onClose={() => setIsAggregatorReconOpen(false)} t={t} accent={accent} isDark={isDark} />
-      <EquipmentMaintenanceModal isOpen={isEquipmentMaintOpen} onClose={() => setIsEquipmentMaintOpen(false)} t={t} accent={accent} isDark={isDark} />
-      <StatutoryComplianceModal isOpen={isStatutoryComplianceOpen} onClose={() => setIsStatutoryComplianceOpen(false)} t={t} accent={accent} isDark={isDark} />
+      {isShiftSchedulerOpen && <ShiftSchedulerModal isOpen={isShiftSchedulerOpen} onClose={() => setIsShiftSchedulerOpen(false)} t={t} accent={accent} />}
+      {isRoyaltyCalcOpen && <RoyaltyCalculatorModal isOpen={isRoyaltyCalcOpen} onClose={() => setIsRoyaltyCalcOpen(false)} t={t} accent={accent} />}
+      {isVendorScorecardOpen && <VendorScorecardModal isOpen={isVendorScorecardOpen} onClose={() => setIsVendorScorecardOpen(false)} t={t} accent={accent} />}
+      {isMenuMatrixOpen && <MenuEngineeringMatrix isOpen={isMenuMatrixOpen} onClose={() => setIsMenuMatrixOpen(false)} t={t} accent={accent} />}
+      {isOutletComparisonOpen && <OutletComparisonModal isOpen={isOutletComparisonOpen} onClose={() => setIsOutletComparisonOpen(false)} t={t} accent={accent} isDark={isDark} />}
+      {isWarRoomOpen && <WarRoomPresentationMode isOpen={isWarRoomOpen} onClose={() => setIsWarRoomOpen(false)} accent={accent} />}
+      {isShortcutsOpen && <KeyboardShortcutsModal isOpen={isShortcutsOpen} onClose={() => setIsShortcutsOpen(false)} isDark={isDark} />}
+      {isExportStudioOpen && <ExecutiveExportStudioModal isOpen={isExportStudioOpen} onClose={() => setIsExportStudioOpen(false)} isDark={isDark} />}
+      {isSensitivityMatrixOpen && <MarginSensitivityMatrixModal isOpen={isSensitivityMatrixOpen} onClose={() => setIsSensitivityMatrixOpen(false)} t={t} accent={accent} isDark={isDark} />}
+      {isDemoGuideOpen && <LiveDemoGuideModal isOpen={isDemoGuideOpen} onClose={() => setIsDemoGuideOpen(false)} onNavigate={(k) => setActive(k)} isDark={isDark} />}
+      {isCCTVSentinelOpen && <CCTVVisionSentinelModal isOpen={isCCTVSentinelOpen} onClose={() => setIsCCTVSentinelOpen(false)} t={t} accent={accent} isDark={isDark} />}
+      {isStoreExpansionOpen && <StoreExpansionSimulatorModal isOpen={isStoreExpansionOpen} onClose={() => setIsStoreExpansionOpen(false)} t={t} accent={accent} isDark={isDark} />}
+      {isCustomerSentimentOpen && <CustomerSentimentStudioModal isOpen={isCustomerSentimentOpen} onClose={() => setIsCustomerSentimentOpen(false)} t={t} accent={accent} isDark={isDark} />}
+      {isRecipeVarianceOpen && <RecipeVarianceEngineModal isOpen={isRecipeVarianceOpen} onClose={() => setIsRecipeVarianceOpen(false)} t={t} accent={accent} isDark={isDark} />}
+      {isRoyaltyEvasionOpen && <RoyaltyEvasionAuditorModal isOpen={isRoyaltyEvasionOpen} onClose={() => setIsRoyaltyEvasionOpen(false)} t={t} accent={accent} isDark={isDark} />}
+      {isAggregatorReconOpen && <AggregatorReconciliationModal isOpen={isAggregatorReconOpen} onClose={() => setIsAggregatorReconOpen(false)} t={t} accent={accent} isDark={isDark} />}
+      {isEquipmentMaintOpen && <EquipmentMaintenanceModal isOpen={isEquipmentMaintOpen} onClose={() => setIsEquipmentMaintOpen(false)} t={t} accent={accent} isDark={isDark} />}
+      {isStatutoryComplianceOpen && <StatutoryComplianceModal isOpen={isStatutoryComplianceOpen} onClose={() => setIsStatutoryComplianceOpen(false)} t={t} accent={accent} isDark={isDark} />}
       <ExecutiveQuickDock
         onOpenCommandPalette={() => setIsCommandPaletteOpen(true)}
         onOpenQRScanner={() => setIsQRScannerOpen(true)}
