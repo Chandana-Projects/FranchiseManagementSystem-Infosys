@@ -2081,7 +2081,7 @@ function getPredictedRisks(auditList: any[]) {
               <button
                 key={m.id}
                 onClick={() => setActive(m.id)}
-                className="w-full flex items-center gap-3 px-5 py-2.5 text-sm text-left transition-colors duration-150 relative border-l-2 cursor-pointer hover:bg-white/5 active:scale-[0.99]"
+                className="w-full flex items-center gap-3 px-5 py-2.5 text-sm text-left nav-tab-smooth relative border-l-2 cursor-pointer"
                 style={{
                   borderColor: isActive ? accent : "transparent",
                   background: isActive ? `${accent}1A` : "transparent",
@@ -2092,7 +2092,7 @@ function getPredictedRisks(auditList: any[]) {
                 <span className="font-medium">{m.label}</span>
                 {isActive && (
                   <span
-                    className="absolute right-3 w-1.5 h-1.5 rounded-full"
+                    className="absolute right-3 w-1.5 h-1.5 rounded-full shadow-sm transition-all duration-200"
                     style={{ backgroundColor: accent, boxShadow: `0 0 8px ${accent}` }}
                   />
                 )}
