@@ -91,6 +91,7 @@ export default function RootLayout({
           loop
           muted
           playsInline
+          preload="metadata"
         />
         {/* Gradient colour overlay */}
         <div id="bg-overlay" />

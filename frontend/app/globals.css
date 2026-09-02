@@ -31,6 +31,8 @@
   object-fit: cover;
   z-index: -2;
   pointer-events: none;
+  transform: translateZ(0);
+  will-change: transform;
 }
 
 /* Gradient overlay with vibrant ambient orbs that shine softly through frosted glass */
