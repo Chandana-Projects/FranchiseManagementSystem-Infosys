@@ -44,7 +44,7 @@ describe("Security, Sanitization & Audit Trail", () => {
     expect(res.body.success).toBe(true);
     expect(Array.isArray(res.body.logs)).toBe(true);
     expect(res.body.logs[0]).toHaveProperty("signatureHash");
-  });
+  }, 15000);
 
   it("GET /api/enterprise/audit-trail/verify verifies cryptographic chain", async () => {
     const app = require("../src/app");

@@ -16,6 +16,9 @@ import {
   Layers,
   Volume2,
   VolumeX,
+  Eye,
+  Store,
+  MessageSquare,
 } from "lucide-react";
 import { isAudioMuted, toggleAudioMute } from "@/lib/WebAudioSFX";
 
@@ -26,6 +29,9 @@ interface ExecutiveQuickDockProps {
   onOpenDispatch: () => void;
   onOpenTour: () => void;
   onOpenAskAI: () => void;
+  onOpenCCTV?: () => void;
+  onOpenExpansion?: () => void;
+  onOpenSentiment?: () => void;
 }
 
 export default function ExecutiveQuickDock({
@@ -35,6 +41,9 @@ export default function ExecutiveQuickDock({
   onOpenDispatch,
   onOpenTour,
   onOpenAskAI,
+  onOpenCCTV,
+  onOpenExpansion,
+  onOpenSentiment,
 }: ExecutiveQuickDockProps) {
   const [isExpanded, setIsExpanded] = useState(true);
   const [hoveredTool, setHoveredTool] = useState<string | null>(null);
@@ -84,6 +93,27 @@ export default function ExecutiveQuickDock({
       icon: <Truck className="w-4 h-4 text-emerald-400" />,
       color: "#10B981",
       action: onOpenDispatch,
+    },
+    {
+      id: "cctv",
+      label: "CCTV AI Sentinel",
+      icon: <Eye className="w-4 h-4 text-cyan-400" />,
+      color: "#06B6D4",
+      action: () => onOpenCCTV && onOpenCCTV(),
+    },
+    {
+      id: "expansion",
+      label: "AI Store Expansion",
+      icon: <Store className="w-4 h-4 text-purple-400" />,
+      color: "#A855F7",
+      action: () => onOpenExpansion && onOpenExpansion(),
+    },
+    {
+      id: "sentiment",
+      label: "Customer Sentiment Studio",
+      icon: <MessageSquare className="w-4 h-4 text-pink-400" />,
+      color: "#EC4899",
+      action: () => onOpenSentiment && onOpenSentiment(),
     },
     {
       id: "audio-toggle",

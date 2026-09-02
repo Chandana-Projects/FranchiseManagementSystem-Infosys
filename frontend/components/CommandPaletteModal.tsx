@@ -28,6 +28,8 @@ import {
   Volume2,
   VolumeX,
   Activity,
+  Eye,
+  MessageSquare,
 } from "lucide-react";
 import { isAudioMuted, toggleAudioMute, playTechChime } from "@/lib/WebAudioSFX";
 
@@ -40,6 +42,9 @@ interface CommandPaletteModalProps {
   onOpenDispatch?: () => void;
   onOpenTour?: () => void;
   onOpenVoiceAssistant?: () => void;
+  onOpenCCTV?: () => void;
+  onOpenExpansion?: () => void;
+  onOpenSentiment?: () => void;
 }
 
 interface PaletteItem {
@@ -61,6 +66,9 @@ export default function CommandPaletteModal({
   onOpenDispatch,
   onOpenTour,
   onOpenVoiceAssistant,
+  onOpenCCTV,
+  onOpenExpansion,
+  onOpenSentiment,
 }: CommandPaletteModalProps) {
   const [query, setQuery] = useState("");
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -272,6 +280,42 @@ export default function CommandPaletteModal({
         if (onOpenTour) onOpenTour();
         onClose();
       },
+    },
+    {
+      id: "cctv-sentinel",
+      title: "CCTV AI Vision Sentinel Studio",
+      subtitle: "Multi-camera computer vision monitoring, PPE compliance, and queue detection",
+      category: "AI & Tools",
+      icon: <Eye className="w-4 h-4 text-cyan-400" />,
+      action: () => {
+        if (onOpenCCTV) onOpenCCTV();
+        onClose();
+      },
+      shortcut: "⌥ C",
+    },
+    {
+      id: "store-expansion",
+      title: "AI Store Expansion & Cannibalization Simulator",
+      subtitle: "What-If financial sandbox, break-even payback, and territory cannibalization",
+      category: "AI & Tools",
+      icon: <Store className="w-4 h-4 text-purple-400" />,
+      action: () => {
+        if (onOpenExpansion) onOpenExpansion();
+        onClose();
+      },
+      shortcut: "⌥ E",
+    },
+    {
+      id: "customer-sentiment",
+      title: "Customer Voice & NLP Sentiment Studio",
+      subtitle: "Multi-channel reviews, aspect-based sentiment, and 1-click AI response generator",
+      category: "AI & Tools",
+      icon: <MessageSquare className="w-4 h-4 text-pink-400" />,
+      action: () => {
+        if (onOpenSentiment) onOpenSentiment();
+        onClose();
+      },
+      shortcut: "⌥ R",
     },
 
     // Operations

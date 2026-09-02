@@ -67,6 +67,9 @@ import KeyboardShortcutsModal from "./KeyboardShortcutsModal";
 import ExecutiveExportStudioModal from "./ExecutiveExportStudioModal";
 import MarginSensitivityMatrixModal from "./MarginSensitivityMatrixModal";
 import LiveDemoGuideModal from "./LiveDemoGuideModal";
+import CCTVVisionSentinelModal from "./CCTVVisionSentinelModal";
+import StoreExpansionSimulatorModal from "./StoreExpansionSimulatorModal";
+import CustomerSentimentStudioModal from "./CustomerSentimentStudioModal";
 import { BookOpen, Compass, QrCode, Volume2, VolumeX, Bot, Sliders, Menu, X, Calculator, Utensils, ChevronDown, Swords, Cpu, Keyboard, FileSpreadsheet, PlayCircle } from "lucide-react";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
@@ -1381,6 +1384,9 @@ export default function FranchiseOSDashboard({ initialModule = "dashboard" }: Fr
   const [isExportStudioOpen, setIsExportStudioOpen] = useState(false);
   const [isSensitivityMatrixOpen, setIsSensitivityMatrixOpen] = useState(false);
   const [isDemoGuideOpen, setIsDemoGuideOpen] = useState(false);
+  const [isCCTVSentinelOpen, setIsCCTVSentinelOpen] = useState(false);
+  const [isStoreExpansionOpen, setIsStoreExpansionOpen] = useState(false);
+  const [isCustomerSentimentOpen, setIsCustomerSentimentOpen] = useState(false);
   const [accent, setAccent] = useState("#F59E0B");
   const [glowEffect, setGlowEffect] = useState(true);
   const [blurDepth, setBlurDepth] = useState(8);
@@ -2531,6 +2537,54 @@ function getPredictedRisks(auditList: any[]) {
                         <div>
                           <div className="text-xs font-bold text-amber-300">Guided Tour</div>
                           <div className="text-[10px] text-amber-400/80 leading-tight">System Walkthrough</div>
+                        </div>
+                      </button>
+
+                      {/* CCTV Vision Sentinel */}
+                      <button
+                        onClick={() => {
+                          playTechChime("nav");
+                          setIsCCTVSentinelOpen(true);
+                          setIsQuickToolsOpen(false);
+                        }}
+                        className="flex items-start gap-2.5 p-2.5 rounded-xl border border-cyan-500/25 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 hover:border-cyan-500/50 transition-all cursor-pointer text-left group"
+                      >
+                        <Eye size={16} className="mt-0.5 shrink-0 text-cyan-400 group-hover:scale-110 transition-transform" />
+                        <div>
+                          <div className="text-xs font-bold text-cyan-300">CCTV Sentinel</div>
+                          <div className="text-[10px] text-cyan-400/80 leading-tight">Live Vision PPE & Queue AI</div>
+                        </div>
+                      </button>
+
+                      {/* Store Expansion Simulator */}
+                      <button
+                        onClick={() => {
+                          playTechChime("nav");
+                          setIsStoreExpansionOpen(true);
+                          setIsQuickToolsOpen(false);
+                        }}
+                        className="flex items-start gap-2.5 p-2.5 rounded-xl border border-purple-500/25 bg-purple-500/10 hover:bg-purple-500/20 text-purple-300 hover:border-purple-500/50 transition-all cursor-pointer text-left group"
+                      >
+                        <Store size={16} className="mt-0.5 shrink-0 text-purple-300 group-hover:scale-110 transition-transform" />
+                        <div>
+                          <div className="text-xs font-bold text-purple-200">Expansion AI</div>
+                          <div className="text-[10px] text-purple-300/80 leading-tight">Cannibalization & ROI Model</div>
+                        </div>
+                      </button>
+
+                      {/* Customer Sentiment Studio */}
+                      <button
+                        onClick={() => {
+                          playTechChime("nav");
+                          setIsCustomerSentimentOpen(true);
+                          setIsQuickToolsOpen(false);
+                        }}
+                        className="flex items-start gap-2.5 p-2.5 rounded-xl border border-pink-500/25 bg-pink-500/10 hover:bg-pink-500/20 text-pink-300 hover:border-pink-500/50 transition-all cursor-pointer text-left group"
+                      >
+                        <MessageSquare size={16} className="mt-0.5 shrink-0 text-pink-400 group-hover:scale-110 transition-transform" />
+                        <div>
+                          <div className="text-xs font-bold text-pink-300">Sentiment Studio</div>
+                          <div className="text-[10px] text-pink-400/80 leading-tight">Review NLP & AI Response</div>
                         </div>
                       </button>
                     </div>
@@ -4222,9 +4276,20 @@ function getPredictedRisks(auditList: any[]) {
 )}    
 {/* Customer Feedback Integration */}
 <div className="rounded-xl border overflow-hidden" style={{ background: t.card, borderColor: t.border }}>
-  <p className="text-sm font-semibold px-5 pt-5 pb-1 flex items-center gap-2" style={{ color: t.text }}>
-    <MessageSquare size={15} color={accent} /> Customer Feedback Integration
-  </p>
+  <div className="flex items-center justify-between px-5 pt-5 pb-1 flex-wrap gap-2">
+    <p className="text-sm font-semibold flex items-center gap-2" style={{ color: t.text }}>
+      <MessageSquare size={15} color={accent} /> Customer Feedback Integration
+    </p>
+    <button
+      onClick={() => {
+        playTechChime("nav");
+        setIsCustomerSentimentOpen(true);
+      }}
+      className="px-2.5 py-1 rounded-lg text-xs font-semibold bg-pink-500/15 hover:bg-pink-500/25 text-pink-400 border border-pink-500/30 flex items-center gap-1.5 transition-all cursor-pointer shadow-xs"
+    >
+      <Sparkles size={13} /> Launch Full NLP Sentiment Studio
+    </button>
+  </div>
   <table className="w-full text-sm mt-3">
     <thead>
       <tr className="text-left text-xs border-y" style={{ color: t.textFaint, borderColor: t.border }}>
@@ -5729,6 +5794,15 @@ function getPredictedRisks(auditList: any[]) {
                   <p className="text-xs" style={{ color: t.textMuted }}>Predictive revenue analytics, What-If simulation sandbox, and MLOps model console.</p>
                 </div>
                 <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => {
+                      playTechChime("nav");
+                      setIsStoreExpansionOpen(true);
+                    }}
+                    className="px-3 py-1.5 rounded-xl border text-xs font-semibold flex items-center gap-1.5 transition-all bg-purple-500/15 hover:bg-purple-500/25 text-purple-300 border-purple-500/40 cursor-pointer shadow-md"
+                  >
+                    <Store size={14} /> Store Expansion Simulator
+                  </button>
                   <span className="text-xs font-medium px-3 py-1 rounded-full border border-teal-500/30 bg-teal-500/10 text-teal-400 flex items-center gap-1.5">
                     <span className="w-2 h-2 rounded-full bg-teal-400 animate-pulse" /> XGBoost / Random Forest Active
                   </span>
@@ -6976,9 +7050,20 @@ function getPredictedRisks(auditList: any[]) {
 
               {/* Grid Pillar 2: Vision AI & IoT Sensors */}
               <div className="rounded-xl border p-5" style={{ background: t.card, borderColor: t.border }}>
-                <h3 className="text-sm font-semibold mb-3 flex items-center gap-2" style={{ color: t.text }}>
-                  <Eye size={16} color={accent} /> CCTV Vision AI & Cold-Chain IoT Telemetry
-                </h3>
+                <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
+                  <h3 className="text-sm font-semibold flex items-center gap-2" style={{ color: t.text }}>
+                    <Eye size={16} color={accent} /> CCTV Vision AI & Cold-Chain IoT Telemetry
+                  </h3>
+                  <button
+                    onClick={() => {
+                      playTechChime("nav");
+                      setIsCCTVSentinelOpen(true);
+                    }}
+                    className="px-2.5 py-1 rounded-lg text-xs font-semibold bg-cyan-500/15 hover:bg-cyan-500/25 text-cyan-400 border border-cyan-500/30 flex items-center gap-1.5 transition-all cursor-pointer shadow-xs"
+                  >
+                    <Eye size={13} /> Launch Live CCTV Sentinel Studio
+                  </button>
+                </div>
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                   {[
                     { title: "Refrigeration Unit #1", val: "3.4°C", status: "Optimal", health: "98%", outlet: "Nashik" },
@@ -7416,6 +7501,9 @@ function getPredictedRisks(auditList: any[]) {
         onOpenSOPBot={() => setIsSOPBotOpen(true)}
         onOpenDispatch={() => setIsDispatchModalOpen(true)}
         onOpenTour={() => setIsDemoTourOpen(true)}
+        onOpenCCTV={() => setIsCCTVSentinelOpen(true)}
+        onOpenExpansion={() => setIsStoreExpansionOpen(true)}
+        onOpenSentiment={() => setIsCustomerSentimentOpen(true)}
       />
       <ShiftSchedulerModal isOpen={isShiftSchedulerOpen} onClose={() => setIsShiftSchedulerOpen(false)} t={t} accent={accent} />
       <RoyaltyCalculatorModal isOpen={isRoyaltyCalcOpen} onClose={() => setIsRoyaltyCalcOpen(false)} t={t} accent={accent} />
@@ -7427,6 +7515,9 @@ function getPredictedRisks(auditList: any[]) {
       <ExecutiveExportStudioModal isOpen={isExportStudioOpen} onClose={() => setIsExportStudioOpen(false)} isDark={isDark} />
       <MarginSensitivityMatrixModal isOpen={isSensitivityMatrixOpen} onClose={() => setIsSensitivityMatrixOpen(false)} t={t} accent={accent} isDark={isDark} />
       <LiveDemoGuideModal isOpen={isDemoGuideOpen} onClose={() => setIsDemoGuideOpen(false)} onNavigate={(k) => setActive(k)} isDark={isDark} />
+      <CCTVVisionSentinelModal isOpen={isCCTVSentinelOpen} onClose={() => setIsCCTVSentinelOpen(false)} t={t} accent={accent} isDark={isDark} />
+      <StoreExpansionSimulatorModal isOpen={isStoreExpansionOpen} onClose={() => setIsStoreExpansionOpen(false)} t={t} accent={accent} isDark={isDark} />
+      <CustomerSentimentStudioModal isOpen={isCustomerSentimentOpen} onClose={() => setIsCustomerSentimentOpen(false)} t={t} accent={accent} isDark={isDark} />
       <ExecutiveQuickDock
         onOpenCommandPalette={() => setIsCommandPaletteOpen(true)}
         onOpenQRScanner={() => setIsQRScannerOpen(true)}
@@ -7434,6 +7525,9 @@ function getPredictedRisks(auditList: any[]) {
         onOpenDispatch={() => setIsDispatchModalOpen(true)}
         onOpenTour={() => setIsDemoTourOpen(true)}
         onOpenAskAI={() => setShowAskAI(true)}
+        onOpenCCTV={() => setIsCCTVSentinelOpen(true)}
+        onOpenExpansion={() => setIsStoreExpansionOpen(true)}
+        onOpenSentiment={() => setIsCustomerSentimentOpen(true)}
       />
     </div>
 
