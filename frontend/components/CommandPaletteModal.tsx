@@ -30,6 +30,11 @@ import {
   Activity,
   Eye,
   MessageSquare,
+  Scale,
+  ShieldAlert,
+  Bike,
+  Wrench,
+  FileCheck2,
 } from "lucide-react";
 import { isAudioMuted, toggleAudioMute, playTechChime } from "@/lib/WebAudioSFX";
 
@@ -45,6 +50,11 @@ interface CommandPaletteModalProps {
   onOpenCCTV?: () => void;
   onOpenExpansion?: () => void;
   onOpenSentiment?: () => void;
+  onOpenRecipeVariance?: () => void;
+  onOpenRoyaltyEvasion?: () => void;
+  onOpenAggregatorRecon?: () => void;
+  onOpenEquipmentMaint?: () => void;
+  onOpenStatutoryCompliance?: () => void;
 }
 
 interface PaletteItem {
@@ -69,6 +79,11 @@ export default function CommandPaletteModal({
   onOpenCCTV,
   onOpenExpansion,
   onOpenSentiment,
+  onOpenRecipeVariance,
+  onOpenRoyaltyEvasion,
+  onOpenAggregatorRecon,
+  onOpenEquipmentMaint,
+  onOpenStatutoryCompliance,
 }: CommandPaletteModalProps) {
   const [query, setQuery] = useState("");
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -316,6 +331,66 @@ export default function CommandPaletteModal({
         onClose();
       },
       shortcut: "⌥ R",
+    },
+    {
+      id: "recipe-variance",
+      title: "Recipe BOM Variance Engine",
+      subtitle: "Theoretical food cost, kitchen portioning inaccuracy, and raw shrinkage audit",
+      category: "AI & Tools",
+      icon: <Scale className="w-4 h-4 text-amber-400" />,
+      action: () => {
+        if (onOpenRecipeVariance) onOpenRecipeVariance();
+        onClose();
+      },
+      shortcut: "⌥ V",
+    },
+    {
+      id: "royalty-evasion",
+      title: "Franchise Royalty & POS Sales Evasion Auditor",
+      subtitle: "Detect cash voids, un-declared sales, and 'No-Sale' drawer pops evading 5% royalty",
+      category: "AI & Tools",
+      icon: <ShieldAlert className="w-4 h-4 text-rose-400" />,
+      action: () => {
+        if (onOpenRoyaltyEvasion) onOpenRoyaltyEvasion();
+        onClose();
+      },
+      shortcut: "⌥ F",
+    },
+    {
+      id: "aggregator-recon",
+      title: "Third-Party Aggregator Payout Reconciler",
+      subtitle: "Audit Swiggy/Zomato gross orders against net bank payouts and recover dispute fees",
+      category: "Operations",
+      icon: <Bike className="w-4 h-4 text-orange-400" />,
+      action: () => {
+        if (onOpenAggregatorRecon) onOpenAggregatorRecon();
+        onClose();
+      },
+      shortcut: "⌥ P",
+    },
+    {
+      id: "equipment-maint",
+      title: "Store Equipment Asset Health & SLA Desk",
+      subtitle: "Calculate machine downtime revenue bleed per hour and track AMC contractor SLA",
+      category: "Operations",
+      icon: <Wrench className="w-4 h-4 text-cyan-400" />,
+      action: () => {
+        if (onOpenEquipmentMaint) onOpenEquipmentMaint();
+        onClose();
+      },
+      shortcut: "⌥ M",
+    },
+    {
+      id: "statutory-shield",
+      title: "Statutory Regulatory License & Legal Shield",
+      subtitle: "Track FSSAI, Fire NOC, and lease expiry with 3-tier corporate legal escalation",
+      category: "Operations",
+      icon: <FileCheck2 className="w-4 h-4 text-emerald-400" />,
+      action: () => {
+        if (onOpenStatutoryCompliance) onOpenStatutoryCompliance();
+        onClose();
+      },
+      shortcut: "⌥ L",
     },
 
     // Operations

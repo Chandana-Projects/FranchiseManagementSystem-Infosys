@@ -19,6 +19,11 @@ import {
   Eye,
   Store,
   MessageSquare,
+  Scale,
+  ShieldAlert,
+  Bike,
+  Wrench,
+  FileCheck2,
 } from "lucide-react";
 import { isAudioMuted, toggleAudioMute } from "@/lib/WebAudioSFX";
 
@@ -32,6 +37,11 @@ interface ExecutiveQuickDockProps {
   onOpenCCTV?: () => void;
   onOpenExpansion?: () => void;
   onOpenSentiment?: () => void;
+  onOpenRecipeVariance?: () => void;
+  onOpenRoyaltyEvasion?: () => void;
+  onOpenAggregatorRecon?: () => void;
+  onOpenEquipmentMaint?: () => void;
+  onOpenStatutoryCompliance?: () => void;
 }
 
 export default function ExecutiveQuickDock({
@@ -44,6 +54,11 @@ export default function ExecutiveQuickDock({
   onOpenCCTV,
   onOpenExpansion,
   onOpenSentiment,
+  onOpenRecipeVariance,
+  onOpenRoyaltyEvasion,
+  onOpenAggregatorRecon,
+  onOpenEquipmentMaint,
+  onOpenStatutoryCompliance,
 }: ExecutiveQuickDockProps) {
   const [isExpanded, setIsExpanded] = useState(true);
   const [hoveredTool, setHoveredTool] = useState<string | null>(null);
@@ -114,6 +129,41 @@ export default function ExecutiveQuickDock({
       icon: <MessageSquare className="w-4 h-4 text-pink-400" />,
       color: "#EC4899",
       action: () => onOpenSentiment && onOpenSentiment(),
+    },
+    {
+      id: "recipe-variance",
+      label: "Recipe BOM Variance Engine",
+      icon: <Scale className="w-4 h-4 text-amber-400" />,
+      color: "#F59E0B",
+      action: () => onOpenRecipeVariance && onOpenRecipeVariance(),
+    },
+    {
+      id: "royalty-evasion",
+      label: "Royalty Evasion Anti-Fraud",
+      icon: <ShieldAlert className="w-4 h-4 text-rose-400" />,
+      color: "#F43F5E",
+      action: () => onOpenRoyaltyEvasion && onOpenRoyaltyEvasion(),
+    },
+    {
+      id: "aggregator-recon",
+      label: "Swiggy/Zomato Payout Reconciler",
+      icon: <Bike className="w-4 h-4 text-orange-400" />,
+      color: "#F97316",
+      action: () => onOpenAggregatorRecon && onOpenAggregatorRecon(),
+    },
+    {
+      id: "equipment-maint",
+      label: "Store Equipment SLA Desk",
+      icon: <Wrench className="w-4 h-4 text-cyan-400" />,
+      color: "#06B6D4",
+      action: () => onOpenEquipmentMaint && onOpenEquipmentMaint(),
+    },
+    {
+      id: "statutory-shield",
+      label: "Statutory License Shield",
+      icon: <FileCheck2 className="w-4 h-4 text-emerald-400" />,
+      color: "#10B981",
+      action: () => onOpenStatutoryCompliance && onOpenStatutoryCompliance(),
     },
     {
       id: "audio-toggle",

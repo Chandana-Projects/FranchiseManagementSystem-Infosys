@@ -70,7 +70,12 @@ import LiveDemoGuideModal from "./LiveDemoGuideModal";
 import CCTVVisionSentinelModal from "./CCTVVisionSentinelModal";
 import StoreExpansionSimulatorModal from "./StoreExpansionSimulatorModal";
 import CustomerSentimentStudioModal from "./CustomerSentimentStudioModal";
-import { BookOpen, Compass, QrCode, Volume2, VolumeX, Bot, Sliders, Menu, X, Calculator, Utensils, ChevronDown, Swords, Cpu, Keyboard, FileSpreadsheet, PlayCircle } from "lucide-react";
+import RecipeVarianceEngineModal from "./RecipeVarianceEngineModal";
+import RoyaltyEvasionAuditorModal from "./RoyaltyEvasionAuditorModal";
+import AggregatorReconciliationModal from "./AggregatorReconciliationModal";
+import EquipmentMaintenanceModal from "./EquipmentMaintenanceModal";
+import StatutoryComplianceModal from "./StatutoryComplianceModal";
+import { BookOpen, Compass, QrCode, Volume2, VolumeX, Bot, Sliders, Menu, X, Calculator, Utensils, ChevronDown, Swords, Cpu, Keyboard, FileSpreadsheet, PlayCircle, Scale, Bike, ShieldAlert } from "lucide-react";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
 
@@ -1387,6 +1392,11 @@ export default function FranchiseOSDashboard({ initialModule = "dashboard" }: Fr
   const [isCCTVSentinelOpen, setIsCCTVSentinelOpen] = useState(false);
   const [isStoreExpansionOpen, setIsStoreExpansionOpen] = useState(false);
   const [isCustomerSentimentOpen, setIsCustomerSentimentOpen] = useState(false);
+  const [isRecipeVarianceOpen, setIsRecipeVarianceOpen] = useState(false);
+  const [isRoyaltyEvasionOpen, setIsRoyaltyEvasionOpen] = useState(false);
+  const [isAggregatorReconOpen, setIsAggregatorReconOpen] = useState(false);
+  const [isEquipmentMaintOpen, setIsEquipmentMaintOpen] = useState(false);
+  const [isStatutoryComplianceOpen, setIsStatutoryComplianceOpen] = useState(false);
   const [accent, setAccent] = useState("#F59E0B");
   const [glowEffect, setGlowEffect] = useState(true);
   const [blurDepth, setBlurDepth] = useState(8);
@@ -2312,7 +2322,7 @@ function getPredictedRisks(auditList: any[]) {
                           Executive Tools & Launchers
                         </span>
                       </div>
-                      <span className="text-[10px] font-mono text-slate-400">8 Modules</span>
+                      <span className="text-[10px] font-mono text-amber-300 font-bold">22 Enterprise Modules</span>
                     </div>
 
                     {/* Tools Grid */}
@@ -2585,6 +2595,86 @@ function getPredictedRisks(auditList: any[]) {
                         <div>
                           <div className="text-xs font-bold text-pink-300">Sentiment Studio</div>
                           <div className="text-[10px] text-pink-400/80 leading-tight">Review NLP & AI Response</div>
+                        </div>
+                      </button>
+
+                      {/* Recipe BOM Variance Engine */}
+                      <button
+                        onClick={() => {
+                          playTechChime("nav");
+                          setIsRecipeVarianceOpen(true);
+                          setIsQuickToolsOpen(false);
+                        }}
+                        className="flex items-start gap-2.5 p-2.5 rounded-xl border border-amber-500/25 bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 hover:border-amber-500/50 transition-all cursor-pointer text-left group"
+                      >
+                        <Scale size={16} className="mt-0.5 shrink-0 text-amber-400 group-hover:scale-110 transition-transform" />
+                        <div>
+                          <div className="text-xs font-bold text-amber-300">Recipe BOM Variance</div>
+                          <div className="text-[10px] text-amber-400/80 leading-tight">Food Cost & Shrinkage Audit</div>
+                        </div>
+                      </button>
+
+                      {/* Royalty Evasion Anti-Fraud Auditor */}
+                      <button
+                        onClick={() => {
+                          playTechChime("nav");
+                          setIsRoyaltyEvasionOpen(true);
+                          setIsQuickToolsOpen(false);
+                        }}
+                        className="flex items-start gap-2.5 p-2.5 rounded-xl border border-rose-500/25 bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 hover:border-rose-500/50 transition-all cursor-pointer text-left group"
+                      >
+                        <ShieldAlert size={16} className="mt-0.5 shrink-0 text-rose-400 group-hover:scale-110 transition-transform" />
+                        <div>
+                          <div className="text-xs font-bold text-rose-300">Royalty Evasion AI</div>
+                          <div className="text-[10px] text-rose-400/80 leading-tight">No-Sale Pop & Cash Audit</div>
+                        </div>
+                      </button>
+
+                      {/* Third-Party Aggregator Reconciler */}
+                      <button
+                        onClick={() => {
+                          playTechChime("nav");
+                          setIsAggregatorReconOpen(true);
+                          setIsQuickToolsOpen(false);
+                        }}
+                        className="flex items-start gap-2.5 p-2.5 rounded-xl border border-orange-500/25 bg-orange-500/10 hover:bg-orange-500/20 text-orange-300 hover:border-orange-500/50 transition-all cursor-pointer text-left group"
+                      >
+                        <Bike size={16} className="mt-0.5 shrink-0 text-orange-400 group-hover:scale-110 transition-transform" />
+                        <div>
+                          <div className="text-xs font-bold text-orange-300">Aggregator Payout</div>
+                          <div className="text-[10px] text-orange-400/80 leading-tight">Swiggy/Zomato Reconciler</div>
+                        </div>
+                      </button>
+
+                      {/* Equipment Maintenance Helpdesk */}
+                      <button
+                        onClick={() => {
+                          playTechChime("nav");
+                          setIsEquipmentMaintOpen(true);
+                          setIsQuickToolsOpen(false);
+                        }}
+                        className="flex items-start gap-2.5 p-2.5 rounded-xl border border-cyan-500/25 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 hover:border-cyan-500/50 transition-all cursor-pointer text-left group"
+                      >
+                        <Wrench size={16} className="mt-0.5 shrink-0 text-cyan-400 group-hover:scale-110 transition-transform" />
+                        <div>
+                          <div className="text-xs font-bold text-cyan-300">Asset SLA Helpdesk</div>
+                          <div className="text-[10px] text-cyan-400/80 leading-tight">Machine Downtime & Bleed</div>
+                        </div>
+                      </button>
+
+                      {/* Statutory License Expiry Shield */}
+                      <button
+                        onClick={() => {
+                          playTechChime("nav");
+                          setIsStatutoryComplianceOpen(true);
+                          setIsQuickToolsOpen(false);
+                        }}
+                        className="flex items-start gap-2.5 p-2.5 rounded-xl border border-emerald-500/25 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 hover:border-emerald-500/50 transition-all cursor-pointer text-left group"
+                      >
+                        <FileCheck2 size={16} className="mt-0.5 shrink-0 text-emerald-400 group-hover:scale-110 transition-transform" />
+                        <div>
+                          <div className="text-xs font-bold text-emerald-300">Statutory Shield</div>
+                          <div className="text-[10px] text-emerald-400/80 leading-tight">FSSAI & Fire NOC Renewal</div>
                         </div>
                       </button>
                     </div>
@@ -3099,7 +3189,29 @@ function getPredictedRisks(auditList: any[]) {
               <OutletAgentCharts t={t} accent={accent} isDark={isDark} />
 
               <div className="rounded-xl border overflow-hidden transition-colors duration-200" style={{ background: t.card, borderColor: t.border }}>
-                <p className="text-sm font-semibold px-5 pt-5 pb-1 flex items-center gap-2" style={{ color: t.text }}><Store size={15} color={accent} /> Outlet Sales &amp; Performance ({dynamicOutletPerformance.length} Outlets)</p>
+                <div className="flex items-center justify-between px-5 pt-5 pb-1 flex-wrap gap-2">
+                  <p className="text-sm font-semibold flex items-center gap-2" style={{ color: t.text }}><Store size={15} color={accent} /> Outlet Sales &amp; Performance ({dynamicOutletPerformance.length} Outlets)</p>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => {
+                        playTechChime("nav");
+                        setIsRoyaltyEvasionOpen(true);
+                      }}
+                      className="px-2.5 py-1 rounded-lg text-xs font-semibold bg-rose-500/15 hover:bg-rose-500/25 text-rose-400 border border-rose-500/30 flex items-center gap-1.5 transition-all cursor-pointer shadow-xs"
+                    >
+                      <ShieldAlert size={13} /> Royalty &amp; Cash Fraud Auditor
+                    </button>
+                    <button
+                      onClick={() => {
+                        playTechChime("nav");
+                        setIsAggregatorReconOpen(true);
+                      }}
+                      className="px-2.5 py-1 rounded-lg text-xs font-semibold bg-orange-500/15 hover:bg-orange-500/25 text-orange-400 border border-orange-500/30 flex items-center gap-1.5 transition-all cursor-pointer shadow-xs"
+                    >
+                      <Bike size={13} /> Aggregator Payout Reconciler
+                    </button>
+                  </div>
+                </div>
                 <table className="w-full text-sm mt-3">
                   <thead>
                     <tr className="text-left text-xs border-y" style={{ color: t.textFaint, borderColor: t.border }}>
@@ -3184,11 +3296,22 @@ function getPredictedRisks(auditList: any[]) {
                 <div className="flex items-center justify-between mb-1 flex-wrap gap-2">
                   <div className="flex items-center gap-2">
                     <Trash2 size={15} color="#F59E0B" />
-                    <p className="text-sm font-semibold" style={{ color: t.text }}>Reduce Waste</p>
+                    <p className="text-sm font-semibold" style={{ color: t.text }}>Reduce Waste &amp; Recipe Shrinkage</p>
                   </div>
-                  <span className="text-xs px-2.5 py-1 rounded-full border" style={{ background: "#F59E0B1A", color: "#F59E0B", borderColor: "#F59E0B33" }}>
-                    Avg wastage: {avgWastagePercent}%
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => {
+                        playTechChime("nav");
+                        setIsRecipeVarianceOpen(true);
+                      }}
+                      className="px-2.5 py-1 rounded-lg text-xs font-semibold bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 border border-amber-500/30 flex items-center gap-1.5 transition-all cursor-pointer shadow-xs"
+                    >
+                      <Scale size={13} /> Launch Recipe BOM Variance Engine
+                    </button>
+                    <span className="text-xs px-2.5 py-1 rounded-full border" style={{ background: "#F59E0B1A", color: "#F59E0B", borderColor: "#F59E0B33" }}>
+                      Avg wastage: {avgWastagePercent}%
+                    </span>
+                  </div>
                 </div>
                 <p className="text-sm leading-relaxed mb-3" style={{ color: t.textMuted }}>
                   Tracking spoilage and waste by item helps cut losses — items above 5% wastage are flagged for review.
@@ -4360,9 +4483,31 @@ function getPredictedRisks(auditList: any[]) {
               {auditSubTab === "operational" && (
   <div className="space-y-6">
     <div className="rounded-xl border overflow-hidden" style={{ background: t.card, borderColor: t.border }}>
-      <p className="text-sm font-semibold px-5 pt-5 pb-1 flex items-center gap-2" style={{ color: t.text }}>
-        <ClipboardList size={15} color={accent} /> Operational Compliance
-      </p>
+      <div className="flex items-center justify-between px-5 pt-5 pb-1 flex-wrap gap-2">
+        <p className="text-sm font-semibold flex items-center gap-2" style={{ color: t.text }}>
+          <ClipboardList size={15} color={accent} /> Operational Compliance &amp; Facilities
+        </p>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => {
+              playTechChime("nav");
+              setIsEquipmentMaintOpen(true);
+            }}
+            className="px-2.5 py-1 rounded-lg text-xs font-semibold bg-cyan-500/15 hover:bg-cyan-500/25 text-cyan-400 border border-cyan-500/30 flex items-center gap-1.5 transition-all cursor-pointer shadow-xs"
+          >
+            <Wrench size={13} /> Equipment Breakdown &amp; SLA Desk
+          </button>
+          <button
+            onClick={() => {
+              playTechChime("nav");
+              setIsStatutoryComplianceOpen(true);
+            }}
+            className="px-2.5 py-1 rounded-lg text-xs font-semibold bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-400 border border-emerald-500/30 flex items-center gap-1.5 transition-all cursor-pointer shadow-xs"
+          >
+            <FileCheck2 size={13} /> Statutory Licenses &amp; Legal Shield
+          </button>
+        </div>
+      </div>
       <p className="text-xs px-5 pb-3" style={{ color: t.textFaint }}>
         Attendance, staffing, inventory updates, and cash closing — checked daily per outlet.
       </p>
@@ -7504,6 +7649,11 @@ function getPredictedRisks(auditList: any[]) {
         onOpenCCTV={() => setIsCCTVSentinelOpen(true)}
         onOpenExpansion={() => setIsStoreExpansionOpen(true)}
         onOpenSentiment={() => setIsCustomerSentimentOpen(true)}
+        onOpenRecipeVariance={() => setIsRecipeVarianceOpen(true)}
+        onOpenRoyaltyEvasion={() => setIsRoyaltyEvasionOpen(true)}
+        onOpenAggregatorRecon={() => setIsAggregatorReconOpen(true)}
+        onOpenEquipmentMaint={() => setIsEquipmentMaintOpen(true)}
+        onOpenStatutoryCompliance={() => setIsStatutoryComplianceOpen(true)}
       />
       <ShiftSchedulerModal isOpen={isShiftSchedulerOpen} onClose={() => setIsShiftSchedulerOpen(false)} t={t} accent={accent} />
       <RoyaltyCalculatorModal isOpen={isRoyaltyCalcOpen} onClose={() => setIsRoyaltyCalcOpen(false)} t={t} accent={accent} />
@@ -7518,6 +7668,11 @@ function getPredictedRisks(auditList: any[]) {
       <CCTVVisionSentinelModal isOpen={isCCTVSentinelOpen} onClose={() => setIsCCTVSentinelOpen(false)} t={t} accent={accent} isDark={isDark} />
       <StoreExpansionSimulatorModal isOpen={isStoreExpansionOpen} onClose={() => setIsStoreExpansionOpen(false)} t={t} accent={accent} isDark={isDark} />
       <CustomerSentimentStudioModal isOpen={isCustomerSentimentOpen} onClose={() => setIsCustomerSentimentOpen(false)} t={t} accent={accent} isDark={isDark} />
+      <RecipeVarianceEngineModal isOpen={isRecipeVarianceOpen} onClose={() => setIsRecipeVarianceOpen(false)} t={t} accent={accent} isDark={isDark} />
+      <RoyaltyEvasionAuditorModal isOpen={isRoyaltyEvasionOpen} onClose={() => setIsRoyaltyEvasionOpen(false)} t={t} accent={accent} isDark={isDark} />
+      <AggregatorReconciliationModal isOpen={isAggregatorReconOpen} onClose={() => setIsAggregatorReconOpen(false)} t={t} accent={accent} isDark={isDark} />
+      <EquipmentMaintenanceModal isOpen={isEquipmentMaintOpen} onClose={() => setIsEquipmentMaintOpen(false)} t={t} accent={accent} isDark={isDark} />
+      <StatutoryComplianceModal isOpen={isStatutoryComplianceOpen} onClose={() => setIsStatutoryComplianceOpen(false)} t={t} accent={accent} isDark={isDark} />
       <ExecutiveQuickDock
         onOpenCommandPalette={() => setIsCommandPaletteOpen(true)}
         onOpenQRScanner={() => setIsQRScannerOpen(true)}
@@ -7528,6 +7683,11 @@ function getPredictedRisks(auditList: any[]) {
         onOpenCCTV={() => setIsCCTVSentinelOpen(true)}
         onOpenExpansion={() => setIsStoreExpansionOpen(true)}
         onOpenSentiment={() => setIsCustomerSentimentOpen(true)}
+        onOpenRecipeVariance={() => setIsRecipeVarianceOpen(true)}
+        onOpenRoyaltyEvasion={() => setIsRoyaltyEvasionOpen(true)}
+        onOpenAggregatorRecon={() => setIsAggregatorReconOpen(true)}
+        onOpenEquipmentMaint={() => setIsEquipmentMaintOpen(true)}
+        onOpenStatutoryCompliance={() => setIsStatutoryComplianceOpen(true)}
       />
     </div>
 
