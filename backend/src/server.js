@@ -2,8 +2,9 @@ require("dotenv").config();
 
 const app = require("./app");
 const posSimulator = require("./services/posSimulator");
+const { startEscalationEngine, stopEscalationEngine } = require("./services/escalationEngineService");
 const prisma = require("./config/prisma");
-const dashboardRoutes = require("./routes/dashboardRoutes");
+
 
 const PORT = process.env.PORT || 5000;
 
@@ -14,11 +15,17 @@ const server = app.listen(PORT, () => {
   
   // Start live POS transactions simulation loop
   posSimulator.startSimulator();
+
+  // Start SLA Escalation Engine (runs every 60s)
+  startEscalationEngine();
 });
+
 
 // Graceful Shutdown on termination signals
 function gracefulShutdown(signal) {
   console.log(`\n🛑 [Server] Received ${signal}. Starting graceful shutdown...`);
+  stopEscalationEngine();
+
 
   server.close(async () => {
     console.log("🔒 [Server] Closed active HTTP listeners.");

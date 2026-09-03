@@ -20,7 +20,11 @@ const complianceRoutes = require("./routes/complianceRoutes");
 const enterpriseRoutes = require("./routes/enterpriseRoutes");
 const setupSwagger = require("./swagger");
 const errorHandler = require("./middlewares/errorHandler");
-const dashboardRoutes = require("./routes/dashboardRoutes");
+const notificationRoutes     = require("./routes/notificationRoutes");
+const escalationRoutes       = require("./routes/escalationRoutes");
+const notificationRuleRoutes = require("./routes/notificationRuleRoutes");
+const dashboardRoutes        = require("./routes/dashboardRoutes");
+
 
 const app = express();
 
@@ -74,7 +78,11 @@ app.use("/api/intelligence", intelligenceRoutes);
 app.use("/api/campaigns", campaignRoutes);
 app.use("/api/reports", reportsRoutes);
 app.use("/api/enterprise", enterpriseRoutes);
-app.use("/api/dashboard", dashboardRoutes);
+app.use("/api/dashboard",          dashboardRoutes);
+app.use("/api/notifications",      notificationRoutes);
+app.use("/api/escalations",        escalationRoutes);
+app.use("/api/notification-rules", notificationRuleRoutes);
+
 
 // Swagger Documentation
 setupSwagger(app);
