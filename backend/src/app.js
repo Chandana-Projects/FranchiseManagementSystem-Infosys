@@ -20,11 +20,15 @@ const complianceRoutes = require("./routes/complianceRoutes");
 const enterpriseRoutes = require("./routes/enterpriseRoutes");
 const setupSwagger = require("./swagger");
 const errorHandler = require("./middlewares/errorHandler");
-const notificationRoutes     = require("./routes/notificationRoutes");
-const escalationRoutes       = require("./routes/escalationRoutes");
-const notificationRuleRoutes = require("./routes/notificationRuleRoutes");
-const dashboardRoutes        = require("./routes/dashboardRoutes");
+const actionPlanRoutes = require("./routes/actionPlanRoutes");  
 
+const notificationRoutes = require("./routes/notificationRoutes");
+const escalationRoutes = require("./routes/escalationRoutes");
+const notificationRuleRoutes = require("./routes/notificationRuleRoutes");
+const dashboardRoutes = require("./routes/dashboardRoutes");
+
+// Push notification routes
+const pushRoutes = require("./routes/pushRoutes");
 
 const app = express();
 
@@ -33,30 +37,48 @@ app.use(helmet({
   crossOriginEmbedderPolicy: false,
   crossOriginResourcePolicy: { policy: "cross-origin" },
   frameguard: { action: "sameorigin" },
-  hsts: { maxAge: 31536000, includeSubDomains: true, preload: true },
+  hsts: {
+    maxAge: 31536000,
+    includeSubDomains: true,
+    preload: true
+  },
   noSniff: true,
-  referrerPolicy: { policy: "strict-origin-when-cross-origin" },
+  referrerPolicy: {
+    policy: "strict-origin-when-cross-origin"
+  },
 }));
+
 app.use(requestTracker);
 
-const allowedOrigins = process.env.ALLOWED_ORIGINS 
-  ? process.env.ALLOWED_ORIGINS.split(",") 
+const allowedOrigins = process.env.ALLOWED_ORIGINS
+  ? process.env.ALLOWED_ORIGINS.split(",")
   : ["http://localhost:3000"];
 
 app.use(cors({
   origin: (origin, callback) => {
     if (!origin) return callback(null, true);
-    if (allowedOrigins.indexOf(origin) === -1 && !allowedOrigins.includes("*")) {
-      const msg = "The CORS policy for this site does not allow access from the specified Origin.";
+
+    if (
+      allowedOrigins.indexOf(origin) === -1 &&
+      !allowedOrigins.includes("*")
+    ) {
+      const msg =
+        "The CORS policy for this site does not allow access from the specified Origin.";
+
       return callback(new Error(msg), false);
     }
+
     return callback(null, true);
   },
   credentials: true
 }));
 
 app.use(express.json({ limit: "5mb" }));
-app.use(express.urlencoded({ extended: true, limit: "5mb" }));
+app.use(express.urlencoded({
+  extended: true,
+  limit: "5mb"
+}));
+
 app.use(inputSanitizer);
 
 // Rate limit general API requests
@@ -78,11 +100,14 @@ app.use("/api/intelligence", intelligenceRoutes);
 app.use("/api/campaigns", campaignRoutes);
 app.use("/api/reports", reportsRoutes);
 app.use("/api/enterprise", enterpriseRoutes);
-app.use("/api/dashboard",          dashboardRoutes);
-app.use("/api/notifications",      notificationRoutes);
-app.use("/api/escalations",        escalationRoutes);
+app.use("/api/dashboard", dashboardRoutes);
+app.use("/api/notifications", notificationRoutes);
+app.use("/api/escalations", escalationRoutes);
 app.use("/api/notification-rules", notificationRuleRoutes);
+app.use("/api/action-plans", actionPlanRoutes);
 
+// Push notification routes
+app.use("/api/push", pushRoutes);
 
 // Swagger Documentation
 setupSwagger(app);
