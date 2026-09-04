@@ -120,12 +120,12 @@ export default function DigitalWorldClock({
             <span className="text-teal-400 group-hover:text-teal-300 transition-colors">
               {timeString}
             </span>
-            <span className="hidden xl:inline-block text-[9px] font-sans font-semibold px-1 py-0.2 rounded bg-teal-500/20 text-teal-300 border border-teal-500/30">
+            <span className="hidden 2xl:inline-block text-[9px] font-sans font-semibold px-1 py-0.2 rounded bg-teal-500/20 text-teal-300 border border-teal-500/30">
               {selectedCity.name.split(" ")[0]}
             </span>
           </div>
 
-          <div className="hidden lg:flex items-center gap-1 text-[9px] text-slate-400 font-medium leading-none">
+          <div className="hidden 2xl:flex items-center gap-1 text-[9px] text-slate-400 font-medium leading-none">
             <Calendar size={9} className="text-slate-400 shrink-0" />
             <span>
               {weekday}, {day} {month} <span className="font-bold text-slate-300">{year}</span>

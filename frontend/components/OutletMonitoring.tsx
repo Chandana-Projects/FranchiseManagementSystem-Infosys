@@ -2203,8 +2203,8 @@ function getPredictedRisks(auditList: any[]) {
           accentColor={accent}
           theme={t}
         />
-        <div className="border-b px-3 sm:px-5 py-2 flex items-center justify-between gap-2 sm:gap-3 flex-nowrap relative z-30 transition-colors duration-200" style={{ background: t.panel, borderColor: t.border }}>
-          <div className="flex items-center gap-2 shrink-0 min-w-[130px] max-w-[180px] sm:max-w-xs md:max-w-sm">
+        <div className="border-b px-2.5 sm:px-4 py-2 flex items-center justify-between gap-2 relative z-30 transition-colors duration-200 overflow-x-auto no-scrollbar min-w-0" style={{ background: t.panel, borderColor: t.border }}>
+          <div className="flex items-center gap-2 shrink-0 min-w-[130px] max-w-[170px] sm:max-w-xs md:max-w-sm">
             {/* Hamburger Button for Mobile/Tablet (< lg) */}
             <button
               onClick={() => setIsMobileSidebarOpen(true)}
@@ -2214,8 +2214,8 @@ function getPredictedRisks(auditList: any[]) {
             >
               <Menu size={16} />
             </button>
-            <div className="relative flex-1 min-w-[120px] sm:min-w-[180px]">
-            <div className="flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs border focus-within:border-amber-400 transition-colors overflow-hidden" style={{ background: t.inputBg, borderColor: t.border }}>
+            <div className="relative flex-1 min-w-[110px] sm:min-w-[160px]">
+            <div className="flex items-center gap-1.5 rounded-lg px-2 sm:px-2.5 py-1 text-xs border focus-within:border-amber-400 transition-colors overflow-hidden" style={{ background: t.inputBg, borderColor: t.border }}>
               <Search size={13} color={t.textFaint} className="shrink-0" />
               <input
                 type="text"
@@ -2283,7 +2283,7 @@ function getPredictedRisks(auditList: any[]) {
         </div>
 
         {/* Header Action Controls */}
-          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0 relative z-30 overflow-visible">
+          <div className="flex items-center gap-1 sm:gap-1.5 shrink-0 relative z-30">
             {/* Multi-Tier Role Switcher */}
             <div className="shrink-0 relative z-10">
               <RoleSwitcher
@@ -2745,7 +2745,7 @@ function getPredictedRisks(auditList: any[]) {
               title="Ask AI Copilot"
             >
               <Sparkles size={13} className="shrink-0" />
-              <span className="hidden sm:inline">Ask AI</span>
+              <span className="hidden xl:inline">Ask AI</span>
             </button>
             <button
               onClick={() => setIsDark(!isDark)}
@@ -2755,7 +2755,7 @@ function getPredictedRisks(auditList: any[]) {
               title={isDark ? "Switch to Light Mode" : "Switch to Dark Mode"}
             >
               {isDark ? <Sun size={13} className="shrink-0" /> : <Moon size={13} className="shrink-0" />}
-              <span className="hidden sm:inline">{isDark ? "Light" : "Dark"}</span>
+              <span className="hidden xl:inline">{isDark ? "Light" : "Dark"}</span>
             </button>
             <button
               onClick={handleSignOut}
