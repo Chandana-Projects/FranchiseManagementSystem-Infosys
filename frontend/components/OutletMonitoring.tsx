@@ -2203,7 +2203,7 @@ function getPredictedRisks(auditList: any[]) {
           accentColor={accent}
           theme={t}
         />
-        <div className="border-b px-2.5 sm:px-4 py-2 flex items-center justify-between gap-2 relative z-30 transition-colors duration-200 overflow-x-auto no-scrollbar min-w-0" style={{ background: t.panel, borderColor: t.border }}>
+        <div className="border-b px-2.5 sm:px-4 py-2 flex items-center justify-between gap-2 relative z-30 transition-colors duration-200 overflow-visible min-w-0" style={{ background: t.panel, borderColor: t.border }}>
           <div className="flex items-center gap-2 shrink-0 min-w-[130px] max-w-[170px] sm:max-w-xs md:max-w-sm">
             {/* Hamburger Button for Mobile/Tablet (< lg) */}
             <button
