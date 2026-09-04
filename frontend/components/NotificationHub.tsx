@@ -222,7 +222,9 @@ export default function NotificationHub({
                 }`}
                 style={{
                   background: t.card,
-                  borderColor: t.border,
+                  borderTopColor: t.border,
+                  borderRightColor: t.border,
+                  borderBottomColor: t.border,
                   borderLeftColor: !item.is_read ? accent : t.border
                 }}
               >
