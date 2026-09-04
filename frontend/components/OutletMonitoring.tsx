@@ -19,7 +19,8 @@ import {
   Gauge, TrendingUpDown, ListChecks, Layers,
   Rocket,
   ArrowRight, Database,
-  Filter, BarChart2
+  Filter, BarChart2,
+  Swords,Cpu,Keyboard,FileSpreadsheet,PlayCircle,Scale,Bike,ShieldAlert
 } from "lucide-react";
 
 import AuditComplianceSummary from "./AuditComplianceSummary";

@@ -2,6 +2,7 @@
   "dependencies": {
     "@tanstack/react-query": "^5.101.4",
     "axios": "^1.18.1",
+    "lucide-react": "^1.40.0",
     "react-hook-form": "^7.82.0",
     "recharts": "^3.10.0",
     "shadcn-ui": "^0.9.5",
