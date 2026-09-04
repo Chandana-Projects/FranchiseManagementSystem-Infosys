@@ -78,7 +78,11 @@ import AuditAgentCharts from "./agent-charts/AuditAgentCharts";
 import IntelligenceAgentCharts from "./agent-charts/IntelligenceAgentCharts";
 import ReportsCharts from "./agent-charts/ReportsCharts";
 import DigitalWorldClock from "./DigitalWorldClock";
-import { BookOpen, Compass, QrCode, Volume2, VolumeX, Bot, Sliders, Menu, X, Calculator, Utensils, ChevronDown, Swords, Cpu, Keyboard, FileSpreadsheet, PlayCircle, Scale, Bike, ShieldAlert } from "lucide-react";
+import NotificationHub from "./NotificationHub";
+import ActionPlansStudio from "./ActionPlansStudio";
+import NotificationChannelsModal from "./NotificationChannelsModal";
+
+import { BookOpen, Compass, QrCode, Volume2, VolumeX, Bot, Sliders, Menu, X, Calculator, Utensils, ChevronDown } from "lucide-react";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
 
