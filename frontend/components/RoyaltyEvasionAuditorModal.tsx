@@ -346,7 +346,7 @@ export default function RoyaltyEvasionAuditorModal({
                 {SAMPLE_TXNS.map((txn) => (
                   <div key={txn.id} className="p-2.5 rounded-lg border bg-slate-800/40 border-slate-700/60 text-xs space-y-1">
                     <div className="flex items-center justify-between text-[10px]">
-                      <span className="font-mono text-rose-400 font-bold">{txn.id} // {txn.terminal}</span>
+                      <span className="font-mono text-rose-400 font-bold">{txn.id} {"//"} {txn.terminal}</span>
                       <span className="text-slate-400">{txn.time}</span>
                     </div>
                     <div className="flex items-center justify-between font-semibold">

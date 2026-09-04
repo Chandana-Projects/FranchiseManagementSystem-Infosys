@@ -136,6 +136,59 @@ const INITIAL_INCIDENTS: IncidentLog[] = [
   }
 ];
 
+function drawBox(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+  label: string,
+  color: string,
+  subLabel: string
+) {
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 1.5;
+
+  // Corner reticles
+  const cLen = 10;
+  ctx.beginPath();
+  // Top-left
+  ctx.moveTo(x, y + cLen);
+  ctx.lineTo(x, y);
+  ctx.lineTo(x + cLen, y);
+  // Top-right
+  ctx.moveTo(x + w - cLen, y);
+  ctx.lineTo(x + w, y);
+  ctx.lineTo(x + w, y + cLen);
+  // Bottom-left
+  ctx.moveTo(x, y + h - cLen);
+  ctx.lineTo(x, y + h);
+  ctx.lineTo(x + cLen, y + h);
+  // Bottom-right
+  ctx.moveTo(x + w - cLen, y + h);
+  ctx.lineTo(x + w, y + h);
+  ctx.lineTo(x + w, y + h - cLen);
+  ctx.stroke();
+
+  // Fill highlight
+  ctx.fillStyle = color.replace(")", ", 0.08)").replace("rgb", "rgba").replace("#", "rgba(");
+  ctx.fillRect(x, y, w, h);
+
+  // Label tag
+  ctx.fillStyle = color;
+  ctx.fillRect(x, y - 18, Math.max(90, label.length * 6.5), 18);
+  ctx.fillStyle = "#0F172A";
+  ctx.font = "bold 9px sans-serif";
+  ctx.fillText(label, x + 4, y - 5);
+
+  // Subtag pill
+  ctx.fillStyle = "rgba(15, 23, 42, 0.75)";
+  ctx.fillRect(x, y + h + 3, Math.max(100, subLabel.length * 6.2), 16);
+  ctx.fillStyle = color;
+  ctx.font = "9px monospace";
+  ctx.fillText(subLabel, x + 4, y + h + 14);
+}
+
 export default function CCTVVisionSentinelModal({
   isOpen,
   onClose,
@@ -268,58 +321,7 @@ export default function CCTVVisionSentinelModal({
     };
   }, [isOpen, selectedCam, isPlaying, liveTimestamp]);
 
-  const drawBox = (
-    ctx: CanvasRenderingContext2D,
-    x: number,
-    y: number,
-    w: number,
-    h: number,
-    label: string,
-    color: string,
-    subLabel: string
-  ) => {
-    ctx.strokeStyle = color;
-    ctx.lineWidth = 1.5;
 
-    // Corner reticles
-    const cLen = 10;
-    ctx.beginPath();
-    // Top-left
-    ctx.moveTo(x, y + cLen);
-    ctx.lineTo(x, y);
-    ctx.lineTo(x + cLen, y);
-    // Top-right
-    ctx.moveTo(x + w - cLen, y);
-    ctx.lineTo(x + w, y);
-    ctx.lineTo(x + w, y + cLen);
-    // Bottom-left
-    ctx.moveTo(x, y + h - cLen);
-    ctx.lineTo(x, y + h);
-    ctx.lineTo(x + cLen, y + h);
-    // Bottom-right
-    ctx.moveTo(x + w - cLen, y + h);
-    ctx.lineTo(x + w, y + h);
-    ctx.lineTo(x + w, y + h - cLen);
-    ctx.stroke();
-
-    // Fill highlight
-    ctx.fillStyle = color.replace(")", ", 0.08)").replace("rgb", "rgba").replace("#", "rgba(");
-    ctx.fillRect(x, y, w, h);
-
-    // Label tag
-    ctx.fillStyle = color;
-    ctx.fillRect(x, y - 18, Math.max(90, label.length * 6.5), 18);
-    ctx.fillStyle = "#0F172A";
-    ctx.font = "bold 9px sans-serif";
-    ctx.fillText(label, x + 4, y - 5);
-
-    // Subtag pill
-    ctx.fillStyle = "rgba(15, 23, 42, 0.75)";
-    ctx.fillRect(x, y + h + 3, Math.max(100, subLabel.length * 6.2), 16);
-    ctx.fillStyle = color;
-    ctx.font = "9px monospace";
-    ctx.fillText(subLabel, x + 4, y + h + 14);
-  };
 
   const handleExportIncidentAudit = () => {
     playTechChime();

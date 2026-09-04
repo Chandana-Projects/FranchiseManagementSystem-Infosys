@@ -155,6 +155,32 @@ const CATALOG_TREEMAP = [
   },
 ];
 
+function CustomTooltipContent({ active, payload, label }: any) {
+  if (active && payload && payload.length) {
+    return (
+      <div className="p-3 rounded-xl shadow-2xl border backdrop-blur-md bg-slate-950/90 border-slate-700 text-white text-xs">
+        <p className="font-bold border-b border-slate-800 pb-1 mb-1.5 text-slate-200">{label}</p>
+        {payload.map((entry: any, index: number) => (
+          <div key={`item-${index}`} className="flex items-center justify-between gap-4 my-1">
+            <span className="flex items-center gap-1.5" style={{ color: entry.color || entry.stroke || entry.fill }}>
+              <span className="w-2 h-2 rounded-full inline-block" style={{ background: entry.color || entry.stroke || entry.fill }} />
+              {entry.name}:
+            </span>
+            <span className="font-mono font-bold text-white">
+              {typeof entry.value === "number" && entry.value > 1000
+                ? `₹${entry.value.toLocaleString()}`
+                : typeof entry.value === "number" && entry.name?.includes("%")
+                ? `${entry.value}%`
+                : entry.value}
+            </span>
+          </div>
+        ))}
+      </div>
+    );
+  }
+  return null;
+}
+
 export default function AdvancedAnalyticsStudio({ t, accent = "#0D9488", isDark = true }: AnalyticsProps) {
   const [activeChartTab, setActiveChartTab] = useState<"overview" | "revenue" | "operations" | "radar" | "waste">("overview");
   const [selectedRange, setSelectedRange] = useState<"7D" | "30D" | "90D" | "YTD">("30D");
@@ -165,32 +191,6 @@ export default function AdvancedAnalyticsStudio({ t, accent = "#0D9488", isDark 
   const textColor = t.text;
   const textMuted = t.textMuted;
   const panelBg = t.panel;
-
-  const CustomTooltipContent = ({ active, payload, label }: any) => {
-    if (active && payload && payload.length) {
-      return (
-        <div className="p-3 rounded-xl shadow-2xl border backdrop-blur-md bg-slate-950/90 border-slate-700 text-white text-xs">
-          <p className="font-bold border-b border-slate-800 pb-1 mb-1.5 text-slate-200">{label}</p>
-          {payload.map((entry: any, index: number) => (
-            <div key={`item-${index}`} className="flex items-center justify-between gap-4 my-1">
-              <span className="flex items-center gap-1.5" style={{ color: entry.color || entry.stroke || entry.fill }}>
-                <span className="w-2 h-2 rounded-full inline-block" style={{ background: entry.color || entry.stroke || entry.fill }} />
-                {entry.name}:
-              </span>
-              <span className="font-mono font-bold text-white">
-                {typeof entry.value === "number" && entry.value > 1000
-                  ? `₹${entry.value.toLocaleString()}`
-                  : typeof entry.value === "number" && entry.name.includes("%")
-                  ? `${entry.value}%`
-                  : entry.value}
-              </span>
-            </div>
-          ))}
-        </div>
-      );
-    }
-    return null;
-  };
 
   return (
     <div className="space-y-6 animate-in fade-in duration-300">

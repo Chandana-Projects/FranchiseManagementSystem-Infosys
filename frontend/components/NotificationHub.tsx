@@ -75,6 +75,14 @@ export default function NotificationHub({
     );
   };
 
+  const [now, setNow] = useState<number>(0);
+
+  useEffect(() => {
+    setNow(Date.now());
+    const interval = setInterval(() => setNow(Date.now()), 30000);
+    return () => clearInterval(interval);
+  }, []);
+
   // Helper to calculate SLA status
   const getSlaBadge = (item: NotificationItem) => {
     if (item.is_acknowledged) {
@@ -94,10 +102,10 @@ export default function NotificationHub({
     }
 
     const createdTime = new Date(item.created_at).getTime();
-    const elapsedMinutes = Math.floor((Date.now() - createdTime) / (60 * 1000));
+    const elapsedMinutes = now > 0 ? Math.floor((now - createdTime) / (60 * 1000)) : 0;
     const remaining = Math.max(0, (item.sla_minutes || 30) - elapsedMinutes);
 
-    if (remaining === 0) {
+    if (now > 0 && remaining === 0) {
       return (
         <span className="text-[10px] font-bold text-rose-400 flex items-center gap-1">
           <Clock size={12} /> SLA Overdue

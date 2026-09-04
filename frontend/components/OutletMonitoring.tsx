@@ -6753,8 +6753,8 @@ function getPredictedRisks(auditList: any[]) {
                 </div>
                 <div className="text-right font-mono text-[10px] text-slate-300">
                   <p className="font-bold text-amber-400">CONFIDENTIAL REPORT</p>
-                  <p>Ref: DOC-{Date.now().toString().slice(-6)}</p>
-                  <p>Date: {new Date().toLocaleDateString()} {new Date().toLocaleTimeString()}</p>
+                  <p>Ref: DOC-EXECUTIVE-REPORT</p>
+                  <p>Network Operations &amp; Intelligence Summary</p>
                 </div>
               </div>
 

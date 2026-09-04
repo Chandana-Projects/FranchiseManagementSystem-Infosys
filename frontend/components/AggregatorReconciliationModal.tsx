@@ -318,7 +318,7 @@ export default function AggregatorReconciliationModal({
                 {disputes.map((d) => (
                   <div key={d.id} className="p-2.5 rounded-lg border bg-slate-800/40 border-slate-700/60 text-xs space-y-1.5">
                     <div className="flex items-center justify-between text-[10px]">
-                      <span className="font-mono text-orange-400 font-bold">{d.id} // {d.platform}</span>
+                      <span className="font-mono text-orange-400 font-bold">{d.id} {"//"} {d.platform}</span>
                       <span className="text-slate-400">{d.date}</span>
                     </div>
                     <div className="flex items-center justify-between">

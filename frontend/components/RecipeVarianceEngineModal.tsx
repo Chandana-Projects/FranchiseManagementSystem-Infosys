@@ -127,7 +127,15 @@ export default function RecipeVarianceEngineModal({
     let totalActualCost = 0;
     let highRiskCount = 0;
 
-    const items = selectedRecipe.ingredients.map((ing) => {
+    const items: Array<typeof selectedRecipe.ingredients[0] & {
+      theoCost: number;
+      actCost: number;
+      varianceQty: number;
+      variancePct: number;
+      costVariance: number;
+    }> = [];
+
+    for (const ing of selectedRecipe.ingredients) {
       const theoCost = ing.theoreticalQty * ing.unitCost;
       const actCost = ing.actualQty * ing.unitCost;
       const varianceQty = +(ing.actualQty - ing.theoreticalQty).toFixed(1);
@@ -138,15 +146,15 @@ export default function RecipeVarianceEngineModal({
       totalActualCost += actCost;
       if (ing.shrinkageTag === "Potential Pilferage") highRiskCount++;
 
-      return {
+      items.push({
         ...ing,
         theoCost,
         actCost,
         varianceQty,
         variancePct,
         costVariance
-      };
-    });
+      });
+    }
 
     const totalMenuSales = selectedRecipe.unitsSold * selectedRecipe.menuPrice;
     const idealFoodCostPct = totalMenuSales > 0 ? +((totalTheoreticalCost / totalMenuSales) * 100).toFixed(1) : 0;

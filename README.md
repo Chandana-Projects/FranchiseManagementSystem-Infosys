@@ -2,10 +2,10 @@
 
 > **Infosys Internship Team Capstone Project 2026**  
 > **Repository**: [Chandana-Projects/FranchiseManagementSystem](https://github.com/Chandana-Projects/FranchiseManagementSystem)  
-> **Milestone**: 🏆 **Gold Master Release v1.0.0 • 167 Commits Milestone (107+ Lead Architect Century Commits 💯)**
+> **Milestone**: 🏆 **Gold Master Release v1.0.0 • 172 Commits Milestone (109+ Lead Architect Century Commits 💯)**
 
 [![Infosys Internship](https://img.shields.io/badge/Infosys-Team_Capstone_Project-blue?logo=infosys)](https://www.infosys.com/)
-[![107 Commits Milestone](https://img.shields.io/badge/Lead_Architect-107_Commits_Century_💯-gold?logo=github)](https://github.com/AbhishekPattnaik124)
+[![109 Commits Milestone](https://img.shields.io/badge/Lead_Architect-109_Commits_Century_💯-gold?logo=github)](https://github.com/AbhishekPattnaik124)
 [![Release v1.0.0](https://img.shields.io/badge/Release-v1.0.0--Gold_Master-success)](https://github.com/Chandana-Projects/FranchiseManagementSystem)
 [![Next.js 16](https://img.shields.io/badge/Next.js-v16.2.11-black?logo=next.js)](https://nextjs.org/)
 [![React 19](https://img.shields.io/badge/React-v19.2.4-61DAFB?logo=react)](https://react.dev/)
@@ -29,11 +29,11 @@ We are proud to present **OmniFranchise**, a collaborative enterprise solution e
 
 | Team Member | GitHub Profile | Role & Key Technical Focus | Commits Authored | Contribution % |
 | :--- | :--- | :--- | :---: | :---: |
-| 🧑‍💻 **Abhishek Pattnaik** | [@AbhishekPattnaik124](https://github.com/AbhishekPattnaik124) | **Full-Stack & ML Architect** — UI/UX Glassmorphic Design System, FastAPI ML Microservice (Prophet / XGBoost / Isolation Forest), 23+ Heavy Enterprise Operations Modals, War Room Boardroom Kiosk, Multi-Store Arena, Margin Sensitivity Matrix, PDF Studio, CCTV AI Vision Sentinel, Recipe BOM Variance, Royalty Evasion Auditor, Aggregator Reconciler, Equipment SLA, Statutory Shield, Multi-Channel Notification Engine (Email, SMS, Circuit Breaker, SLA Escalation Engine) & 12+ Domain Visualizations | **107 Commits 💯** | **64.1%** |
-| 👩‍💻 **Chandana S** | [@Chandana-Projects](https://github.com/Chandana-Projects) | **Full-Stack Lead & Project Admin** — Repository Owner & Git Administration, Express 5 REST API Gateway, PostgreSQL Prisma ORM Schemas & Migrations, JWT Authentication & RBAC Filters, Action Plans REST API (`/api/action-plans`), Web Push VAPID Subscription Engine (`/api/push`), and Core Backend Modules | **35 Commits** | **21.0%** |
-| 👩‍💻 **Mamta Choudhary** | [@mamta072703](https://github.com/mamta072703) | **Software Engineer & QA Lead** — Inventory Telemetry Analytics, Reorder Threshold Alerts, HACCP Food Safety Compliance Audits, Automated Purchase Order (PO) Workflows, Jest & Supertest Automated API Test Suites (18/18 Passing), Frontend QA & Member 3 Integration Guide (`Member3_WorkGuide.md`) | **25 Commits** | **15.0%** |
+| 🧑‍💻 **Abhishek Pattnaik** | [@AbhishekPattnaik124](https://github.com/AbhishekPattnaik124) | **Full-Stack & ML Architect** — UI/UX Glassmorphic Design System, FastAPI ML Microservice (Prophet / XGBoost / Isolation Forest), 23+ Heavy Enterprise Operations Modals, War Room Boardroom Kiosk, Multi-Store Arena, Margin Sensitivity Matrix, PDF Studio, CCTV AI Vision Sentinel, Recipe BOM Variance, Royalty Evasion Auditor, Aggregator Reconciler, Equipment SLA, Statutory Shield, Multi-Channel Notification Engine (Email, SMS, Circuit Breaker, SLA Escalation Engine), Notification Hub Offline-Resilient Fallback Layer & 12+ Domain Visualizations | **109 Commits 💯** | **63.4%** |
+| 👩‍💻 **Chandana S** | [@Chandana-Projects](https://github.com/Chandana-Projects) | **Full-Stack Lead & Project Admin** — Repository Owner & Git Administration, Express 5 REST API Gateway, PostgreSQL Prisma ORM Schemas & Migrations, JWT Authentication & RBAC Filters, Action Plans REST API (`/api/action-plans`), Web Push VAPID Subscription Engine (`/api/push`), and Core Backend Modules | **35 Commits** | **20.3%** |
+| 👩‍💻 **Mamta Choudhary** | [@mamta072703](https://github.com/mamta072703) | **Software Engineer & QA Lead** — Inventory Telemetry Analytics, Reorder Threshold Alerts, HACCP Food Safety Compliance Audits, Automated Purchase Order (PO) Workflows, Jest & Supertest Automated API Test Suites (18/18 Passing), Frontend QA, Notification Action Plans Studio & Member 3 Integration Guide (`Member3_WorkGuide.md`) | **28 Commits** | **16.3%** |
 
-> 📊 **Total Repository History**: **167 Commits** across frontend, backend REST APIs, machine learning pipelines, test automation, and database schemas.
+> 📊 **Total Repository History**: **172 Commits** across frontend, backend REST APIs, machine learning pipelines, test automation, database schemas, and notification module resilience layer.
 
 ---
 
