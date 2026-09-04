@@ -38,6 +38,10 @@ import { LANGUAGES, SupportedLanguage, translateKey } from "../lib/MultiLangEngi
 import { isAudioMuted, toggleAudioMute, playTechChime } from "../lib/WebAudioSFX";
 import { CURRENCY_CONFIGS, CurrencyCode, formatCurrencyValue } from "../lib/CurrencyEngine";
 import dynamic from "next/dynamic";
+import NotificationHub from "./NotificationHub";
+import ActionPlansStudio from "./ActionPlansStudio";
+import NotificationChannelsModal from "./NotificationChannelsModal";
+
 
 const RealOutletMap = dynamic(() => import("./RealOutletMap"), { ssr: false });
 const ShiftSchedulerModal = dynamic(() => import("./ShiftSchedulerModal"), { ssr: false });
@@ -79,9 +83,7 @@ import AuditAgentCharts from "./agent-charts/AuditAgentCharts";
 import IntelligenceAgentCharts from "./agent-charts/IntelligenceAgentCharts";
 import ReportsCharts from "./agent-charts/ReportsCharts";
 import DigitalWorldClock from "./DigitalWorldClock";
-import NotificationHub from "./NotificationHub";
-import ActionPlansStudio from "./ActionPlansStudio";
-import NotificationChannelsModal from "./NotificationChannelsModal";
+
 
 import { BookOpen, Compass, QrCode, Volume2, VolumeX, Bot, Sliders, Menu, X, Calculator, Utensils, ChevronDown } from "lucide-react";
 
@@ -1179,6 +1181,18 @@ export default function FranchiseOSDashboard({ initialModule = "dashboard" }: Fr
       window.removeEventListener("fops-navigate", handleCustomNav);
     };
   }, []);
+
+  // Notification module state
+const [notificationTab, setNotificationTab] = useState<
+  "alerts" | "plans" | "channels"
+>("alerts");
+
+const [handoffPlanData, setHandoffPlanData] = useState<{
+  title: string;
+  description: string;
+  outlet_id?: number;
+  notification_id?: number;
+} | null>(null);
 
   // Additional state for Audit, Intelligence, Reporting, and Notifications
   const [audits, setAudits] = useState<any[]>([
@@ -6985,110 +6999,80 @@ function getPredictedRisks(auditList: any[]) {
             </div>
           ) : active === "notifications" ? (
             <div className="space-y-6">
-              <div className="flex flex-wrap items-center justify-between gap-4">
+              {/* Notification Master Module Header & Navigation */}
+              <div className="flex flex-wrap items-center justify-between gap-4 border-b pb-4" style={{ borderColor: t.border }}>
                 <div>
-                  <h2 className="text-xl font-bold" style={{ color: t.text }}>Live Notifications & Anomaly Monitor</h2>
-                  <p className="text-xs" style={{ color: t.textMuted }}>Server-Sent Events POS ticker and Isolation Forest transaction anomaly flags.</p>
+                  <h2 className="text-xl font-bold" style={{ color: t.text }}>Enterprise Notification & Action Center</h2>
+                  <p className="text-xs" style={{ color: t.textMuted }}>
+                    Multi-channel routing (Push, Email, SMS), SLA escalation monitoring, and operational corrective action plans.
+                  </p>
                 </div>
 
-                <div className="flex items-center gap-3">
+                {/* Sub-Tab Navigation */}
+                <div className="flex items-center gap-2 p-1 rounded-xl border" style={{ background: t.card, borderColor: t.border }}>
                   <button
-                    onClick={() => setNotificationsList(prev => prev.map(n => ({ ...n, unread: false })))}
-                    className="text-xs font-semibold px-3 py-2 rounded-lg border transition-colors cursor-pointer"
-                    style={{ borderColor: t.border, color: t.textMuted }}
+                    onClick={() => setNotificationTab("alerts")}
+                    className="px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors cursor-pointer"
+                    style={{
+                      background: notificationTab === "alerts" ? accent : "transparent",
+                      color: notificationTab === "alerts" ? "#fff" : t.textMuted
+                    }}
                   >
-                    Mark All as Read
+                    🔔 Live Alerts & SLA Ledger
+                  </button>
+                  <button
+                    onClick={() => setNotificationTab("plans")}
+                    className="px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors cursor-pointer"
+                    style={{
+                      background: notificationTab === "plans" ? accent : "transparent",
+                      color: notificationTab === "plans" ? "#fff" : t.textMuted
+                    }}
+                  >
+                    📋 Action Plans Studio
+                  </button>
+                  <button
+                    onClick={() => setNotificationTab("channels")}
+                    className="px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors cursor-pointer"
+                    style={{
+                      background: notificationTab === "channels" ? accent : "transparent",
+                      color: notificationTab === "channels" ? "#fff" : t.textMuted
+                    }}
+                  >
+                    ⚡ Channel Delivery & Rules
                   </button>
                 </div>
               </div>
 
-              {/* SSE Live Notifications Settings & Frequency Control */}
-              <SSENotificationControl t={t} accent={accent} />
-
-              <div className="rounded-xl border p-4" style={{ background: t.card, borderColor: t.border }}>
-                <div className="flex items-center justify-between mb-3">
-                  <div className="flex items-center gap-2">
-                    <span className="w-2.5 h-2.5 rounded-full bg-teal-400 animate-pulse" />
-                    <h3 className="text-sm font-semibold" style={{ color: t.text }}>Live POS Transaction Stream (SSE Channel)</h3>
-                  </div>
-                  <span className="text-[10px] font-mono text-teal-400 border border-teal-500/30 px-2 py-0.5 rounded-full bg-teal-500/10">Streaming Active</span>
+              {/* Tab 1: Live Alerts & SLA Ledger */}
+              {notificationTab === "alerts" && (
+                <div className="space-y-6">
+                  <SSENotificationControl t={t} accent={accent} />
+                  <NotificationHub
+                    t={t}
+                    accent={accent}
+                    onOpenActionPlanWithData={(data) => {
+                      setHandoffPlanData(data);
+                      setNotificationTab("plans");
+                    }}
+                  />
                 </div>
+              )}
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
-                  {sseTransactions.map(tx => (
-                    <div key={tx.id} className="p-3 rounded-lg border flex items-center justify-between" style={{ background: t.panel, borderColor: t.border }}>
-                      <div>
-                        <p className="font-semibold" style={{ color: t.text }}>{tx.outlet}</p>
-                        <p className="text-[11px]" style={{ color: t.textFaint }}>{tx.items} item(s) • {tx.time}</p>
-                      </div>
-                      <span className="font-mono font-bold text-teal-400">₹{tx.amount}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
+              {/* Tab 2: Action Plans Studio */}
+              {notificationTab === "plans" && (
+                <ActionPlansStudio
+                  t={t}
+                  accent={accent}
+                  defaultOutletId={selectedOutlet === "All" ? 1 : Number(selectedOutlet)}
+                  initialNewPlan={handoffPlanData}
+                  onClearInitialPlan={() => setHandoffPlanData(null)}
+                />
+              )}
 
-              <div className="rounded-xl border p-5" style={{ background: t.card, borderColor: t.border }}>
-                <h3 className="text-sm font-semibold mb-3 flex items-center gap-2" style={{ color: t.text }}>
-                  <AlertTriangle size={16} className="text-rose-400" /> Isolation Forest Anomaly Detection Alerts
-                </h3>
-
-                <div className="space-y-3 text-xs">
-                  {anomalies.map(an => (
-                    <div key={an.id} className="p-3.5 rounded-lg border flex items-start justify-between gap-4 bg-rose-500/5 border-rose-500/20">
-                      <div>
-                        <div className="flex items-center gap-2 mb-1">
-                          <span className="font-bold text-rose-400">{an.outlet}</span>
-                          <span className="text-[10px] font-mono text-rose-400/80">({an.time})</span>
-                        </div>
-                        <p className="leading-relaxed" style={{ color: t.textMuted }}>{an.reason}</p>
-                      </div>
-                      <div className="text-right shrink-0">
-                        <span className="text-xs font-bold text-rose-400">Score: {an.score}</span>
-                        <p className="text-[10px] text-rose-400/70">{an.status}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div className="rounded-xl border p-5" style={{ background: t.card, borderColor: t.border }}>
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-sm font-semibold" style={{ color: t.text }}>Notification Ledger</h3>
-                  <div className="flex gap-2">
-                    {["All", "Critical", "Healthy", "Watch"].map(f => (
-                      <button
-                        key={f}
-                        onClick={() => setNotifFilter(f)}
-                        className="text-xs px-2.5 py-1 rounded-md border transition-colors cursor-pointer"
-                        style={{
-                          borderColor: notifFilter === f ? accent : t.border,
-                          background: notifFilter === f ? `${accent}1A` : "transparent",
-                          color: notifFilter === f ? accent : t.textMuted
-                        }}
-                      >
-                        {f}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="space-y-2.5 text-xs">
-                  {notificationsList
-                    .filter(n => notifFilter === "All" || n.severity === notifFilter)
-                    .map(n => (
-                      <div key={n.id} className={`p-3 rounded-lg border flex items-center justify-between transition-colors ${n.unread ? "border-l-4" : ""}`} style={{ background: t.panel, borderColor: t.border, borderLeftColor: n.unread ? accent : t.border }}>
-                        <div className="flex items-center gap-3">
-                          <span className={`w-2 h-2 rounded-full ${n.severity === "Critical" ? "bg-rose-400" : n.severity === "Watch" ? "bg-amber-400" : "bg-teal-400"}`} />
-                          <div>
-                            <p className="font-semibold" style={{ color: t.text }}>{n.title}</p>
-                            <p className="text-[11px]" style={{ color: t.textMuted }}>{n.desc}</p>
-                          </div>
-                        </div>
-                        <span className="text-[10px]" style={{ color: t.textFaint }}>{n.time}</span>
-                      </div>
-                    ))}
-                </div>
-              </div>
+              {/* Tab 3: Channel Delivery & Rules */}
+              {notificationTab === "channels" && (
+                <NotificationChannelsModal t={t} accent={accent} />
+              )}
             </div>
           ) : active === "enterprise" ? (
             <div className="space-y-6">
