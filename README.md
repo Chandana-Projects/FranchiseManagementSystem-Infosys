@@ -118,14 +118,14 @@ graph TD
     CommsEngine["📨 Multi-Channel Dispatcher<br/>(Nodemailer SMTP • MSG91 SMS • WebPush • SSE)"]:::comms
 
     %% Connections
-    Client -->|PWA App Cache & Push Registration| PWA
-    Client -->|HTTP REST Queries & Mutations| Express
+    Client -->|PWA App Cache and Push Registration| PWA
+    Client -->|HTTP REST Queries and Mutations| Express
     Client -->|Live 60FPS Event Stream /api/events/stream| Express
     Express -->|Prisma Connection Pool| Postgres
-    Express -->|POST /ml/predict & /ml/anomalies (Circuit Breaker)| FastAPI
+    Express -->|POST /ml/predict and /ml/anomalies - Circuit Breaker| FastAPI
     Express -->|Background 60s Interval| EscEngine
     EscEngine -->|Auto-Dispatch Alerts| CommsEngine
-    CommsEngine -->|Email / SMS / Web Push Alerts| Client
+    CommsEngine -->|Email, SMS, and Web Push Alerts| Client
 ```
 
 ---
