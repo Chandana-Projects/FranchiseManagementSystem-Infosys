@@ -2078,10 +2078,12 @@ function getPredictedRisks(auditList: any[]) {
             const Icon = m.icon;
             const isActive = active === m.id;
             return (
-              <button
+              <motion.button
                 key={m.id}
                 onClick={() => setActive(m.id)}
-                className="w-full flex items-center gap-3 px-5 py-2.5 text-sm text-left nav-tab-smooth relative border-l-2 cursor-pointer"
+                whileHover={{ x: 3, backgroundColor: isActive ? `${accent}25` : `${accent}0D` }}
+                whileTap={{ scale: 0.98 }}
+                className="w-full flex items-center gap-3 px-5 py-2.5 text-sm text-left transition-all relative border-l-2 cursor-pointer"
                 style={{
                   borderColor: isActive ? accent : "transparent",
                   background: isActive ? `${accent}1A` : "transparent",
@@ -2091,12 +2093,13 @@ function getPredictedRisks(auditList: any[]) {
                 <Icon size={16} color={isActive ? accent : t.textFaint} />
                 <span className="font-medium">{m.label}</span>
                 {isActive && (
-                  <span
-                    className="absolute right-3 w-1.5 h-1.5 rounded-full shadow-sm transition-all duration-200"
-                    style={{ backgroundColor: accent, boxShadow: `0 0 8px ${accent}` }}
+                  <motion.div
+                    layoutId="activeGlow"
+                    className="absolute right-3 w-1.5 h-1.5 rounded-full"
+                    style={{ backgroundColor: accent, boxShadow: `0 0 10px ${accent}` }}
                   />
                 )}
-              </button>
+              </motion.button>
             );
           })}
         </nav>
@@ -2748,7 +2751,14 @@ function getPredictedRisks(auditList: any[]) {
         </div>
 
         <div className="p-8">
-          <div key={active} className="page-transition">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={active}
+              initial={{ opacity: 0, y: 15, scale: 0.995 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -15, scale: 0.995 }}
+              transition={{ duration: 0.2, ease: "easeOut" }}
+            >
               {active === "dashboard" ? (
             <div className="space-y-6">
               <div className="rounded-xl p-5 border border-l-4" style={{ background: t.card, borderTopColor: t.border, borderRightColor: t.border, borderBottomColor: t.border, borderLeftColor: accent }}>
@@ -7606,7 +7616,8 @@ function getPredictedRisks(auditList: any[]) {
 
             </div>
           ) : null}
-          </div>
+            </motion.div>
+          </AnimatePresence>
         </div>
       </main>
 
