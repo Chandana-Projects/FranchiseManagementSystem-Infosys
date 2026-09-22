@@ -56,6 +56,13 @@ export default function MarketingAgentCharts({ t, isDark = true }: MarketingChar
   const borderColor = t.border;
   const textColor = t.text;
   const textMuted = t.textMuted;
+  const tooltipStyle = {
+    background: isDark ? "#0F172A" : "#FFFFFF",
+    border: `1px solid ${isDark ? "#334155" : "#CBD5E1"}`,
+    borderRadius: 8,
+    color: isDark ? "#fff" : "#0F172A",
+    fontSize: 11,
+  };
 
   return (
     <div className="space-y-6">
@@ -83,7 +90,7 @@ export default function MarketingAgentCharts({ t, isDark = true }: MarketingChar
                 <XAxis dataKey="name" stroke={textMuted} fontSize={10} tickLine={false} />
                 <YAxis stroke={textMuted} fontSize={10} tickLine={false} tickFormatter={(v) => `₹${(v / 1000).toFixed(0)}k`} />
                 <Tooltip
-                  contentStyle={{ background: "#0F172A", border: "1px solid #334155", borderRadius: 8, color: "#fff", fontSize: 11 }}
+                  contentStyle={tooltipStyle}
                   formatter={(v: any) => `₹${Number(v).toLocaleString("en-IN")}`}
                 />
                 <Legend wrapperStyle={{ fontSize: 11 }} />
@@ -115,7 +122,7 @@ export default function MarketingAgentCharts({ t, isDark = true }: MarketingChar
                 <CartesianGrid strokeDasharray="3 3" stroke={isDark ? "#334155" : "#E2E8F0"} opacity={0.5} />
                 <XAxis dataKey="month" stroke={textMuted} fontSize={10} tickLine={false} />
                 <YAxis stroke={textMuted} fontSize={10} tickLine={false} tickFormatter={(v) => `₹${v}`} />
-                <Tooltip contentStyle={{ background: "#0F172A", border: "1px solid #334155", borderRadius: 8, color: "#fff", fontSize: 11 }} />
+                <Tooltip contentStyle={tooltipStyle} />
                 <Legend wrapperStyle={{ fontSize: 11 }} />
                 <Area type="monotone" dataKey="ltv" name="Customer Lifetime Value (LTV)" stroke="#10B981" fill="#10B981" fillOpacity={0.25} />
                 <Area type="monotone" dataKey="cac" name="Acquisition Cost (CAC)" stroke="#F43F5E" fill="#F43F5E" fillOpacity={0.25} />
@@ -157,7 +164,7 @@ export default function MarketingAgentCharts({ t, isDark = true }: MarketingChar
                       <Cell key={`demo-cell-${index}`} fill={entry.color} />
                     ))}
                   </Pie>
-                  <Tooltip contentStyle={{ background: "#0F172A", border: "1px solid #334155", borderRadius: 8, color: "#fff", fontSize: 11 }} />
+                  <Tooltip contentStyle={tooltipStyle} />
                 </PieChart>
               </ResponsiveContainer>
             </div>
@@ -197,7 +204,7 @@ export default function MarketingAgentCharts({ t, isDark = true }: MarketingChar
                 <CartesianGrid strokeDasharray="3 3" stroke={isDark ? "#334155" : "#E2E8F0"} opacity={0.5} />
                 <XAxis type="number" stroke={textMuted} fontSize={10} tickLine={false} tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`} />
                 <YAxis type="category" dataKey="stage" stroke={textMuted} fontSize={10} tickLine={false} width={110} />
-                <Tooltip contentStyle={{ background: "#0F172A", border: "1px solid #334155", borderRadius: 8, color: "#fff", fontSize: 11 }} />
+                <Tooltip contentStyle={tooltipStyle} />
                 <Bar dataKey="volume" name="Users" fill="#3B82F6" radius={[0, 4, 4, 0]} />
               </BarChart>
             </ResponsiveContainer>

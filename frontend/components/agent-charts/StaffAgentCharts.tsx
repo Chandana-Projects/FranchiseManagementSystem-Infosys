@@ -60,6 +60,13 @@ export default function StaffAgentCharts({ t, isDark = true }: StaffChartsProps)
   const borderColor = t.border;
   const textColor = t.text;
   const textMuted = t.textMuted;
+  const tooltipStyle = {
+    background: isDark ? "#0F172A" : "#FFFFFF",
+    border: `1px solid ${isDark ? "#334155" : "#CBD5E1"}`,
+    borderRadius: 8,
+    color: isDark ? "#fff" : "#0F172A",
+    fontSize: 11,
+  };
 
   return (
     <div className="space-y-6">
@@ -86,7 +93,7 @@ export default function StaffAgentCharts({ t, isDark = true }: StaffChartsProps)
                 <CartesianGrid strokeDasharray="3 3" stroke={isDark ? "#334155" : "#E2E8F0"} opacity={0.5} />
                 <XAxis dataKey="outlet" stroke={textMuted} fontSize={10} tickLine={false} />
                 <YAxis stroke={textMuted} fontSize={10} tickLine={false} />
-                <Tooltip contentStyle={{ background: "#0F172A", border: "1px solid #334155", borderRadius: 8, color: "#fff", fontSize: 11 }} />
+                <Tooltip contentStyle={tooltipStyle} />
                 <Legend wrapperStyle={{ fontSize: 11 }} />
                 <Bar dataKey="scheduled" name="Scheduled" fill="#3B82F6" radius={[4, 4, 0, 0]} />
                 <Bar dataKey="actual" name="Actual" fill="#10B981" radius={[4, 4, 0, 0]} />
@@ -128,7 +135,7 @@ export default function StaffAgentCharts({ t, isDark = true }: StaffChartsProps)
                       <Cell key={`role-cell-${index}`} fill={entry.color} />
                     ))}
                   </Pie>
-                  <Tooltip contentStyle={{ background: "#0F172A", border: "1px solid #334155", borderRadius: 8, color: "#fff", fontSize: 11 }} />
+                  <Tooltip contentStyle={tooltipStyle} />
                 </PieChart>
               </ResponsiveContainer>
             </div>
@@ -172,7 +179,7 @@ export default function StaffAgentCharts({ t, isDark = true }: StaffChartsProps)
                 <XAxis dataKey="week" stroke={textMuted} fontSize={10} tickLine={false} />
                 <YAxis yAxisId="speed" stroke="#F59E0B" fontSize={10} tickLine={false} tickFormatter={(v) => `${v}m`} />
                 <YAxis yAxisId="csat" orientation="right" stroke="#10B981" domain={[3.5, 5]} fontSize={10} tickLine={false} />
-                <Tooltip contentStyle={{ background: "#0F172A", border: "1px solid #334155", borderRadius: 8, color: "#fff", fontSize: 11 }} />
+                <Tooltip contentStyle={tooltipStyle} />
                 <Legend wrapperStyle={{ fontSize: 11 }} />
                 <Line yAxisId="speed" type="monotone" dataKey="prepSpeed" name="Avg Prep Time (Mins)" stroke="#F59E0B" strokeWidth={2.5} dot={{ r: 3 }} />
                 <Line yAxisId="csat" type="monotone" dataKey="csat" name="CSAT Rating (out of 5)" stroke="#10B981" strokeWidth={2.5} dot={{ r: 3 }} />
@@ -205,7 +212,7 @@ export default function StaffAgentCharts({ t, isDark = true }: StaffChartsProps)
                 <Radar name="Current Score" dataKey="Score" stroke="#8B5CF6" fill="#8B5CF6" fillOpacity={0.35} />
                 <Radar name="Target SLA" dataKey="Target" stroke="#0D9488" strokeDasharray="3 3" fill="none" />
                 <Legend wrapperStyle={{ fontSize: "11px" }} />
-                <Tooltip contentStyle={{ background: "#0F172A", border: "1px solid #334155", borderRadius: 8, color: "#fff", fontSize: 11 }} />
+                <Tooltip contentStyle={tooltipStyle} />
               </RadarChart>
             </ResponsiveContainer>
           </div>

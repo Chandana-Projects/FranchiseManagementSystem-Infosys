@@ -58,6 +58,13 @@ export default function AuditAgentCharts({ t, isDark = true }: AuditChartsProps)
   const borderColor = t.border;
   const textColor = t.text;
   const textMuted = t.textMuted;
+  const tooltipStyle = {
+    background: isDark ? "#0F172A" : "#FFFFFF",
+    border: `1px solid ${isDark ? "#334155" : "#CBD5E1"}`,
+    borderRadius: 8,
+    color: isDark ? "#fff" : "#0F172A",
+    fontSize: 11,
+  };
 
   return (
     <div className="space-y-6">
@@ -84,7 +91,7 @@ export default function AuditAgentCharts({ t, isDark = true }: AuditChartsProps)
                 <CartesianGrid strokeDasharray="3 3" stroke={isDark ? "#334155" : "#E2E8F0"} opacity={0.5} />
                 <XAxis dataKey="category" stroke={textMuted} fontSize={9} tickLine={false} />
                 <YAxis stroke={textMuted} fontSize={10} tickLine={false} domain={[50, 100]} />
-                <Tooltip contentStyle={{ background: "#0F172A", border: "1px solid #334155", borderRadius: 8, color: "#fff", fontSize: 11 }} />
+                <Tooltip contentStyle={tooltipStyle} />
                 <Legend wrapperStyle={{ fontSize: 11 }} />
                 <Bar dataKey="score" name="Attained Score" fill="#0D9488" radius={[4, 4, 0, 0]} />
                 <Bar dataKey="target" name="Target Benchmark" fill="#3B82F6" radius={[4, 4, 0, 0]} opacity={0.5} />
@@ -114,7 +121,7 @@ export default function AuditAgentCharts({ t, isDark = true }: AuditChartsProps)
                 <CartesianGrid strokeDasharray="3 3" stroke={isDark ? "#334155" : "#E2E8F0"} opacity={0.5} />
                 <XAxis dataKey="month" stroke={textMuted} fontSize={10} tickLine={false} />
                 <YAxis stroke={textMuted} fontSize={10} tickLine={false} domain={[60, 100]} />
-                <Tooltip contentStyle={{ background: "#0F172A", border: "1px solid #334155", borderRadius: 8, color: "#fff", fontSize: 11 }} />
+                <Tooltip contentStyle={tooltipStyle} />
                 <Legend wrapperStyle={{ fontSize: 11 }} />
                 <Line type="monotone" dataKey="Pune" stroke="#10B981" strokeWidth={2} dot={{ r: 2 }} />
                 <Line type="monotone" dataKey="Mumbai" stroke="#3B82F6" strokeWidth={2} dot={{ r: 2 }} />
@@ -160,7 +167,7 @@ export default function AuditAgentCharts({ t, isDark = true }: AuditChartsProps)
                       <Cell key={`sev-cell-${index}`} fill={entry.color} />
                     ))}
                   </Pie>
-                  <Tooltip contentStyle={{ background: "#0F172A", border: "1px solid #334155", borderRadius: 8, color: "#fff", fontSize: 11 }} />
+                  <Tooltip contentStyle={tooltipStyle} />
                 </PieChart>
               </ResponsiveContainer>
             </div>
@@ -203,7 +210,7 @@ export default function AuditAgentCharts({ t, isDark = true }: AuditChartsProps)
                 <Radar name="Network Average" dataKey="score" stroke="#8B5CF6" fill="#8B5CF6" fillOpacity={0.35} />
                 <Radar name="Standard SLA" dataKey="target" stroke="#0D9488" strokeDasharray="3 3" fill="none" />
                 <Legend wrapperStyle={{ fontSize: "11px" }} />
-                <Tooltip contentStyle={{ background: "#0F172A", border: "1px solid #334155", borderRadius: 8, color: "#fff", fontSize: 11 }} />
+                <Tooltip contentStyle={tooltipStyle} />
               </RadarChart>
             </ResponsiveContainer>
           </div>

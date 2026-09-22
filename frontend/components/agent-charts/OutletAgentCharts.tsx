@@ -71,6 +71,13 @@ export default function OutletAgentCharts({ t, isDark = true }: OutletChartsProp
   const borderColor = t.border;
   const textColor = t.text;
   const textMuted = t.textMuted;
+  const tooltipStyle = {
+    background: isDark ? "#0F172A" : "#FFFFFF",
+    border: `1px solid ${isDark ? "#334155" : "#CBD5E1"}`,
+    borderRadius: 8,
+    color: isDark ? "#fff" : "#0F172A",
+    fontSize: 11,
+  };
 
   return (
     <div className="space-y-6">
@@ -98,7 +105,7 @@ export default function OutletAgentCharts({ t, isDark = true }: OutletChartsProp
                 <XAxis dataKey="outlet" stroke={textMuted} fontSize={10} tickLine={false} />
                 <YAxis stroke={textMuted} fontSize={10} tickLine={false} tickFormatter={(v) => `₹${(v / 1000).toFixed(0)}k`} />
                 <Tooltip
-                  contentStyle={{ background: "#0F172A", border: "1px solid #334155", borderRadius: 8, color: "#fff", fontSize: 11 }}
+                  contentStyle={tooltipStyle}
                   formatter={(v: any) => `₹${Number(v).toLocaleString("en-IN")}`}
                 />
                 <Legend wrapperStyle={{ fontSize: 11 }} />
@@ -134,7 +141,7 @@ export default function OutletAgentCharts({ t, isDark = true }: OutletChartsProp
                 <Radar name="Mumbai Bandra" dataKey="Mumbai" stroke="#3B82F6" fill="#3B82F6" fillOpacity={0.25} />
                 <Radar name="Bangalore" dataKey="Bangalore" stroke="#EC4899" fill="#EC4899" fillOpacity={0.2} />
                 <Legend wrapperStyle={{ fontSize: "11px" }} />
-                <Tooltip contentStyle={{ background: "#0F172A", border: "1px solid #334155", borderRadius: 8, color: "#fff", fontSize: 11 }} />
+                <Tooltip contentStyle={tooltipStyle} />
               </RadarChart>
             </ResponsiveContainer>
           </div>
@@ -165,7 +172,7 @@ export default function OutletAgentCharts({ t, isDark = true }: OutletChartsProp
                 <XAxis dataKey="hour" stroke={textMuted} fontSize={10} tickLine={false} />
                 <YAxis yAxisId="left" stroke={textMuted} fontSize={10} tickLine={false} />
                 <YAxis yAxisId="right" orientation="right" stroke="#F59E0B" fontSize={10} tickLine={false} tickFormatter={(v) => `${v}m`} />
-                <Tooltip contentStyle={{ background: "#0F172A", border: "1px solid #334155", borderRadius: 8, color: "#fff", fontSize: 11 }} />
+                <Tooltip contentStyle={tooltipStyle} />
                 <Legend wrapperStyle={{ fontSize: 11 }} />
                 <Bar yAxisId="left" dataKey="orders" name="Order Volume" fill="#3B82F6" radius={[4, 4, 0, 0]} barSize={16} />
                 <Line yAxisId="right" type="monotone" dataKey="ticketTime" name="Prep Time (Mins)" stroke="#F59E0B" strokeWidth={2.5} dot={{ r: 3 }} />
@@ -196,7 +203,7 @@ export default function OutletAgentCharts({ t, isDark = true }: OutletChartsProp
                 <XAxis type="number" dataKey="orderVal" name="Order Value" unit="₹" stroke={textMuted} fontSize={10} />
                 <YAxis type="number" dataKey="prepMins" name="Prep Time" unit="m" stroke={textMuted} fontSize={10} />
                 <ZAxis range={[60, 180]} />
-                <Tooltip cursor={{ strokeDasharray: "3 3" }} contentStyle={{ background: "#0F172A", border: "1px solid #334155", borderRadius: 8, color: "#fff", fontSize: 11 }} />
+                <Tooltip cursor={{ strokeDasharray: "3 3" }} contentStyle={tooltipStyle} />
                 <Scatter name="Kitchen Orders" data={KITCHEN_SCATTER} fill="#EC4899" />
               </ScatterChart>
             </ResponsiveContainer>

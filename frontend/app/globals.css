@@ -255,6 +255,12 @@ html.light-theme,
   color: #0F172A;
 }
 
+/* Preserve recharts tooltip text colors — do NOT override inline styles inside tooltip wrappers */
+.light-theme .recharts-tooltip-wrapper *,
+.light-theme .recharts-default-tooltip * {
+  color: inherit !important;
+}
+
 .light-theme .font-bold,
 .light-theme .font-extrabold {
   color: #020617 !important;

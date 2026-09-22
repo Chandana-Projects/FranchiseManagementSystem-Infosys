@@ -47,6 +47,13 @@ export default function ReportsCharts({ t, isDark = true }: ReportsChartsProps) 
   const borderColor = t.border;
   const textColor = t.text;
   const textMuted = t.textMuted;
+  const tooltipStyle = {
+    background: isDark ? "#0F172A" : "#FFFFFF",
+    border: `1px solid ${isDark ? "#334155" : "#CBD5E1"}`,
+    borderRadius: 8,
+    color: isDark ? "#fff" : "#0F172A",
+    fontSize: 11,
+  };
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -72,7 +79,7 @@ export default function ReportsCharts({ t, isDark = true }: ReportsChartsProps) 
               <XAxis dataKey="month" stroke={textMuted} fontSize={10} tickLine={false} />
               <YAxis stroke={textMuted} fontSize={10} tickLine={false} tickFormatter={(v) => `₹${(v / 1000).toFixed(0)}k`} />
               <Tooltip
-                contentStyle={{ background: "#0F172A", border: "1px solid #334155", borderRadius: 8, color: "#fff", fontSize: 11 }}
+                contentStyle={tooltipStyle}
                 formatter={(v: any) => `₹${Number(v).toLocaleString("en-IN")}`}
               />
               <Legend wrapperStyle={{ fontSize: 11 }} />
@@ -113,7 +120,7 @@ export default function ReportsCharts({ t, isDark = true }: ReportsChartsProps) 
                     <Cell key={`rep-pay-cell-${index}`} fill={entry.color} />
                   ))}
                 </Pie>
-                <Tooltip contentStyle={{ background: "#0F172A", border: "1px solid #334155", borderRadius: 8, color: "#fff", fontSize: 11 }} />
+                <Tooltip contentStyle={tooltipStyle} />
               </PieChart>
             </ResponsiveContainer>
           </div>

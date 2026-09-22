@@ -52,6 +52,13 @@ export default function IntelligenceAgentCharts({ t, isDark = true }: Intelligen
   const borderColor = t.border;
   const textColor = t.text;
   const textMuted = t.textMuted;
+  const tooltipStyle = {
+    background: isDark ? "#0F172A" : "#FFFFFF",
+    border: `1px solid ${isDark ? "#334155" : "#CBD5E1"}`,
+    borderRadius: 8,
+    color: isDark ? "#fff" : "#0F172A",
+    fontSize: 11,
+  };
 
   return (
     <div className="space-y-6">
@@ -76,7 +83,7 @@ export default function IntelligenceAgentCharts({ t, isDark = true }: Intelligen
               <CartesianGrid strokeDasharray="3 3" stroke={isDark ? "#334155" : "#E2E8F0"} opacity={0.5} />
               <XAxis dataKey="day" stroke={textMuted} fontSize={10} tickLine={false} />
               <YAxis stroke={textMuted} fontSize={10} tickLine={false} tickFormatter={(v) => `₹${(v / 1000).toFixed(0)}k`} />
-              <Tooltip contentStyle={{ background: "#0F172A", border: "1px solid #334155", borderRadius: 8, color: "#fff", fontSize: 11 }} />
+              <Tooltip contentStyle={tooltipStyle} />
               <Legend wrapperStyle={{ fontSize: 11 }} />
               <Area type="monotone" dataKey="upper" name="Upper 95% Bound" stroke="#10B981" strokeDasharray="4 4" fill="#10B981" fillOpacity={0.1} />
               <Area type="monotone" dataKey="forecast" name="ML Projected Runway" stroke="#0D9488" strokeWidth={2.5} fill="#0D9488" fillOpacity={0.2} />
@@ -110,7 +117,7 @@ export default function IntelligenceAgentCharts({ t, isDark = true }: Intelligen
                 <CartesianGrid strokeDasharray="3 3" stroke={isDark ? "#334155" : "#E2E8F0"} opacity={0.5} />
                 <XAxis type="number" stroke={textMuted} fontSize={10} domain={[0, 100]} tickFormatter={(v) => `${v}%`} />
                 <YAxis type="category" dataKey="risk" stroke={textMuted} fontSize={9} width={130} tickLine={false} />
-                <Tooltip contentStyle={{ background: "#0F172A", border: "1px solid #334155", borderRadius: 8, color: "#fff", fontSize: 11 }} />
+                <Tooltip contentStyle={tooltipStyle} />
                 <Bar dataKey="probability" name="Risk Likelihood %" fill="#F43F5E" radius={[0, 4, 4, 0]} />
               </BarChart>
             </ResponsiveContainer>
@@ -139,7 +146,7 @@ export default function IntelligenceAgentCharts({ t, isDark = true }: Intelligen
                 <XAxis dataKey="surge" stroke={textMuted} fontSize={9} tickLine={false} />
                 <YAxis yAxisId="margin" stroke="#10B981" domain={[65, 75]} fontSize={10} tickLine={false} tickFormatter={(v) => `${v}%`} />
                 <YAxis yAxisId="vol" orientation="right" stroke="#F43F5E" domain={[-15, 5]} fontSize={10} tickLine={false} tickFormatter={(v) => `${v}%`} />
-                <Tooltip contentStyle={{ background: "#0F172A", border: "1px solid #334155", borderRadius: 8, color: "#fff", fontSize: 11 }} />
+                <Tooltip contentStyle={tooltipStyle} />
                 <Legend wrapperStyle={{ fontSize: 11 }} />
                 <Line yAxisId="margin" type="monotone" dataKey="marginYield" name="Gross Margin Yield %" stroke="#10B981" strokeWidth={2.5} dot={{ r: 3 }} />
                 <Line yAxisId="vol" type="monotone" dataKey="volumeChange" name="Order Volume Shift %" stroke="#F43F5E" strokeWidth={2} strokeDasharray="3 3" dot={{ r: 3 }} />

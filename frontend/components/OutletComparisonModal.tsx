@@ -240,7 +240,7 @@ export default function OutletComparisonModal({
                   <Radar name={outletB.name} dataKey={outletB.name} stroke={outletB.color} fill={outletB.color} fillOpacity={0.25} />
                   <Radar name={outletC.name} dataKey={outletC.name} stroke={outletC.color} fill={outletC.color} fillOpacity={0.25} />
                   <Legend wrapperStyle={{ fontSize: 11 }} />
-                  <Tooltip contentStyle={{ background: "#0F172A", border: "1px solid #334155", borderRadius: 8, color: "#fff", fontSize: 11 }} />
+                  <Tooltip contentStyle={{ background: isDark ? "#0F172A" : "#FFFFFF", border: `1px solid ${isDark ? "#334155" : "#CBD5E1"}`, borderRadius: 8, color: isDark ? "#fff" : "#0F172A", fontSize: 11 }} />
                 </RadarChart>
               </ResponsiveContainer>
             </div>

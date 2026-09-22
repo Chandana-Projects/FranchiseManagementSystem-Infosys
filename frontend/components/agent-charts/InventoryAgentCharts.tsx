@@ -58,6 +58,13 @@ export default function InventoryAgentCharts({ t, isDark = true }: InventoryChar
   const borderColor = t.border;
   const textColor = t.text;
   const textMuted = t.textMuted;
+  const tooltipStyle = {
+    background: isDark ? "#0F172A" : "#FFFFFF",
+    border: `1px solid ${isDark ? "#334155" : "#CBD5E1"}`,
+    borderRadius: 8,
+    color: isDark ? "#fff" : "#0F172A",
+    fontSize: 11,
+  };
 
   return (
     <div className="space-y-6">
@@ -95,7 +102,7 @@ export default function InventoryAgentCharts({ t, isDark = true }: InventoryChar
                       <Cell key={`cat-cell-${index}`} fill={entry.color} />
                     ))}
                   </Pie>
-                  <Tooltip contentStyle={{ background: "#0F172A", border: "1px solid #334155", borderRadius: 8, color: "#fff", fontSize: 11 }} />
+                  <Tooltip contentStyle={tooltipStyle} />
                 </PieChart>
               </ResponsiveContainer>
             </div>
@@ -144,7 +151,7 @@ export default function InventoryAgentCharts({ t, isDark = true }: InventoryChar
                       <Cell key={`waste-cell-${index}`} fill={entry.color} />
                     ))}
                   </Pie>
-                  <Tooltip contentStyle={{ background: "#0F172A", border: "1px solid #334155", borderRadius: 8, color: "#fff", fontSize: 11 }} />
+                  <Tooltip contentStyle={tooltipStyle} />
                 </PieChart>
               </ResponsiveContainer>
             </div>
@@ -187,7 +194,7 @@ export default function InventoryAgentCharts({ t, isDark = true }: InventoryChar
                 <CartesianGrid strokeDasharray="3 3" stroke={isDark ? "#334155" : "#E2E8F0"} opacity={0.5} />
                 <XAxis dataKey="day" stroke={textMuted} fontSize={10} tickLine={false} />
                 <YAxis stroke={textMuted} fontSize={10} tickLine={false} tickFormatter={(v) => `${v}%`} />
-                <Tooltip contentStyle={{ background: "#0F172A", border: "1px solid #334155", borderRadius: 8, color: "#fff", fontSize: 11 }} />
+                <Tooltip contentStyle={tooltipStyle} />
                 <Legend wrapperStyle={{ fontSize: 11 }} />
                 <Area type="monotone" dataKey="stock" name="Stock Level %" stroke="#3B82F6" fill="#3B82F6" fillOpacity={0.25} />
                 <Area type="step" dataKey="safetyStock" name="Safety Threshold" stroke="#EF4444" strokeDasharray="4 4" fill="none" />
@@ -217,7 +224,7 @@ export default function InventoryAgentCharts({ t, isDark = true }: InventoryChar
                 <CartesianGrid strokeDasharray="3 3" stroke={isDark ? "#334155" : "#E2E8F0"} opacity={0.5} />
                 <XAxis dataKey="sku" stroke={textMuted} fontSize={10} tickLine={false} />
                 <YAxis stroke={textMuted} fontSize={10} tickLine={false} />
-                <Tooltip contentStyle={{ background: "#0F172A", border: "1px solid #334155", borderRadius: 8, color: "#fff", fontSize: 11 }} />
+                <Tooltip contentStyle={tooltipStyle} />
                 <Legend wrapperStyle={{ fontSize: 11 }} />
                 <Bar dataKey="current" name="On Hand" fill="#10B981" radius={[4, 4, 0, 0]} />
                 <Bar dataKey="reorder" name="Reorder Trigger" fill="#F59E0B" radius={[4, 4, 0, 0]} opacity={0.6} />
